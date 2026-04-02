@@ -58,7 +58,10 @@
   }
   .nav-logo span { color: var(--indigo); }
   .nav-logo-svg { width: 34px; height: 34px; flex-shrink: 0; }
-  .nav-links { display: flex; gap: 28px; }
+  .nav-links {
+    display: flex; gap: 28px;
+    position: absolute; left: 50%; transform: translateX(-50%);
+  }
   .nav-links a {
     font-size: 13px; font-weight: 500; color: var(--muted);
     text-decoration: none; transition: color .2s;
@@ -2183,7 +2186,7 @@
           <span class="myq-q-num" style="background:linear-gradient(135deg,#10b981,#14b8a6)">Q3</span>
           <input class="myq-input" id="sq-q3" type="text" placeholder="세 번째 질문을 적어보세요"/>
         </div>
-        <button class="myq-submit-btn" onclick="saveMyQ('student')">✦ 오늘의 질문 저장하기</button>
+        <button class="myq-submit-btn" onclick="saveMyQ('student', this)">✦ 오늘의 질문 저장하기</button>
       </div>
     </div>
   </div>
@@ -2233,7 +2236,7 @@
           <span class="myq-q-num" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">Q3</span>
           <input class="myq-input" id="tq-q3" type="text" placeholder="성찰로 이어지는 세 번째 질문"/>
         </div>
-        <button class="myq-submit-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="saveMyQ('teacher')">✦ 오늘의 수업 질문 저장하기</button>
+        <button class="myq-submit-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="saveMyQ('teacher', this)">✦ 오늘의 수업 질문 저장하기</button>
       </div>
     </div>
   </div>
@@ -3468,7 +3471,7 @@
     document.getElementById('myqTeacherForm').style.display = role === 'teacher' ? 'block' : 'none';
   }
 
-  async function saveMyQ(role) {
+  async function saveMyQ(role, btn) {
     const prefix = role === 'student' ? 'sq' : 'tq';
     const grade = document.getElementById(prefix + '-grade').value;
     const subject = document.getElementById(prefix + '-subject').value;
@@ -3506,7 +3509,6 @@
     loadQGallery();
 
     // 저장 성공 피드백
-    const btn = event.currentTarget;
     const orig = btn.textContent;
     btn.textContent = '✅ 저장되었습니다!';
     setTimeout(() => { btn.textContent = orig; }, 1800);

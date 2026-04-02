@@ -237,7 +237,7 @@
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     font-weight: 900;
     font-size: clamp(32px, 5vw, 62px);
-    line-height: 1.18;
+    line-height: 1.45;
     letter-spacing: -0.03em;
     color: var(--ink);
     margin-bottom: 24px;
@@ -250,7 +250,7 @@
   }
   .hero-desc {
     font-size: 16px; color: var(--muted);
-    line-height: 1.85; max-width: 560px;
+    line-height: 1.85; max-width: 680px;
     margin-bottom: 36px;
   }
   .hero-highlights {
@@ -791,14 +791,15 @@
   }
   .hero-contest-box {
     border-radius: 20px;
-    padding: 24px 22px;
+    padding: 40px 32px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 10px;
+    gap: 16px;
     border: 1.5px solid transparent;
     transition: transform .2s, box-shadow .2s;
+    min-height: 280px;
   }
   .hero-contest-box:hover {
     transform: translateY(-3px);
@@ -813,7 +814,7 @@
     border-color: rgba(139,92,246,.25);
   }
   .hero-contest-label {
-    font-size: 22px; font-weight: 900; color: white; letter-spacing: -0.01em;
+    font-size: 28px; font-weight: 900; color: white; letter-spacing: -0.01em;
     text-align: center;
   }
   .hero-contest-agora .hero-contest-label { color: #38bdf8; }
@@ -823,7 +824,7 @@
     text-transform: uppercase; letter-spacing: .08em;
   }
   .hero-contest-desc {
-    font-size: 13px; color: #cbd5e1; line-height: 1.65; flex: 1;
+    font-size: 14px; color: #cbd5e1; line-height: 2; flex: 1;
   }
   .hero-contest-tags {
     display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
@@ -929,12 +930,12 @@
     display: flex; align-items: center; justify-content: center;
     font-weight: 900; font-size: 24px; color: white;
   }
-  .modal-phase { font-size: 11px; text-transform: uppercase; letter-spacing: .18em; color: #94a3b8; margin-bottom: 4px; }
+  .modal-phase { font-size: 11px; text-transform: uppercase; letter-spacing: .18em; color: #ffffff; margin-bottom: 4px; }
   .modal-title { font-size: 26px; font-weight: 900; color: white; }
-  .modal-subtitle { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+  .modal-subtitle { font-size: 14px; color: #ffffff; margin-top: 4px; }
   .modal-desc {
-    font-size: 14px; color: #cbd5e1; line-height: 1.85;
-    border-left: 3px solid rgba(255,255,255,.15);
+    font-size: 14px; color: #ffffff; line-height: 1.85;
+    border-left: 3px solid rgba(255,255,255,.3);
     padding-left: 16px; margin-bottom: 24px;
   }
   .modal-traits {
@@ -946,16 +947,16 @@
   }
   .modal-trait-icon { font-size: 18px; margin-bottom: 6px; }
   .modal-trait-title { font-size: 13px; font-weight: 700; color: white; margin-bottom: 4px; }
-  .modal-trait-text { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+  .modal-trait-text { font-size: 12px; color: #ffffff; line-height: 1.6; }
   .modal-examples-title {
     font-size: 12px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .12em; color: #64748b; margin-bottom: 10px;
+    letter-spacing: .12em; color: #ffffff; margin-bottom: 10px;
   }
   .modal-example-list { display: flex; flex-direction: column; gap: 8px; }
   .modal-example-item {
     background: rgba(255,255,255,.04);
     border-radius: 10px; padding: 10px 14px;
-    font-size: 13px; color: #94a3b8; line-height: 1.6;
+    font-size: 13px; color: #ffffff; line-height: 1.6;
     display: flex; gap: 10px; align-items: flex-start;
   }
   .modal-example-item::before { content: "→"; flex-shrink: 0; opacity: .5; }
@@ -1084,13 +1085,12 @@
     <a href="#contest">공모전</a>
     <a href="#model">수업 모델</a>
     <a href="#roadmap">로드맵</a>
-  </div>
-  <button class="custom-login-btn" onclick="openAuthModal()">로그인 / 회원가입</button>
-  <!-- 로그인 후 유저 표시 -->
-  <div class="nav-user" id="navUser" style="display:none;">
-    <img class="nav-user-avatar" id="navAvatar" src="" alt=""/>
-    <span class="nav-user-name" id="navUserName"></span>
-    <button class="nav-logout-btn" onclick="handleLogout()">로그아웃</button>
+    <button class="custom-login-btn" style="margin-left:12px;" onclick="openAuthModal()">로그인 / 회원가입</button>
+    <div class="nav-user" id="navUser" style="display:none;align-items:center;gap:10px;">
+      <img class="nav-user-avatar" id="navAvatar" src="" alt=""/>
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-logout-btn" onclick="handleLogout()">로그아웃</button>
+    </div>
   </div>
 </nav>
 
@@ -1178,7 +1178,7 @@
       질문하는 학교
     </h1>
     <p class="hero-desc">
-      학생의 자기주도적 질문과 토론을 중심에 두고, Q-LOGOS 기반 수업·평가·프로젝트·공모전을 하나의 학교 생태계로 엮은 질문하는 학교입니다.
+      학생의 자기주도적 질문과 토론을 중심에 두고,<br>Q-LOGOS 기반 수업·평가·프로젝트·공모전을 하나의 학교 생태계로 엮은 질문하는 학교입니다.
     </p>
     <div class="hero-highlights">
       <div class="highlight-item">
@@ -1199,8 +1199,7 @@
       </div>
     </div>
     <div class="hero-actions">
-      <button class="btn-primary">운영 비전 보기 →</button>
-      <button class="btn-outline">공모전 안내 보기</button>
+      <button class="btn-primary" onclick="window.open('브로셔_링크_여기에_입력','_blank')">브로셔 보기 →</button>
     </div>
 
     <!-- 공모전 박스 (히어로 내부, 버튼 바로 아래) -->
@@ -1208,7 +1207,7 @@
       <div class="hero-contest-box hero-contest-agora">
         <div class="hero-contest-label">AGORA 공모전</div>
         <div class="hero-contest-period">연중 운영 · 전교생 · 학부모</div>
-        <p class="hero-contest-desc">월별 핵심가치 중심 발제문을 제시하고 패들렛 기반 온라인 사유 공간에서<br>철학적 토론을 나누는 공모전</p>
+        <p class="hero-contest-desc">월별 핵심가치 중심 발제문을 제시하고<br>패들렛 기반 온라인 사유 공간에서 철학적 토론을 나누는 공모전</p>
         <div class="hero-contest-tags">
           <span class="hero-contest-tag">철학적 사유</span>
           <span class="hero-contest-tag">토론 문화</span>
@@ -1440,7 +1439,7 @@
         <div class="qlogos-frame-phase">PHASE 3</div>
         <div class="qlogos-frame-name">Generate</div>
         <div class="qlogos-frame-sub">질문 생성과 확장</div>
-        <div class="qlogos-frame-desc">개인·모둠 질문을 만들고 비교·보완하며 더 깊은 탐구 질문으로 발전시키는 단계</div>
+        <div class="qlogos-frame-desc">개인·모둠 질문을 만들고 비교·보완하며 더 깊은 탐구 질문으로<br>발전시키는 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(139,92,246,.5);color:#c4b5fd">자세히 보기 →</button>
       </div>
       <div class="qlogos-frame-item" onclick="openModal('organize')">
@@ -1448,7 +1447,7 @@
         <div class="qlogos-frame-phase">PHASE 4</div>
         <div class="qlogos-frame-name">Organize</div>
         <div class="qlogos-frame-sub">사고 정리와 구조화</div>
-        <div class="qlogos-frame-desc">질문을 분류하고 근거를 모아 탐구 계획·토론 구조를 체계적으로 정리하는 단계</div>
+        <div class="qlogos-frame-desc">질문을 분류하고 근거를 모아 탐구 계획·토론 구조를 체계적으로<br>정리하는 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(245,158,11,.5);color:#fbbf24">자세히 보기 →</button>
       </div>
       <div class="qlogos-frame-item" onclick="openModal('solve')">
@@ -1456,7 +1455,7 @@
         <div class="qlogos-frame-phase">PHASE 5</div>
         <div class="qlogos-frame-name">Solve</div>
         <div class="qlogos-frame-sub">답하기, 나누기, 성찰하기</div>
-        <div class="qlogos-frame-desc">탐구 결과를 발표·토론·글쓰기로 나누고 새로운 질문으로 다시 이어 가는 단계</div>
+        <div class="qlogos-frame-desc">탐구 결과를 발표·토론·글쓰기로 나누고 새로운 질문으로<br>다시 이어 가는 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(244,63,94,.5);color:#fb7185">자세히 보기 →</button>
       </div>
     </div>

@@ -525,87 +525,85 @@
   .cta-mini h4 { font-size: 16px; font-weight: 700; color: white; margin-bottom: 8px; }
   .cta-mini p { font-size: 13px; color: #9ca3af; line-height: 1.6; }
 
-  /* ── PORTFOLIO ── */
-  .pf-stat-card {
-    background: white; border: 1px solid var(--line); border-radius: 20px;
-    padding: 24px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.04);
-    transition: transform .2s;
+  /* ── PORTFOLIO (통합 신버전) ── */
+  .pf-dashboard {
+    display: grid; grid-template-columns: repeat(6,1fr); gap: 14px; margin-bottom: 32px;
   }
-  .pf-stat-card:hover { transform: translateY(-3px); }
-  .pf-stat-num {
-    font-size: 36px; font-weight: 900; color: var(--indigo);
-    font-family: 'Bebas Neue', sans-serif; line-height: 1; margin-bottom: 6px;
+  @media(max-width:1100px){ .pf-dashboard{grid-template-columns:repeat(3,1fr);} }
+  @media(max-width:600px) { .pf-dashboard{grid-template-columns:repeat(2,1fr);} }
+  .pf-dash-card {
+    background:white; border:1.5px solid var(--line); border-radius:18px;
+    padding:18px 12px; text-align:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.04); transition:transform .2s;
+    border-top:3px solid var(--dc,var(--indigo));
   }
-  .pf-stat-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .pf-dash-card:hover { transform:translateY(-3px); }
+  .pf-dash-total { border-top-color: var(--ink); }
+  .pf-dash-icon  { font-size:24px; margin-bottom:6px; }
+  .pf-dash-num   { font-size:30px; font-weight:900; font-family:'Bebas Neue',sans-serif; line-height:1; margin-bottom:4px; color:var(--dc,var(--indigo)); }
+  .pf-dash-total .pf-dash-num { color:var(--ink); }
+  .pf-dash-label { font-size:11px; color:var(--muted); font-weight:600; }
 
-  .pf-filter-btn {
-    padding: 7px 16px; border-radius: 100px; border: 1.5px solid var(--line);
-    background: white; color: var(--muted); font-size: 13px; font-weight: 600;
-    cursor: pointer; font-family: inherit; transition: all .2s;
+  .pf-source-tabs {
+    display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px;
   }
-  .pf-filter-btn:hover, .pf-filter-btn.active {
-    background: var(--ink); color: white; border-color: var(--ink);
+  .pf-source-tab {
+    padding:8px 18px; border-radius:100px; border:1.5px solid var(--line);
+    background:white; color:var(--muted); font-size:13px; font-weight:700;
+    cursor:pointer; font-family:inherit; transition:all .2s;
   }
-  .pf-subj-btn {
-    padding: 5px 14px; border-radius: 100px; border: 1.5px solid var(--line);
-    background: white; color: var(--muted); font-size: 12px; font-weight: 600;
-    cursor: pointer; font-family: inherit; transition: all .2s;
-  }
-  .pf-subj-btn.active { background: var(--indigo); color: white; border-color: var(--indigo); }
+  .pf-source-tab:hover { border-color:var(--indigo); color:var(--indigo); }
+  .pf-source-tab.active { background:var(--ink); color:white; border-color:var(--ink); }
 
-  .pf-view-btn {
-    width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid var(--line);
-    background: white; color: var(--muted); font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: all .2s;
-  }
-  .pf-view-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
+  /* 통합 카드 그리드 */
+  .pf-new-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  @media(max-width:1024px){ .pf-new-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:640px) { .pf-new-grid{grid-template-columns:1fr;} }
 
-  .pf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .pf-grid.list-view { grid-template-columns: 1fr; }
+  .pf-new-card {
+    background:white; border:1px solid var(--line); border-radius:20px;
+    padding:0; overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.05); transition:all .2s;
+    position:relative; display:flex; flex-direction:column;
+    animation: pfCardIn .4s ease both;
+  }
+  @keyframes pfCardIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  .pf-new-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,.1); }
 
-  .pf-card {
-    background: white; border: 1px solid var(--line); border-radius: 20px;
-    padding: 22px 24px; box-shadow: 0 2px 8px rgba(0,0,0,.04);
-    transition: all .2s; position: relative; overflow: hidden;
+  .pf-card-ribbon {
+    height:5px; background:var(--pf-color,var(--indigo)); flex-shrink:0;
   }
-  .pf-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: var(--pf-color, var(--indigo));
+  .pf-card-inner { padding:18px 20px; flex:1; display:flex; flex-direction:column; gap:10px; }
+  .pf-card-meta  { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; }
+  .pf-card-source-badge {
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:11px; font-weight:800; padding:3px 10px; border-radius:100px;
+    color:white; background:var(--pf-color,var(--indigo));
   }
-  .pf-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.09); }
-  .pf-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-  .pf-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .pf-card-tag {
-    font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px;
-    background: rgba(79,70,229,.08); color: var(--indigo);
+  .pf-card-date-new { font-size:11px; color:#94a3b8; }
+  .pf-card-title-new { font-size:14px; font-weight:800; color:var(--ink); line-height:1.4; }
+  .pf-card-subtitle  { font-size:12px; color:var(--muted); }
+  .pf-card-qs-new { display:flex; flex-direction:column; gap:6px; flex:1; }
+  .pf-card-q-new {
+    display:flex; gap:8px; align-items:flex-start;
+    font-size:12.5px; color:#334155; line-height:1.6;
+    padding:8px 10px; background:var(--bg); border-radius:10px;
   }
-  .pf-card-tag.t { background: rgba(245,158,11,.1); color: #b45309; }
-  .pf-card-date { font-size: 11px; color: #94a3b8; flex-shrink: 0; margin-left: 8px; }
-  .pf-card-topic { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 3px; }
-  .pf-card-unit { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-  .pf-card-qs { display: flex; flex-direction: column; gap: 8px; }
-  .pf-card-q {
-    display: flex; gap: 9px; align-items: flex-start;
-    font-size: 13px; color: #334155; line-height: 1.6;
-    padding: 8px 10px; background: var(--bg); border-radius: 10px;
+  .pf-card-qbadge-new {
+    font-size:9.5px; font-weight:900; padding:2px 6px; border-radius:6px;
+    color:white; flex-shrink:0; margin-top:2px; background:var(--pf-color,var(--indigo));
   }
-  .pf-card-qbadge {
-    font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 6px;
-    color: white; flex-shrink: 0; margin-top: 2px;
+  .pf-card-del-new {
+    align-self:flex-end; font-size:11px; color:#cbd5e1; background:none; border:none;
+    cursor:pointer; font-family:inherit; transition:color .2s; padding:2px 6px;
   }
-  .pf-card-del {
-    position: absolute; bottom: 14px; right: 16px;
-    font-size: 11px; color: #cbd5e1; background: none; border: none;
-    cursor: pointer; font-family: inherit; transition: color .2s;
-  }
-  .pf-card-del:hover { color: #f43f5e; }
+  .pf-card-del-new:hover { color:#f43f5e; }
 
-  /* list view */
-  .pf-grid.list-view .pf-card { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
-  .pf-grid.list-view .pf-card::before { top: 0; left: 0; right: auto; bottom: 0; width: 3px; height: auto; }
-
-  @media (max-width: 1024px) { .pf-grid { grid-template-columns: repeat(2,1fr); } }
-  @media (max-width: 640px) { .pf-grid { grid-template-columns: 1fr; } .pf-grid.list-view .pf-card { grid-template-columns: 1fr; } }
+  /* 기존 스타일 호환 유지 */
+  .pf-stat-card { display:none; }
+  .pf-filter-btn, .pf-view-btn, .pf-subj-btn { display:none; }
+  .pf-grid { display:none; }
+  .pf-card { display:none; }
 
   /* ── TODAY'S QUESTION ── */
   .myq-role-btn {
@@ -817,7 +815,7 @@
   .qgenerate-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
   /* ══════════════════════════════
-     질문 놀이터
+     질문 미션 놀이터
   ══════════════════════════════ */
   .qplay-tabs {
     display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 36px;
@@ -832,8 +830,8 @@
   .qplay-tab:hover { border-color: var(--indigo); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(79,70,229,.12); }
   .qplay-tab.active { border-color: var(--indigo); background: linear-gradient(135deg,#eef2ff,#f5f3ff); box-shadow: 0 8px 24px rgba(79,70,229,.15); }
   .qplay-tab-icon { font-size: 32px; }
-  .qplay-tab-title { font-size: 14px; font-weight: 800; color: var(--ink); }
-  .qplay-tab-sub { font-size: 11.5px; color: var(--muted); }
+  .qplay-tab-title { font-size: 17px; font-weight: 900; color: var(--ink); }
+  .qplay-tab-sub { font-size: 12px; color: var(--muted); }
 
   .qplay-panel { display: none; }
   .qplay-panel.active { display: block; animation: fadeUp .35s ease; }
@@ -1140,76 +1138,346 @@
   /* 기존 스타일 정리 */
   .qchamp-card, .qchamp-card-inner, .qchamp-front, .qchamp-back, .qchamp-badges, .qchamp-badge { display:none !important; }
 
-  /* 꿈꾸기 */
-  .qdream-themes { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-  .qdream-theme-btn {
-    padding: 10px 18px; border-radius: 100px;
-    background: white; border: 1.5px solid var(--line);
-    font-size: 13px; font-weight: 700; color: var(--muted);
-    cursor: pointer; font-family: inherit; transition: all .2s;
+  /* ── 질문 타임머신 (신버전) ── */
+  .dream-intro {
+    background: linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f2027 100%);
+    border-radius: 24px; padding: 32px 36px;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    margin-bottom: 28px; flex-wrap: wrap;
+    border: 1px solid rgba(139,92,246,.3);
+    box-shadow: 0 0 40px rgba(139,92,246,.1);
   }
-  .qdream-theme-btn:hover, .qdream-theme-btn.active {
-    background: linear-gradient(135deg,#f5f3ff,#ede9fe);
-    border-color: #a78bfa; color: #5b21b6;
+  .dream-intro-text { flex: 1; }
+  .dream-intro-badge {
+    display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .15em;
+    background: rgba(139,92,246,.3); color: #c4b5fd; border-radius: 100px;
+    padding: 4px 14px; margin-bottom: 10px; border: 1px solid rgba(139,92,246,.4);
   }
-  .qdream-hint {
-    background: linear-gradient(135deg,#f5f3ff,#ede9fe);
-    border: 1.5px solid #c4b5fd; border-radius: 14px;
-    padding: 14px 18px; font-size: 13.5px; color: #4c1d95; line-height: 1.8;
-    margin-bottom: 12px;
-  }
-  .qdream-list { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
-  .qdream-item {
-    background: white; border: 1px solid var(--line); border-radius: 14px;
-    padding: 14px 18px; font-size: 13.5px; color: var(--ink); line-height: 1.7;
-    border-left: 3px solid #8b5cf6; position: relative;
-  }
-  .qdream-item-meta { font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+  .dream-intro-title { font-size: 20px; font-weight: 900; color: white; margin-bottom: 8px; }
+  .dream-intro-desc  { font-size: 13px; color: #9ca3af; line-height: 1.75; }
+  .dream-intro-icons { font-size: 32px; letter-spacing: 8px; flex-shrink: 0; }
 
-  /* 북콘서트 */
-  .qbook-categories { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-  .qbook-cat-btn {
-    padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 700;
-    border: 1.5px solid var(--line); background: white; color: var(--muted);
-    cursor: pointer; font-family: inherit; transition: all .18s;
+  .dream-cat-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .dream-cat-btn {
+    padding: 9px 18px; border-radius:100px;
+    border: 2px solid var(--dc, #8b5cf6);
+    background: transparent; color: var(--dc, #8b5cf6);
+    font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .2s;
   }
-  .qbook-cat-btn:hover { border-color: var(--teal); color: var(--teal); }
-  .qbook-cat-btn.active { background: var(--teal); color: white; border-color: var(--teal); }
-  .qbook-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-  @media(max-width:768px){ .qbook-grid { grid-template-columns: 1fr 1fr; } }
-  .qbook-card {
-    background: white; border: 1px solid var(--line); border-radius: 18px;
-    padding: 20px; transition: all .2s; cursor: default;
-    box-shadow: 0 2px 8px rgba(0,0,0,.04);
-    display: flex; flex-direction: column; gap: 8px;
+  .dream-cat-btn:hover { background: rgba(139,92,246,.08); transform:translateY(-1px); }
+  .dream-cat-btn.active { background: var(--dc,#8b5cf6); color: white; border-color:transparent; box-shadow:0 4px 14px rgba(0,0,0,.2); }
+
+  .dream-cat-banner {
+    border-radius: 16px; padding: 14px 20px; margin-bottom: 24px;
+    font-size: 14px; font-weight: 700; line-height: 1.7;
+    display: none;
   }
-  .qbook-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.09); }
-  .qbook-card-cover { font-size: 36px; text-align: center; margin-bottom: 4px; }
-  .qbook-card-title { font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.4; }
-  .qbook-card-author { font-size: 12px; color: var(--muted); }
-  .qbook-card-desc { font-size: 12px; color: #475569; line-height: 1.7; flex: 1; }
-  .qbook-ask-btn {
-    width: 100%; padding: 9px; border-radius: 10px; border: none;
-    background: linear-gradient(135deg,var(--teal),var(--emerald));
-    color: white; font-size: 13px; font-weight: 700; cursor: pointer;
-    font-family: inherit; transition: all .2s; margin-top: 4px;
+
+  /* 카드 그리드 */
+  .dream-model-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; margin-bottom:32px; }
+  @media(max-width:1200px){ .dream-model-grid{grid-template-columns:repeat(3,1fr);} }
+  @media(max-width:680px) { .dream-model-grid{grid-template-columns:1fr 1fr;} }
+
+  .dream-model-card {
+    border-radius: 22px; overflow:hidden; cursor:pointer;
+    transition: all .28s cubic-bezier(.34,1.56,.64,1);
+    animation: cardPop .45s cubic-bezier(.34,1.56,.64,1) both;
+    position: relative; display:flex; flex-direction:column;
   }
-  .qbook-ask-btn:hover { opacity: .88; transform: translateY(-1px); }
-  .qbook-modal-overlay {
-    display: none; position: fixed; inset: 0; z-index: 1000;
-    background: rgba(5,5,20,.75); backdrop-filter: blur(8px);
-    align-items: center; justify-content: center; padding: 24px;
+  .dream-model-card:nth-child(1){animation-delay:.04s}
+  .dream-model-card:nth-child(2){animation-delay:.1s}
+  .dream-model-card:nth-child(3){animation-delay:.17s}
+  .dream-model-card:nth-child(4){animation-delay:.24s}
+  .dream-model-card:nth-child(5){animation-delay:.31s}
+  .dream-model-card:nth-child(6){animation-delay:.38s}
+  @keyframes cardPop{from{opacity:0;transform:scale(.8) rotateY(30deg)}to{opacity:1;transform:none}}
+  .dream-model-card:hover { transform:translateY(-8px) scale(1.03); box-shadow:0 20px 48px rgba(0,0,0,.22); }
+
+  .dream-card-bg {
+    padding: 22px 14px 18px;
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:7px;
+    flex:1;
   }
-  .qbook-modal-overlay.open { display: flex; }
-  .qbook-modal {
-    background: white; border-radius: 28px; padding: 36px;
-    max-width: 580px; width: 100%; max-height: 88vh; overflow-y: auto;
-    position: relative; box-shadow: 0 32px 80px rgba(0,0,0,.25);
+  .dream-card-period-tag {
+    font-size:10px; font-weight:700; padding:3px 10px; border-radius:100px;
+    background:rgba(255,255,255,.2); color:white; letter-spacing:.05em;
   }
-  .qbook-modal-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
-  .qbook-modal-cover { font-size: 48px; flex-shrink: 0; }
-  .qbook-modal-info h3 { font-size: 18px; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
-  .qbook-modal-info p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .dream-card-emoji-big { font-size: 40px; filter:drop-shadow(0 4px 8px rgba(0,0,0,.3)); }
+  .dream-card-name-big  { font-size:15px; font-weight:900; color:white; line-height:1.3; text-shadow:0 2px 8px rgba(0,0,0,.3); word-break:keep-all; }
+  .dream-card-nation-tag {
+    font-size:11px; padding:3px 10px; border-radius:100px;
+    background:rgba(255,255,255,.15); color:rgba(255,255,255,.9); font-weight:600;
+  }
+  .dream-card-job-tag {
+    font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:100px;
+    background:rgba(255,255,255,.18); color:white; word-break:keep-all;
+  }
+
+  .dream-card-ask-row {
+    padding: 0 14px 14px; background: transparent;
+  }
+  .dream-card-ask-btn-new {
+    width:100%; padding:10px; border-radius:12px; border:none;
+    background: #b8c8e8;
+    color: #2d3f6b; font-size:12px; font-weight:800; cursor:pointer;
+    font-family:inherit; transition:all .2s;
+  }
+  .dream-card-ask-btn-new:hover { background:#a3b8de; transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.15); }
+
+  /* 모달 */
+  .dream-modal-overlay {
+    display:none; position:fixed; inset:0; z-index:1000;
+    background:rgba(5,5,20,.8); backdrop-filter:blur(10px);
+    align-items:center; justify-content:center; padding:24px;
+  }
+  .dream-modal-overlay.open { display:flex; }
+  .dream-modal {
+    background:white; border-radius:28px; padding:0;
+    max-width:640px; width:100%; max-height:92vh; overflow-y:auto;
+    position:relative; box-shadow:0 32px 80px rgba(0,0,0,.35);
+  }
+
+  .dream-modal-profile {
+    border-radius:28px 28px 0 0; overflow:hidden;
+    padding: 28px 28px 20px; position:relative;
+  }
+  .dream-modal-profile-inner { display:flex; gap:18px; align-items:flex-end; }
+  .dream-modal-profile-emoji { font-size:56px; flex-shrink:0; filter:drop-shadow(0 4px 12px rgba(0,0,0,.3)); }
+  .dream-modal-profile-info { flex:1; }
+  .dream-modal-profile-name { font-size:22px; font-weight:900; color:white; line-height:1.2; margin-bottom:4px; }
+  .dream-modal-profile-sub  { font-size:13px; color:rgba(255,255,255,.8); display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
+  .dream-modal-profile-tag  { background:rgba(255,255,255,.2); border-radius:100px; padding:3px 10px; font-size:11px; font-weight:600; }
+  .dream-modal-profile-quote { font-size:13px; color:rgba(255,255,255,.9); font-style:italic; line-height:1.65; }
+
+  .dream-modal-tabs {
+    display:flex; gap:0; padding: 0 28px;
+    border-bottom: 1px solid var(--line);
+    background: white;
+  }
+  .dream-modal-tab {
+    padding: 14px 18px; border:none; background:transparent;
+    font-size:13px; font-weight:700; color:var(--muted);
+    cursor:pointer; font-family:inherit; transition:all .2s;
+    border-bottom: 2px solid transparent; margin-bottom:-1px;
+  }
+  .dream-modal-tab:hover { color:var(--indigo); }
+  .dream-modal-tab.active { color:var(--indigo); border-bottom-color:var(--indigo); }
+
+  .dream-modal-pane { padding: 24px 28px; }
+
+  /* 스토리 탭 내부 */
+  .dream-story-quote {
+    background:linear-gradient(135deg,#faf5ff,#ede9fe);
+    border-left:4px solid #8b5cf6; border-radius:14px;
+    padding:16px 18px; font-size:15px; color:#4c1d95;
+    font-style:italic; line-height:1.75; margin-bottom:20px; font-weight:600;
+  }
+  .dream-story-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media(max-width:500px){ .dream-story-grid{grid-template-columns:1fr;} }
+  .dream-story-item { border-radius:14px; padding:14px 16px; }
+  .dream-story-label { font-size:11px; font-weight:800; margin-bottom:6px; letter-spacing:.05em; }
+  .dream-story-text  { font-size:13px; line-height:1.7; }
+
+  /* 질문 탭 내부 */
+  .dream-q-prompts { display:flex; flex-direction:column; gap:8px; margin-bottom:4px; }
+  .dream-q-prompt {
+    padding:11px 16px; border-radius:12px; border:1.5px solid var(--line);
+    background:var(--bg); font-size:13px; color:#334155; line-height:1.6;
+    cursor:pointer; transition:all .18s; display:flex; align-items:center; gap:10px;
+  }
+  .dream-q-prompt:hover { border-color:var(--indigo); background:#eef2ff; }
+  .dream-q-prompt-num { font-size:11px; font-weight:900; padding:2px 8px; border-radius:6px; color:white; flex-shrink:0; }
+
+  /* 선언문 탭 */
+  .dream-declare-intro {
+    background:linear-gradient(135deg,#fef9c3,#fef3c7);
+    border:1.5px solid #fbbf24; border-radius:14px;
+    padding:14px 18px; font-size:13.5px; color:#78350f; line-height:1.8;
+    margin-bottom:16px;
+  }
+
+  .dream-rec-tab {
+    padding:6px 14px; border-radius:100px; border:1.5px solid var(--line);
+    background:white; color:var(--muted); font-size:12px; font-weight:700;
+    cursor:pointer; font-family:inherit; transition:all .18s;
+  }
+  .dream-rec-tab.active { background:var(--ink); color:white; border-color:var(--ink); }
+
+  .qdream-list { margin-top:8px; display:flex; flex-direction:column; gap:10px; }
+  .qdream-item {
+    background:white; border:1px solid var(--line); border-radius:14px;
+    padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.7;
+    border-left:3px solid #8b5cf6;
+  }
+  .qdream-item.declare { border-left-color:#f59e0b; }
+  .qdream-item-meta { font-size:11px; color:#94a3b8; margin-bottom:4px; }
+
+  /* ── 질문 북콘서트 (신버전) ── */
+  .book-intro {
+    background: linear-gradient(135deg,#0f172a,#1e3a5f);
+    border-radius: 24px; padding: 28px 32px; margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    border: 1px solid rgba(14,165,233,.25); flex-wrap: wrap;
+  }
+  .book-intro-badge {
+    font-size:11px; font-weight:800; letter-spacing:.15em;
+    background:rgba(14,165,233,.25); color:#7dd3fc;
+    border-radius:100px; padding:4px 14px; margin-bottom:10px;
+    display:inline-block; border:1px solid rgba(14,165,233,.3);
+  }
+  .book-intro-title { font-size:20px; font-weight:900; color:white; margin-bottom:6px; }
+  .book-intro-desc  { font-size:13px; color:#94a3b8; line-height:1.7; }
+  .book-intro-stats { display:flex; gap:20px; flex-shrink:0; }
+  .book-stat { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .book-stat-num   { font-size:26px; font-weight:900; color:#38bdf8; font-family:'Bebas Neue',sans-serif; line-height:1; }
+  .book-stat-label { font-size:11px; color:#64748b; font-weight:600; }
+
+  .book-cat-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .book-cat-btn {
+    padding:8px 16px; border-radius:100px;
+    border:2px solid var(--bc,#0ea5e9); background:transparent; color:var(--bc,#0ea5e9);
+    font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .18s;
+  }
+  .book-cat-btn:hover { background:rgba(14,165,233,.08); }
+  .book-cat-btn.active { background:var(--bc,#0ea5e9); color:white; border-color:transparent; box-shadow:0 4px 12px rgba(0,0,0,.2); }
+
+  .book-cat-desc {
+    border-radius:14px; padding:12px 18px; margin-bottom:24px;
+    font-size:13.5px; font-weight:600; line-height:1.7; display:none;
+  }
+
+  /* 책 그리드 */
+  .book-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:28px; }
+  @media(max-width:1100px){ .book-grid{grid-template-columns:repeat(4,1fr);} }
+  @media(max-width:768px) { .book-grid{grid-template-columns:repeat(3,1fr);} }
+  @media(max-width:500px) { .book-grid{grid-template-columns:1fr 1fr;} }
+
+  .book-card {
+    background:white; border:1.5px solid var(--line); border-radius:18px;
+    overflow:hidden; cursor:pointer; transition:all .25s;
+    display:flex; flex-direction:column;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    animation: bookSlide .4s ease both;
+  }
+  .book-card:nth-child(odd){ animation-delay:.03s }
+  .book-card:nth-child(even){ animation-delay:.08s }
+  @keyframes bookSlide{ from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+  .book-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 16px 36px rgba(0,0,0,.13); border-color:var(--bcc,#0ea5e9); }
+
+  .book-card-spine {
+    height:6px; background:var(--bcc,#0ea5e9);
+  }
+  .book-card-body {
+    padding:16px 14px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; flex:1;
+  }
+  .book-card-cover-emoji { font-size:36px; margin-bottom:2px; }
+  .book-card-badge {
+    font-size:10px; font-weight:800; padding:2px 8px; border-radius:100px;
+    color:white; background:var(--bcc,#0ea5e9);
+  }
+  .book-card-title { font-size:13px; font-weight:800; color:var(--ink); line-height:1.4; word-break:keep-all; }
+  .book-card-author { font-size:11px; color:var(--muted); }
+  .book-card-read-mark {
+    font-size:10px; font-weight:700; color:#10b981;
+    background:#f0fdf4; border-radius:100px; padding:2px 8px; display:none;
+  }
+  .book-card.questioned .book-card-read-mark { display:inline-block; }
+  .book-card.questioned { border-color:#10b981; }
+  .book-card.questioned .book-card-spine { background:#10b981; }
+
+  .book-card-footer {
+    padding:10px 12px; border-top:1px solid var(--line);
+    background:#fafafa;
+  }
+  .book-card-ask-btn {
+    width:100%; padding:8px; border-radius:10px; border:none;
+    background:var(--bcc,#0ea5e9); color:white;
+    font-size:12px; font-weight:800; cursor:pointer; font-family:inherit; transition:all .2s;
+  }
+  .book-card-ask-btn:hover { opacity:.88; transform:translateY(-1px); }
+
+  /* 모달 */
+  .book-modal-overlay {
+    display:none; position:fixed; inset:0; z-index:1000;
+    background:rgba(5,5,20,.8); backdrop-filter:blur(10px);
+    align-items:center; justify-content:center; padding:24px;
+  }
+  .book-modal-overlay.open { display:flex; }
+  .book-modal {
+    background:white; border-radius:28px; padding:0;
+    max-width:640px; width:100%; max-height:92vh; overflow-y:auto;
+    position:relative; box-shadow:0 32px 80px rgba(0,0,0,.3);
+  }
+  .book-modal-header {
+    border-radius:28px 28px 0 0; padding:28px 28px 20px;
+  }
+  .book-modal-header-inner { display:flex; gap:18px; align-items:flex-start; }
+  .book-modal-cover-big { font-size:56px; flex-shrink:0; }
+  .book-modal-info { flex:1; }
+  .book-modal-title { font-size:20px; font-weight:900; color:white; margin-bottom:4px; line-height:1.3; }
+  .book-modal-author { font-size:13px; color:rgba(255,255,255,.75); margin-bottom:8px; }
+  .book-modal-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .book-modal-tag {
+    font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
+    background:rgba(255,255,255,.2); color:white;
+  }
+
+  .book-modal-tabs {
+    display:flex; border-bottom:1px solid var(--line); background:white;
+  }
+  .book-modal-tab {
+    padding:13px 18px; border:none; background:transparent;
+    font-size:13px; font-weight:700; color:var(--muted);
+    cursor:pointer; font-family:inherit; transition:all .2s;
+    border-bottom:2px solid transparent; margin-bottom:-1px;
+  }
+  .book-modal-tab.active { color:var(--indigo); border-bottom-color:var(--indigo); }
+  .book-modal-pane { padding:22px 26px; }
+
+  /* 책 소개 탭 */
+  .book-info-desc {
+    font-size:14px; color:#334155; line-height:1.85;
+    background:#f8faff; border-radius:14px; padding:16px 18px;
+    border-left:4px solid var(--indigo); margin-bottom:18px;
+  }
+  .book-info-keywords { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .book-info-keyword {
+    font-size:12px; font-weight:700; padding:5px 14px; border-radius:100px;
+    background:#eef2ff; color:#4338ca;
+  }
+  .book-info-quotes { display:flex; flex-direction:column; gap:10px; }
+  .book-info-quote {
+    background:linear-gradient(135deg,#faf5ff,#ede9fe);
+    border-left:3px solid #8b5cf6; border-radius:12px;
+    padding:12px 16px; font-size:13px; color:#4c1d95;
+    font-style:italic; line-height:1.7;
+  }
+
+  /* 질문 유형 선택 */
+  .book-q-type-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .book-q-type-btn {
+    padding:7px 14px; border-radius:100px; border:1.5px solid var(--line);
+    background:white; color:var(--muted); font-size:12px; font-weight:700;
+    cursor:pointer; font-family:inherit; transition:all .18s;
+  }
+  .book-q-type-btn:hover { border-color:var(--indigo); color:var(--indigo); }
+  .book-q-type-btn.active { background:var(--ink); color:white; border-color:var(--ink); }
+  .book-q-mission {
+    background:linear-gradient(135deg,#fef3c7,#fde68a);
+    border:1.5px solid #fbbf24; border-radius:12px;
+    padding:11px 16px; font-size:13px; color:#78350f; font-weight:700;
+    margin-bottom:12px; display:flex; gap:8px; align-items:flex-start;
+  }
+
+  /* 기록 */
+  .book-record-list { display:flex; flex-direction:column; gap:10px; }
+  .book-record-item {
+    background:var(--bg); border-radius:14px; padding:14px 16px;
+    border-left:3px solid var(--indigo);
+  }
+  .book-record-meta { font-size:11px; color:#94a3b8; margin-bottom:4px; }
+  .book-record-q    { font-size:13.5px; color:var(--ink); line-height:1.7; font-weight:600; }
+  .book-record-type { font-size:11px; font-weight:700; color:var(--indigo); margin-bottom:3px; }
 
   /* ── 질문 모아보기 ── */
   .qgal-filters { display: flex; flex-direction: column; gap: 16px; margin-bottom: 36px; }
@@ -1239,8 +1507,9 @@
   .qgal-stat-num { font-size: 28px; font-weight: 900; color: var(--indigo); font-family: 'Bebas Neue', sans-serif; line-height: 1; }
   .qgal-stat-label { font-size: 12px; color: var(--muted); font-weight: 600; }
 
-  .qgal-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  @media (max-width: 768px) { .qgal-cols { grid-template-columns: 1fr; } }
+  .qgal-cols { display:none; } /* 더 이상 사용 안 함 */
+  .qgal-list-full { display:flex; flex-direction:column; gap:10px; }
+  .qgal-stats { display:none !important; }
   .qgal-col {
     background: white; border: 1px solid var(--line);
     border-radius: 20px; overflow: hidden;
@@ -1435,11 +1704,11 @@
     padding: 3px 10px;
   }
   .hero-contest-btn-row {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; justify-content: center;
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; justify-content: center;
   }
   .hero-contest-join {
-    padding: 7px 16px; border-radius: 100px;
-    font-size: 12px; font-weight: 700;
+    padding: 12px 24px; border-radius: 100px;
+    font-size: 15px; font-weight: 800;
     cursor: pointer; transition: all .2s;
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     border: none;
@@ -1453,8 +1722,8 @@
   }
   .logos-join:hover { background: #ddd6fe; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(196,181,253,.35); }
   .hero-contest-btn {
-    padding: 7px 16px; border-radius: 100px;
-    font-size: 12px; font-weight: 700;
+    padding: 12px 24px; border-radius: 100px;
+    font-size: 15px; font-weight: 800;
     cursor: pointer; transition: all .2s;
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     background: rgba(255,255,255,.1);
@@ -2078,14 +2347,6 @@
         <button class="qgal-btn" onclick="setQGalFilter('subject','진로',this)">진로</button>
       </div>
     </div>
-    <div class="qgal-filter-group">
-      <label class="qgal-filter-label">구분</label>
-      <div class="qgal-btn-row">
-        <button class="qgal-btn active" onclick="setQGalFilter('role','all',this)">전체</button>
-        <button class="qgal-btn" onclick="setQGalFilter('role','student',this)">🎒 학생</button>
-        <button class="qgal-btn" onclick="setQGalFilter('role','teacher',this)">👩‍🏫 선생님</button>
-      </div>
-    </div>
   </div>
 
   <!-- 결과 영역 -->
@@ -2098,32 +2359,13 @@
     <div style="font-size:16px;font-weight:700;margin-bottom:8px;">아직 등록된 질문이 없어요</div>
     <div style="font-size:13px;">위 <strong>오늘의 나의 질문</strong>에서 질문을 저장하면 여기에 나타납니다.</div>
   </div>
-  <div id="qgalStats" class="qgal-stats" style="display:none;">
-    <div class="qgal-stat"><span id="qgalTotalNum" class="qgal-stat-num">0</span><span class="qgal-stat-label">전체 질문</span></div>
-    <div class="qgal-stat"><span id="qgalStudentNum" class="qgal-stat-num" style="color:#0ea5e9">0</span><span class="qgal-stat-label">학생 질문</span></div>
-    <div class="qgal-stat"><span id="qgalTeacherNum" class="qgal-stat-num" style="color:#f59e0b">0</span><span class="qgal-stat-label">선생님 질문</span></div>
-  </div>
+  <div id="qgalStats" style="display:none;"></div>
 
-  <!-- 학생 / 선생님 분류 -->
+  <!-- 학생 질문 모아보기 -->
   <div id="qgalBoard" style="display:none;">
-    <div class="qgal-cols">
-      <!-- 학생 -->
-      <div class="qgal-col">
-        <div class="qgal-col-header qgal-col-student">
-          <span>🎒 학생 질문</span>
-          <span id="qgalStudentCount" class="qgal-col-count">0개</span>
-        </div>
-        <div id="qgalStudentList" class="qgal-list"></div>
-      </div>
-      <!-- 선생님 -->
-      <div class="qgal-col">
-        <div class="qgal-col-header qgal-col-teacher">
-          <span>👩‍🏫 선생님 질문</span>
-          <span id="qgalTeacherCount" class="qgal-col-count">0개</span>
-        </div>
-        <div id="qgalTeacherList" class="qgal-list"></div>
-      </div>
-    </div>
+    <div id="qgalStudentCount" style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;"></div>
+    <div id="qgalStudentList" class="qgal-list-full"></div>
+    <div id="qgalTeacherList" style="display:none;"></div>
   </div>
 </section>
 
@@ -2382,11 +2624,11 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════
-     질문 놀이터
+     질문 미션 놀이터
 ════════════════════════════════════════════════ -->
 <section id="qplayground" class="fade-in" style="max-width:1280px;margin:0 auto;padding:80px 32px;">
-  <span class="section-eyebrow">QUESTION PLAYGROUND</span>
-  <h2 class="section-title">질문 놀이터</h2>
+  <span class="section-eyebrow">QUESTION MISSION PLAYGROUND</span>
+  <h2 class="section-title">질문 미션 놀이터</h2>
   <p class="section-desc">질문을 게임처럼 즐겨보세요. 네 가지 활동으로 질문하는 힘을 키워갑니다.</p>
 
   <!-- 4개 탭 카드 -->
@@ -2403,8 +2645,8 @@
     </button>
     <button class="qplay-tab" onclick="switchQPlay('dream')">
       <span class="qplay-tab-icon">🌟</span>
-      <span class="qplay-tab-title">질문으로 꿈꾸기</span>
-      <span class="qplay-tab-sub">미래·진로·꿈 질문</span>
+      <span class="qplay-tab-title">질문 타임머신</span>
+      <span class="qplay-tab-sub">역사 위인과 질문 여행</span>
     </button>
     <button class="qplay-tab" onclick="switchQPlay('book')">
       <span class="qplay-tab-icon">📚</span>
@@ -2567,55 +2809,163 @@
     </div>
   </div>
 
-  <!-- ── 패널 3: 질문으로 꿈꾸기 ── -->
+  <!-- ── 패널 3: 질문 타임머신 ── -->
   <div class="qplay-panel" id="panel-dream">
-    <div class="qplay-panel-desc">미래, 진로, 꿈에 대한 질문을 자유롭게 작성해보세요. 아래 주제 카드를 클릭하면 질문 힌트를 얻을 수 있어요!</div>
-    <div class="qdream-themes">
-      <button class="qdream-theme-btn" onclick="selectDreamTheme('나의 미래 모습',this)">🔮 나의 미래 모습</button>
-      <button class="qdream-theme-btn" onclick="selectDreamTheme('꿈꾸는 직업',this)">💼 꿈꾸는 직업</button>
-      <button class="qdream-theme-btn" onclick="selectDreamTheme('세상을 바꾸는 나',this)">🌍 세상을 바꾸는 나</button>
-      <button class="qdream-theme-btn" onclick="selectDreamTheme('10년 후 나에게',this)">📬 10년 후 나에게</button>
-      <button class="qdream-theme-btn" onclick="selectDreamTheme('내가 만드는 세상',this)">🏗️ 내가 만드는 세상</button>
-      <button class="qdream-theme-btn" onclick="selectDreamTheme('나의 재능과 가능성',this)">✨ 나의 재능과 가능성</button>
+
+    <!-- 인트로 배너 -->
+    <div class="dream-intro">
+      <div class="dream-intro-text">
+        <span class="dream-intro-badge">🚀 TIME TRAVEL</span>
+        <h3 class="dream-intro-title">역사 속 위인과 만나는 타임머신 여행</h3>
+        <p class="dream-intro-desc">분야를 선택하면 5명의 위인이 나타납니다.<br>그들의 삶을 들여다보고, 그들에게 질문을 던지고, 나만의 꿈 선언문을 써보세요!</p>
+      </div>
+      <div class="dream-intro-icons">⏰ → 🌍 → ✨</div>
     </div>
-    <div id="dreamHint" class="qdream-hint" style="display:none;"></div>
-    <div class="qplay-write-area" style="margin-top:20px;">
-      <label class="qplay-write-label" id="dreamWriteLabel">✏️ 미래와 꿈에 대한 나만의 질문을 자유롭게 써보세요</label>
-      <textarea class="qplay-textarea" id="dreamAnswer" placeholder="예) 나는 20년 후에 어떤 사람이 되어 있을까? 그 사람이 되기 위해 지금 나는 무엇을 해야 할까?"></textarea>
-      <button class="qplay-submit-btn" style="margin-top:12px;" onclick="submitDreamAnswer()">✦ 질문 기록하기</button>
-      <div id="dreamFeedback" class="qplay-feedback" style="display:none;"></div>
+
+    <!-- 분야 선택 -->
+    <div class="dream-cat-row" id="dreamCatBtns">
+      <button class="dream-cat-btn active" onclick="selectDreamCat('과학·기술',this)" style="--dc:#0ea5e9">🔬 과학·기술</button>
+      <button class="dream-cat-btn" onclick="selectDreamCat('예술·창작',this)" style="--dc:#ec4899">🎨 예술·창작</button>
+      <button class="dream-cat-btn" onclick="selectDreamCat('사회·정치',this)" style="--dc:#10b981">🌍 사회·정치</button>
+      <button class="dream-cat-btn" onclick="selectDreamCat('교육·철학',this)" style="--dc:#f59e0b">📚 교육·철학</button>
+      <button class="dream-cat-btn" onclick="selectDreamCat('경제·기업',this)" style="--dc:#6366f1">💼 경제·기업</button>
+      <button class="dream-cat-btn" onclick="selectDreamCat('스포츠·도전',this)" style="--dc:#f43f5e">🏆 스포츠·도전</button>
+      <button class="dream-cat-btn" onclick="selectDreamCat('의학·복지',this)" style="--dc:#14b8a6">🏥 의학·복지</button>
+      <button class="dream-cat-btn" onclick="selectDreamCat('환경·생태',this)" style="--dc:#84cc16">🌿 환경·생태</button>
     </div>
-    <div id="dreamList" class="qdream-list"></div>
+
+    <!-- 카테고리 소개 배너 -->
+    <div class="dream-cat-banner" id="dreamCatBanner"></div>
+
+    <!-- 롤모델 카드 그리드 -->
+    <div class="dream-model-grid" id="dreamModelGrid"></div>
+
+    <!-- 질문하기 모달 -->
+    <div class="dream-modal-overlay" id="dreamModalOverlay" onclick="closeDreamModal()">
+      <div class="dream-modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeDreamModal()">✕</button>
+
+        <!-- 위인 프로필 헤더 -->
+        <div class="dream-modal-profile" id="dreamModalProfile"></div>
+
+        <!-- 탭: 위인 스토리 / 질문하기 / 꿈 선언문 -->
+        <div class="dream-modal-tabs">
+          <button class="dream-modal-tab active" id="dmTab1" onclick="switchDreamTab('story')">📖 위인 스토리</button>
+          <button class="dream-modal-tab" id="dmTab2" onclick="switchDreamTab('question')">✏️ 질문하기</button>
+          <button class="dream-modal-tab" id="dmTab3" onclick="switchDreamTab('declare')">🌟 꿈 선언문</button>
+        </div>
+
+        <!-- 스토리 탭 -->
+        <div class="dream-modal-pane" id="dreamPaneStory"></div>
+
+        <!-- 질문 탭 -->
+        <div class="dream-modal-pane" id="dreamPaneQuestion" style="display:none;">
+          <div class="dream-q-prompts" id="dreamQPrompts"></div>
+          <label class="qplay-write-label" style="margin-top:16px;" id="dreamModalLabel">✏️ 이 위인에게 가장 묻고 싶은 질문을 써보세요</label>
+          <textarea class="qplay-textarea" id="dreamModalAnswer" placeholder="위인의 시대와 삶에서 나에게 가장 의미 있는 질문을 던져보세요..."></textarea>
+          <button class="qplay-submit-btn" style="margin-top:12px;" onclick="submitDreamModalAnswer()">✦ 질문 기록하기</button>
+          <div id="dreamModalFeedback" class="qplay-feedback" style="display:none;"></div>
+        </div>
+
+        <!-- 꿈 선언문 탭 -->
+        <div class="dream-modal-pane" id="dreamPaneDeclare" style="display:none;">
+          <div class="dream-declare-intro" id="dreamDeclareIntro"></div>
+          <textarea class="qplay-textarea" id="dreamDeclareText" style="min-height:120px;" placeholder="나는 ___처럼 ___하고 싶다. 왜냐하면..."></textarea>
+          <button class="qplay-submit-btn" style="margin-top:12px;background:linear-gradient(135deg,#f59e0b,#f97316);" onclick="submitDreamDeclare()">🌟 나의 꿈 선언하기</button>
+          <div id="dreamDeclareFeedback" class="qplay-feedback" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 나의 기록 -->
+    <div id="dreamRecordSection" style="display:none;margin-top:36px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:15px;font-weight:800;color:var(--ink);">📋 나의 질문·꿈 기록</div>
+        <div style="display:flex;gap:8px;">
+          <button class="dream-rec-tab active" id="drecQ" onclick="switchDreamRec('q',this)">✏️ 질문</button>
+          <button class="dream-rec-tab" id="drecD" onclick="switchDreamRec('d',this)">🌟 선언문</button>
+        </div>
+      </div>
+      <div id="dreamQList" class="qdream-list"></div>
+      <div id="dreamDeclareList" class="qdream-list" style="display:none;"></div>
+    </div>
   </div>
 
   <!-- ── 패널 4: 질문 북콘서트 ── -->
   <div class="qplay-panel" id="panel-book">
-    <div class="qplay-panel-desc">10개 진로 분야별 청소년 추천도서입니다. 책을 선택한 후 "질문하기" 버튼을 눌러 책 내용에 대한 탐구 질문을 만들어보세요!</div>
-    <div class="qbook-categories" id="bookCategoryBtns">
-      <button class="qbook-cat-btn active" onclick="selectBookCat('과학·기술',this)">🔬 과학·기술</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('인문·철학',this)">📖 인문·철학</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('사회·경제',this)">🌐 사회·경제</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('예술·창작',this)">🎨 예술·창작</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('환경·생태',this)">🌿 환경·생태</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('의료·보건',this)">🏥 의료·보건</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('교육·심리',this)">🧠 교육·심리</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('법·정치',this)">⚖️ 법·정치</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('스포츠·체육',this)">⚽ 스포츠·체육</button>
-      <button class="qbook-cat-btn" onclick="selectBookCat('미디어·정보',this)">💻 미디어·정보</button>
+
+    <!-- 인트로 배너 -->
+    <div class="book-intro">
+      <div class="book-intro-left">
+        <div class="book-intro-badge">📚 BOOK CONCERT</div>
+        <div class="book-intro-title">질문하는 독서 콘서트</div>
+        <div class="book-intro-desc">10개 분야 청소년 추천도서 100권. 책 표지를 클릭하고 탐구 질문을 써보세요!</div>
+      </div>
+      <div class="book-intro-stats">
+        <div class="book-stat"><span class="book-stat-num" id="bookReadCount">0</span><span class="book-stat-label">질문한 책</span></div>
+        <div class="book-stat"><span class="book-stat-num" id="bookQCount">0</span><span class="book-stat-label">작성한 질문</span></div>
+        <div class="book-stat"><span class="book-stat-num" id="bookLevelBadge">📖</span><span class="book-stat-label">독서 레벨</span></div>
+      </div>
     </div>
-    <div class="qbook-grid" id="bookGrid"></div>
-    <!-- 책 질문 모달 -->
-    <div class="qbook-modal-overlay" id="bookModalOverlay" onclick="closeBookModal()">
-      <div class="qbook-modal" onclick="event.stopPropagation()">
+
+    <!-- 분야 선택 -->
+    <div class="book-cat-row" id="bookCategoryBtns">
+      <button class="book-cat-btn active" onclick="selectBookCat('과학·기술',this)" style="--bc:#0ea5e9">🔬 과학·기술</button>
+      <button class="book-cat-btn" onclick="selectBookCat('인문·철학',this)" style="--bc:#8b5cf6">📖 인문·철학</button>
+      <button class="book-cat-btn" onclick="selectBookCat('사회·경제',this)" style="--bc:#10b981">🌐 사회·경제</button>
+      <button class="book-cat-btn" onclick="selectBookCat('예술·창작',this)" style="--bc:#ec4899">🎨 예술·창작</button>
+      <button class="book-cat-btn" onclick="selectBookCat('환경·생태',this)" style="--bc:#84cc16">🌿 환경·생태</button>
+      <button class="book-cat-btn" onclick="selectBookCat('의료·보건',this)" style="--bc:#14b8a6">🏥 의료·보건</button>
+      <button class="book-cat-btn" onclick="selectBookCat('교육·심리',this)" style="--bc:#f59e0b">🧠 교육·심리</button>
+      <button class="book-cat-btn" onclick="selectBookCat('법·정치',this)" style="--bc:#6366f1">⚖️ 법·정치</button>
+      <button class="book-cat-btn" onclick="selectBookCat('스포츠·도전',this)" style="--bc:#f43f5e">🏆 스포츠·도전</button>
+      <button class="book-cat-btn" onclick="selectBookCat('미디어·정보',this)" style="--bc:#f97316">💻 미디어·정보</button>
+    </div>
+
+    <!-- 분야 소개 -->
+    <div class="book-cat-desc" id="bookCatDesc"></div>
+
+    <!-- 책 그리드 -->
+    <div class="book-grid" id="bookGrid"></div>
+
+    <!-- 책 모달 -->
+    <div class="book-modal-overlay" id="bookModalOverlay" onclick="closeBookModal()">
+      <div class="book-modal" onclick="event.stopPropagation()">
         <button class="modal-close" onclick="closeBookModal()">✕</button>
-        <div id="bookModalContent"></div>
-        <div class="qplay-write-area" style="margin-top:20px;">
-          <label class="qplay-write-label">✏️ 이 책에 대한 나만의 질문을 써보세요</label>
-          <textarea class="qplay-textarea" id="bookAnswer" placeholder="책을 읽으면서 떠오른 질문, 더 알고 싶은 것, 궁금한 점을 써보세요..."></textarea>
+
+        <!-- 책 헤더 -->
+        <div class="book-modal-header" id="bookModalHeader"></div>
+
+        <!-- 탭 -->
+        <div class="book-modal-tabs">
+          <button class="book-modal-tab active" id="bmTab1" onclick="switchBookTab('info')">📖 책 소개</button>
+          <button class="book-modal-tab" id="bmTab2" onclick="switchBookTab('question')">✏️ 질문하기</button>
+          <button class="book-modal-tab" id="bmTab3" onclick="switchBookTab('record')">📋 나의 기록</button>
+        </div>
+
+        <!-- 책 소개 탭 -->
+        <div class="book-modal-pane" id="bookPaneInfo"></div>
+
+        <!-- 질문 탭 -->
+        <div class="book-modal-pane" id="bookPaneQuestion" style="display:none;">
+          <div class="book-q-type-row" id="bookQTypeRow"></div>
+          <div class="book-q-mission" id="bookQMission"></div>
+          <textarea class="qplay-textarea" id="bookAnswer" placeholder="책에서 떠오른 탐구 질문을 써보세요..."></textarea>
           <button class="qplay-submit-btn" style="margin-top:12px;" onclick="submitBookAnswer()">✦ 질문 제출하기</button>
           <div id="bookFeedback" class="qplay-feedback" style="display:none;"></div>
         </div>
+
+        <!-- 기록 탭 -->
+        <div class="book-modal-pane" id="bookPaneRecord" style="display:none;">
+          <div id="bookRecordList" class="book-record-list"></div>
+        </div>
       </div>
+    </div>
+
+    <!-- 전체 기록 -->
+    <div id="bookAllRecords" style="display:none;margin-top:32px;">
+      <div style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:16px;">📋 나의 독서 질문 기록</div>
+      <div id="bookAllList" class="book-record-list"></div>
     </div>
   </div>
 </section>
@@ -2624,51 +2974,65 @@
 <section id="portfolio" class="fade-in">
   <span class="section-eyebrow">MY QUESTION PORTFOLIO</span>
   <h2 class="section-title">나의 질문 포트폴리오</h2>
-  <p class="section-desc">오늘의 나의 질문에서 기록한 질문들이 누적되어 나만의 포트폴리오를 만들어 갑니다.</p>
+  <p class="section-desc">오늘의 나의 질문과 질문 미션 놀이터의 모든 활동이 자동으로 누적되어 나만의 성장 포트폴리오가 됩니다.</p>
 
-  <!-- 통계 요약 -->
-  <div id="pfSummary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px;">
-    <div class="pf-stat-card">
-      <div class="pf-stat-num" id="pfTotalCount">0</div>
-      <div class="pf-stat-label">총 질문 기록</div>
+  <!-- 통합 통계 대시보드 -->
+  <div class="pf-dashboard">
+    <div class="pf-dash-card pf-dash-total">
+      <div class="pf-dash-icon">📝</div>
+      <div class="pf-dash-num" id="pfTotalCount">0</div>
+      <div class="pf-dash-label">총 활동 기록</div>
     </div>
-    <div class="pf-stat-card">
-      <div class="pf-stat-num" id="pfStudentCount" style="color:#0ea5e9">0</div>
-      <div class="pf-stat-label">학생 질문</div>
+    <div class="pf-dash-card" style="--dc:#0ea5e9">
+      <div class="pf-dash-icon">🎒</div>
+      <div class="pf-dash-num" id="pfStudentCount" style="color:#0ea5e9">0</div>
+      <div class="pf-dash-label">오늘의 질문</div>
     </div>
-    <div class="pf-stat-card">
-      <div class="pf-stat-num" id="pfTeacherCount" style="color:#f59e0b">0</div>
-      <div class="pf-stat-label">선생님 질문</div>
+    <div class="pf-dash-card" style="--dc:#8b5cf6">
+      <div class="pf-dash-icon">🎰</div>
+      <div class="pf-dash-num" id="pfKwCount" style="color:#8b5cf6">0</div>
+      <div class="pf-dash-label">키워드 게임</div>
     </div>
-    <div class="pf-stat-card">
-      <div class="pf-stat-num" id="pfSubjectCount" style="color:#8b5cf6">0</div>
-      <div class="pf-stat-label">탐구한 과목 수</div>
+    <div class="pf-dash-card" style="--dc:#f59e0b">
+      <div class="pf-dash-icon">🏆</div>
+      <div class="pf-dash-num" id="pfChampCount" style="color:#f59e0b">0</div>
+      <div class="pf-dash-label">챔피언 질문</div>
+    </div>
+    <div class="pf-dash-card" style="--dc:#10b981">
+      <div class="pf-dash-icon">⏰</div>
+      <div class="pf-dash-num" id="pfDreamCount" style="color:#10b981">0</div>
+      <div class="pf-dash-label">타임머신</div>
+    </div>
+    <div class="pf-dash-card" style="--dc:#f43f5e">
+      <div class="pf-dash-icon">📚</div>
+      <div class="pf-dash-num" id="pfBookCount" style="color:#f43f5e">0</div>
+      <div class="pf-dash-label">북콘서트</div>
     </div>
   </div>
 
-  <!-- 필터 + 뷰 전환 -->
-  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="pf-filter-btn active" onclick="filterPF('all', this)">전체</button>
-      <button class="pf-filter-btn" onclick="filterPF('student', this)">🎒 학생</button>
-      <button class="pf-filter-btn" onclick="filterPF('teacher', this)">👩‍🏫 선생님</button>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="pf-view-btn active" id="viewGrid" onclick="switchView('grid', this)" title="카드 보기">⊞</button>
-      <button class="pf-view-btn" id="viewList" onclick="switchView('list', this)" title="목록 보기">☰</button>
-    </div>
+  <!-- 출처 필터 탭 -->
+  <div class="pf-source-tabs" id="pfSourceTabs">
+    <button class="pf-source-tab active" onclick="setPfSource('all',this)">🗂️ 전체</button>
+    <button class="pf-source-tab" onclick="setPfSource('myq',this)">🎒 오늘의 질문</button>
+    <button class="pf-source-tab" onclick="setPfSource('kw',this)">🎰 키워드 게임</button>
+    <button class="pf-source-tab" onclick="setPfSource('champ',this)">🏆 질문 챔피언</button>
+    <button class="pf-source-tab" onclick="setPfSource('dream',this)">⏰ 타임머신</button>
+    <button class="pf-source-tab" onclick="setPfSource('book',this)">📚 북콘서트</button>
   </div>
 
-  <!-- 과목별 필터 -->
-  <div id="pfSubjectFilter" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;"></div>
-
-  <!-- 포트폴리오 카드 영역 -->
+  <!-- 빈 상태 -->
   <div id="pfEmpty" style="text-align:center;padding:60px 0;color:#94a3b8;">
-    <div style="font-size:48px;margin-bottom:16px;">📝</div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:8px;">아직 기록된 질문이 없어요</div>
-    <div style="font-size:13px;">위쪽 <strong>오늘의 나의 질문</strong> 섹션에서 질문을 저장하면<br>여기에 포트폴리오가 쌓입니다.</div>
+    <div style="font-size:48px;margin-bottom:16px;">📂</div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px;">아직 포트폴리오가 비어있어요</div>
+    <div style="font-size:13px;line-height:1.8;">
+      <strong>오늘의 나의 질문</strong>에서 질문을 저장하거나<br>
+      <strong>질문 미션 놀이터</strong>에서 활동을 완료하면<br>
+      여기에 자동으로 포트폴리오가 쌓입니다.
+    </div>
   </div>
-  <div id="pfGrid" class="pf-grid"></div>
+
+  <!-- 포트폴리오 카드 그리드 -->
+  <div id="pfGrid" class="pf-new-grid"></div>
 </section>
 
 <!-- ROADMAP / 대시보드 -->
@@ -2824,7 +3188,7 @@
         const user = JSON.parse(result.value);
         showCustomLoggedIn(user);
       }
-    } catch(e) { /* 세션 없음 */ }
+    } catch(e) {}
   }
   // ⚠️ 아래 YOUR_GOOGLE_CLIENT_ID 부분을 Google Cloud Console에서 발급받은 클라이언트 ID로 교체하세요.
   const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
@@ -2859,7 +3223,6 @@
   }
 
   function handleLogout() {
-    // 개인 세션만 삭제 (회원 정보는 shared에 그대로 유지)
     try { window.storage.delete('session', false); } catch(e) {}
     localStorage.removeItem('qschool_user');
     localStorage.removeItem('qschool_session');
@@ -2925,55 +3288,129 @@
     '정보':'#a855f7','음악':'#ec4899','미술':'#f43f5e','체육':'#14b8a6','진로':'#f59e0b'
   };
 
-  function filterPF(role, el) {
-    pfFilter = role;
-    pfSubjectFilter = 'all';
-    document.querySelectorAll('.pf-filter-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    renderPortfolio();
+  // ══════════════════════════════════════════
+  // 통합 포트폴리오 시스템
+  // ══════════════════════════════════════════
+  let pfSourceFilter = 'all';
+
+  // 출처별 메타 정보
+  const pfSourceMeta = {
+    myq:   { label:'오늘의 질문', icon:'🎒', color:'#0ea5e9' },
+    kw:    { label:'키워드 게임', icon:'🎰', color:'#8b5cf6' },
+    champ: { label:'질문 챔피언', icon:'🏆', color:'#f59e0b' },
+    dream: { label:'타임머신',    icon:'⏰', color:'#10b981' },
+    book:  { label:'북콘서트',    icon:'📚', color:'#f43f5e' },
+  };
+
+  // 전체 포트폴리오 항목 수집
+  function collectAllPfEntries() {
+    const entries = [];
+
+    // 1. 오늘의 나의 질문
+    const myqList = JSON.parse(localStorage.getItem('myq_list') || '[]');
+    myqList.forEach(e => {
+      const qs = [e.q1, e.q2, e.q3].filter(Boolean);
+      entries.push({
+        source: 'myq', id: 'myq_' + e.id,
+        title: e.topic || `${e.subject} · ${e.grade}`,
+        subtitle: `${e.subject}${e.unit ? ' · ' + e.unit : ''} · ${e.grade}`,
+        role: e.role === 'teacher' ? '👩‍🏫 선생님' : '🎒 학생',
+        questions: qs,
+        date: e.date,
+        rawId: e.id,
+      });
+    });
+
+    // 2. 키워드 게임 명예의 전당
+    if (typeof kwGameState !== 'undefined') {
+      kwGameState.hall.forEach((h, i) => {
+        entries.push({
+          source: 'kw', id: 'kw_' + i,
+          title: `키워드: ${h.kws}`,
+          subtitle: `${h.badge} 난이도 달성`,
+          questions: [h.q],
+          date: new Date().toLocaleDateString('ko-KR'),
+        });
+      });
+    }
+
+    // 3. 챔피언 기록
+    if (typeof champState !== 'undefined') {
+      champState.hall.forEach((h, i) => {
+        entries.push({
+          source: 'champ', id: 'champ_' + i,
+          title: h.scene,
+          subtitle: `${h.type} · ${h.pts}점`,
+          questions: [h.q],
+          date: new Date().toLocaleDateString('ko-KR'),
+        });
+      });
+    }
+
+    // 4. 타임머신 질문
+    if (typeof dreamQAnswers !== 'undefined') {
+      dreamQAnswers.forEach((d, i) => {
+        entries.push({
+          source: 'dream', id: 'dream_' + i,
+          title: `${d.emoji} ${d.name}에게 묻다`,
+          subtitle: d.nation,
+          questions: [d.ans],
+          date: d.date,
+        });
+      });
+    }
+    if (typeof dreamDeclares !== 'undefined') {
+      dreamDeclares.forEach((d, i) => {
+        entries.push({
+          source: 'dream', id: 'dreamed_' + i,
+          title: `🌟 꿈 선언문 · ${d.name}`,
+          subtitle: `${d.emoji} ${d.name}에게 영감을 받아`,
+          questions: [d.txt],
+          date: d.date,
+        });
+      });
+    }
+
+    // 5. 북콘서트 기록
+    if (typeof bookRecords !== 'undefined') {
+      bookRecords.forEach((r, i) => {
+        entries.push({
+          source: 'book', id: 'book_' + i,
+          title: `${r.cover} ${r.title}`,
+          subtitle: r.type,
+          questions: [r.q],
+          date: r.date,
+        });
+      });
+    }
+
+    // 최신순 정렬 (id 기반)
+    return entries.reverse();
   }
 
-  function filterPFSubject(subj, el) {
-    pfSubjectFilter = subj;
-    document.querySelectorAll('.pf-subj-btn').forEach(b => b.classList.remove('active'));
+  function setPfSource(src, el) {
+    pfSourceFilter = src;
+    document.querySelectorAll('.pf-source-tab').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
     renderPortfolio();
-  }
-
-  function switchView(view, el) {
-    pfView = view;
-    document.querySelectorAll('.pf-view-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    const grid = document.getElementById('pfGrid');
-    grid.classList.toggle('list-view', view === 'list');
   }
 
   function renderPortfolio() {
-    const all = JSON.parse(localStorage.getItem('myq_list') || '[]');
+    const all = collectAllPfEntries();
+    const filtered = pfSourceFilter === 'all' ? all : all.filter(e => e.source === pfSourceFilter);
 
-    // 통계
-    const students = all.filter(e => e.role === 'student');
-    const teachers = all.filter(e => e.role === 'teacher');
-    const subjects = [...new Set(all.map(e => e.subject).filter(Boolean))];
-    document.getElementById('pfTotalCount').textContent = all.length;
-    document.getElementById('pfStudentCount').textContent = students.length;
-    document.getElementById('pfTeacherCount').textContent = teachers.length;
-    document.getElementById('pfSubjectCount').textContent = subjects.length;
-
-    // 과목 필터 버튼
-    const sfEl = document.getElementById('pfSubjectFilter');
-    sfEl.innerHTML = subjects.length ? `
-      <button class="pf-subj-btn ${pfSubjectFilter==='all'?'active':''}" onclick="filterPFSubject('all',this)">전체 과목</button>
-      ${subjects.map(s => `<button class="pf-subj-btn ${pfSubjectFilter===s?'active':''}" onclick="filterPFSubject('${s}',this)">${s}</button>`).join('')}
-    ` : '';
-
-    // 필터 적용
-    let filtered = all;
-    if (pfFilter !== 'all') filtered = filtered.filter(e => e.role === pfFilter);
-    if (pfSubjectFilter !== 'all') filtered = filtered.filter(e => e.subject === pfSubjectFilter);
+    // 통계 업데이트
+    const counts = { myq:0, kw:0, champ:0, dream:0, book:0 };
+    all.forEach(e => { if (counts[e.source] !== undefined) counts[e.source]++; });
+    document.getElementById('pfTotalCount').textContent   = all.length;
+    document.getElementById('pfStudentCount').textContent = counts.myq;
+    document.getElementById('pfKwCount').textContent      = counts.kw;
+    document.getElementById('pfChampCount').textContent   = counts.champ;
+    document.getElementById('pfDreamCount').textContent   = counts.dream;
+    document.getElementById('pfBookCount').textContent    = counts.book;
 
     const emptyEl = document.getElementById('pfEmpty');
-    const gridEl = document.getElementById('pfGrid');
+    const gridEl  = document.getElementById('pfGrid');
 
     if (!filtered.length) {
       emptyEl.style.display = 'block';
@@ -2982,36 +3419,34 @@
     }
     emptyEl.style.display = 'none';
 
-    const isT = e => e.role === 'teacher';
-    gridEl.innerHTML = filtered.map(e => {
-      const color = subjectColors[e.subject] || '#8b5cf6';
-      const qs = [e.q1, e.q2, e.q3].filter(Boolean);
-      const qColors = isT(e)
-        ? ['#f59e0b','#f43f5e','#8b5cf6']
-        : ['#0ea5e9','#8b5cf6','#10b981'];
+    gridEl.innerHTML = filtered.map((e, idx) => {
+      const meta = pfSourceMeta[e.source] || { label:'기록', icon:'📝', color:'#6366f1' };
       return `
-        <div class="pf-card" style="--pf-color:${color}">
-          <div class="pf-card-header">
-            <div class="pf-card-tags">
-              <span class="pf-card-tag ${isT(e)?'t':''}">${isT(e)?'👩‍🏫 선생님':'🎒 학생'}</span>
-              <span class="pf-card-tag" style="background:${color}18;color:${color}">${e.subject||''}</span>
-              ${e.grade ? `<span class="pf-card-tag">${e.grade}</span>` : ''}
+        <div class="pf-new-card" style="--pf-color:${meta.color}">
+          <div class="pf-card-ribbon"></div>
+          <div class="pf-card-inner">
+            <div class="pf-card-meta">
+              <span class="pf-card-source-badge">${meta.icon} ${meta.label}${e.role ? ' · ' + e.role : ''}</span>
+              <span class="pf-card-date-new">${e.date || ''}</span>
             </div>
-            <span class="pf-card-date">${e.date}</span>
+            <div class="pf-card-title-new">${e.title}</div>
+            ${e.subtitle ? `<div class="pf-card-subtitle">${e.subtitle}</div>` : ''}
+            <div class="pf-card-qs-new">
+              ${e.questions.map((q, qi) => `
+                <div class="pf-card-q-new">
+                  <span class="pf-card-qbadge-new">Q${qi+1}</span>
+                  <span>${q}</span>
+                </div>`).join('')}
+            </div>
+            ${e.source === 'myq' ? `<button class="pf-card-del-new" onclick="deletePFEntry(${e.rawId})">삭제 ✕</button>` : ''}
           </div>
-          <div class="pf-card-topic">${e.topic || '(주제 미입력)'}</div>
-          ${e.unit ? `<div class="pf-card-unit">📂 ${e.unit}</div>` : '<div class="pf-card-unit" style="margin-bottom:14px;"></div>'}
-          <div class="pf-card-qs">
-            ${qs.map((q,i) => `
-              <div class="pf-card-q">
-                <span class="pf-card-qbadge" style="background:${qColors[i]}">Q${i+1}</span>
-                <span>${q}</span>
-              </div>`).join('')}
-          </div>
-          <button class="pf-card-del" onclick="deletePFEntry(${e.id})">삭제 ✕</button>
         </div>`;
     }).join('');
   }
+
+  function filterPF() {}   // 하위 호환용 빈 함수
+  function switchView() {}  // 하위 호환용 빈 함수
+  function filterPFSubject() {} // 하위 호환용 빈 함수
 
   async function deletePFEntry(id) {
     const saved = JSON.parse(localStorage.getItem('myq_list') || '[]').filter(e => e.id !== id);
@@ -3049,7 +3484,9 @@
     const now = new Date();
     const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-    const entry = { role, grade, subject, unit, topic, q1, q2, q3, date: dateStr, id: Date.now() };
+    const currentUser = getCurrentUser();
+    const authorKey = currentUser ? (currentUser.key || currentUser.email || currentUser.name || '') : '';
+    const entry = { role, grade, subject, unit, topic, q1, q2, q3, date: dateStr, id: Date.now(), authorKey };
     const saved = JSON.parse(localStorage.getItem('myq_list') || '[]');
     saved.unshift(entry);
     localStorage.setItem('myq_list', JSON.stringify(saved));
@@ -3208,7 +3645,7 @@
   }
 
   // ══════════════════════════════
-  // 질문 놀이터
+  // 질문 미션 놀이터
   // ══════════════════════════════
   function switchQPlay(id) {
     document.querySelectorAll('.qplay-tab').forEach((t,i) => {
@@ -3430,6 +3867,7 @@
       kwGameState.hall.unshift({ q: ans, kws: kwCurrentSet.join(' · '), pts: earned, badge });
       if (kwGameState.hall.length > 5) kwGameState.hall.pop();
       renderKwHall();
+      renderPortfolio();
     } else {
       kwGameState.streak = 0;
       updateHUD();
@@ -3491,6 +3929,10 @@
       { emoji:'🧬🌿', scene:'인간과 식물의 유전자를 합성한 새로운 생명체가 탄생했다. 이 존재에게도 인권이 있을까?', tags:['생명','윤리','권리'] },
       { emoji:'🌊🏙️', scene:'지구 온난화로 해수면이 상승해 서울이 물에 잠겼다. 새로운 수중 도시를 어디에 어떻게 설계할까?', tags:['기후','도시','미래'] },
       { emoji:'💊🧠', scene:'기억을 선택적으로 지울 수 있는 약이 개발됐다. 학교에서 시험 걱정을 없애기 위해 나쁜 기억을 지운다면?', tags:['기억','교육','자유'] },
+      { emoji:'🦁🤝', scene:'동물이 인간의 언어로 말할 수 있게 됐다. 동물들이 처음으로 인류에게 요구한 것은 무엇일까?', tags:['동물','언어','권리'] },
+      { emoji:'🌙🏠', scene:'달에 작은 마을이 생겼다. 달 주민과 지구 주민 사이에 어떤 법과 규칙이 필요할까?', tags:['우주','법','공동체'] },
+      { emoji:'🎮🌍', scene:'가상현실이 너무 완벽해서 현실과 구별이 불가능해졌다. 사람들은 어떤 세상을 선택할까?', tags:['가상현실','현실','선택'] },
+      { emoji:'🌈🧪', scene:'모든 인간이 태어날 때 자신의 미래 직업을 알 수 있는 유전자 검사를 받는다. 이 세상은 어떤 모습일까?', tags:['운명','직업','자유의지'] },
     ],
     '철학': [
       { emoji:'🪞❓', scene:'"나"란 누구인가? 내 몸이 전부 바뀌어도 나는 여전히 "나"일까?', tags:['자아','정체성','존재'] },
@@ -3498,6 +3940,11 @@
       { emoji:'🌀🕊️', scene:'자유란 무엇인가? 규칙이 없으면 진정한 자유를 누릴 수 있을까?', tags:['자유','규칙','사회'] },
       { emoji:'💬🤫', scene:'모든 사람이 서로의 생각을 읽을 수 있다면 세상은 더 평화로워질까, 더 혼란스러워질까?', tags:['소통','비밀','공동체'] },
       { emoji:'🌱⚡', scene:'"성장"과 "안정" 중 하나만 선택해야 한다면 무엇을 택하겠는가? 그 이유는?', tags:['성장','안정','가치'] },
+      { emoji:'🤔💭', scene:'행복은 느끼는 것인가, 만들어가는 것인가? 행복의 조건이 사람마다 다른 이유는 무엇일까?', tags:['행복','감정','철학'] },
+      { emoji:'🕯️🌑', scene:'빛이 없으면 어둠을 알 수 없듯, 고통 없이 행복을 느낄 수 있을까?', tags:['고통','행복','이분법'] },
+      { emoji:'🌍⚡', scene:'"정의로운 전쟁"이 가능할까? 전쟁이 정의를 실현하는 수단이 될 수 있을까?', tags:['전쟁','정의','평화'] },
+      { emoji:'🎭🧩', scene:'인간은 태어날 때부터 선한가, 악한가? 그것은 환경이 결정하는 것일까?', tags:['선악','본성','환경'] },
+      { emoji:'🏛️📜', scene:'100년 전 사람들이 옳다고 믿었던 것을 지금 우리는 틀렸다고 한다. 지금 우리의 믿음도 100년 후에 틀릴 수 있을까?', tags:['진리','역사','변화'] },
     ],
     '사회': [
       { emoji:'📱🧒', scene:'12살짜리 아이가 SNS에 하루 8시간을 쓴다. 사회는 이것을 어떻게 다루어야 할까?', tags:['미디어','청소년','책임'] },
@@ -3505,18 +3952,35 @@
       { emoji:'🌍🏠', scene:'100명이 넘는 난민이 우리 마을에 들어왔다. 우리 지역 사회는 어떻게 반응해야 할까?', tags:['난민','공존','다문화'] },
       { emoji:'💰🎓', scene:'부자 부모를 둔 아이와 그렇지 않은 아이의 교육 기회는 왜 다를까? 어떻게 해결할 수 있을까?', tags:['불평등','교육','공정'] },
       { emoji:'🗳️🤝', scene:'모든 사람이 투표에 참여하지 않는 민주주의, 이것은 진정한 민주주의일까?', tags:['민주주의','참여','권리'] },
+      { emoji:'🏭🌿', scene:'일자리 100개를 만드는 공장이 강을 오염시킨다. 경제와 환경 중 어떤 것을 우선해야 할까?', tags:['경제','환경','갈등'] },
+      { emoji:'📰🤥', scene:'가짜 뉴스를 퍼뜨린 사람에게 법적 책임을 물어야 할까? 표현의 자유와 충돌하지 않을까?', tags:['가짜뉴스','자유','책임'] },
+      { emoji:'👴👶', scene:'노인 인구가 급증해 젊은 세대의 세금 부담이 커지고 있다. 세대 간 공정한 약속은 어떻게 만들까?', tags:['고령화','세대','공정'] },
+      { emoji:'🤖⚖️', scene:'AI가 범죄자의 재범 가능성을 예측해 판결에 활용된다면 공정한 재판이 가능할까?', tags:['AI','법','공정'] },
+      { emoji:'🎮📚', scene:'게임 과몰입 청소년에게 국가가 게임 사용 시간을 강제로 제한할 수 있을까?', tags:['게임','자유','규제'] },
     ],
     '미래': [
       { emoji:'🌡️🌏', scene:'2100년 지구 평균 기온이 3도 올랐다. 지금 중학생인 나는 어른이 되어 어떤 세상을 살게 될까?', tags:['기후','미래','세대'] },
       { emoji:'💼🤖', scene:'내가 원하는 직업 10개 중 8개가 AI로 대체되었다. 나는 무엇을 해야 할까?', tags:['직업','AI','진로'] },
       { emoji:'🧬💊', scene:'유전자 편집으로 질병 없는 완벽한 아기를 태어나게 할 수 있다. 이것은 축복일까 위험일까?', tags:['유전자','생명','윤리'] },
       { emoji:'🏙️🌿', scene:'도시 전체가 태양광·바람으로만 움직이는 에너지 자립 도시가 가능할까? 무엇이 필요할까?', tags:['에너지','도시','지속가능'] },
+      { emoji:'🧠💻', scene:'뇌와 컴퓨터를 연결하는 칩이 상용화됐다. 이 기술을 학교 수업에 활용한다면 어떤 일이 벌어질까?', tags:['기술','뇌','교육'] },
+      { emoji:'🍽️🌾', scene:'2060년, 식량 부족으로 곤충과 합성 단백질이 주식이 됐다. 음식 문화는 어떻게 바뀔까?', tags:['식량','문화','미래'] },
+      { emoji:'🏥🤖', scene:'의사 대신 AI가 수술을 집도한다. AI 의사를 신뢰할 수 있을까? 인간 의사는 왜 필요할까?', tags:['AI','의료','신뢰'] },
+      { emoji:'🛸🌌', scene:'외계 지적 생명체와 최초로 교신이 이루어졌다. 인류는 무엇을 먼저 물어봐야 할까?', tags:['우주','외계','인류'] },
+      { emoji:'🔋♾️', scene:'무한 에너지 기술이 개발됐다. 에너지 문제가 해결되면 세상의 어떤 갈등이 사라지고, 새로운 갈등이 생길까?', tags:['에너지','갈등','변화'] },
+      { emoji:'👁️🌐', scene:'모든 사람의 위치와 행동이 실시간으로 공개되는 완전 투명 사회. 범죄는 줄겠지만 무엇을 잃게 될까?', tags:['감시','프라이버시','안전'] },
     ],
     '나': [
       { emoji:'🌟💭', scene:'10년 후의 나에게 편지를 쓴다면, 지금 가장 묻고 싶은 것은 무엇인가?', tags:['미래','나','성장'] },
       { emoji:'🎭🫀', scene:'나는 어떤 감정을 가장 잘 숨기는가? 그 감정을 숨기는 이유는 무엇일까?', tags:['감정','자아','솔직함'] },
       { emoji:'🏆😔', scene:'내가 가장 두려워하는 실패는 무엇인가? 그 실패가 오히려 나를 성장시킬 수 있을까?', tags:['실패','용기','성장'] },
       { emoji:'🌈🧭', scene:'내가 세상에서 딱 한 가지만 바꿀 수 있다면 무엇을 바꾸고 싶은가? 그 이유는?', tags:['가치','변화','나'] },
+      { emoji:'🪢🗣️', scene:'나는 다른 사람의 기대에 맞춰 살고 있을까, 아니면 나 자신의 길을 걷고 있을까?', tags:['정체성','기대','자유'] },
+      { emoji:'🕰️💛', scene:'지금 이 순간이 내 인생에서 가장 빛나는 시간이라면, 나는 지금 무엇을 다르게 할까?', tags:['현재','후회','선택'] },
+      { emoji:'🔑🚪', scene:'내가 아직 아무에게도 열지 않은 마음의 문이 있다면, 그 안에는 무엇이 있을까?', tags:['내면','솔직함','관계'] },
+      { emoji:'🌊🏄', scene:'내 삶에서 가장 큰 파도처럼 다가온 변화는 무엇이었나? 나는 그 파도를 어떻게 탔는가?', tags:['변화','적응','성장'] },
+      { emoji:'🎯🌱', scene:'내가 잘한다고 생각하는 것과 진심으로 좋아하는 것이 다르다면, 어느 쪽을 따라야 할까?', tags:['재능','열정','진로'] },
+      { emoji:'🤝🌍', scene:'나 혼자 행복한 삶과 많은 사람과 함께 행복한 삶 중 어떤 것이 더 가치 있을까?', tags:['행복','공동체','개인'] },
     ],
   };
   // 전체 = 모든 카테고리 합치기
@@ -3641,6 +4105,7 @@
     renderChampTypeTabs();
     updateChampHUD();
     renderChampHall();
+    renderPortfolio();
 
     // 다음 미완료 유형으로 자동 이동
     if (!allDone) {
@@ -3681,141 +4146,757 @@
   // 초기화 시 HUD 업데이트
   window.addEventListener('load', () => { updateChampHUD(); });
 
-  // ── 3. 질문으로 꿈꾸기 ──
-  const dreamHints = {
-    '나의 미래 모습': '💭 힌트: 10년 후 나는 어디서 무엇을 하고 있을까? 그 삶에서 가장 소중한 것은? 지금의 나와 어떻게 연결될까?',
-    '꿈꾸는 직업': '💭 힌트: 이 직업을 선택한다면 어떤 문제를 해결하고 싶은가? 그 직업에서 가장 보람 있는 순간은 언제일까?',
-    '세상을 바꾸는 나': '💭 힌트: 내가 바꾸고 싶은 세상의 문제 한 가지는? 나만의 방식으로 그 문제를 해결한다면?',
-    '10년 후 나에게': '💭 힌트: 지금의 내가 미래의 나에게 꼭 묻고 싶은 것은? 지금 잘 하고 있는 걸까?',
-    '내가 만드는 세상': '💭 힌트: 내가 설계할 수 있다면 어떤 학교, 어떤 사회, 어떤 지구를 만들고 싶은가?',
-    '나의 재능과 가능성': '💭 힌트: 내가 가장 잘할 수 있는 것은? 아직 발견하지 못한 나만의 가능성은 무엇일까?',
+  // ── 3. 질문 타임머신 ──
+  // ── 3. 질문 타임머신 (롤모델 카드) ──
+  const rolemodels = {
+    '과학·기술': [
+      { emoji:'🍎', name:'아이작 뉴턴', nation:'🇬🇧 영국', period:'1643–1727', job:'물리학자·수학자',
+        quote:'"천재는 인내다. 나는 계속 생각했을 뿐이다."',
+        value:'지적 탐구, 자연 법칙 규명', achievement:'만유인력 법칙, 광학 연구, 미적분학 발명',
+        failure:'연금술과 신비주의에 빠져 수십 년 헤맴, 만년에 조폐국장으로 전직',
+        lesson:'끝없는 의문을 품고 포기하지 않는 집중력' },
+      { emoji:'⚡', name:'니콜라 테슬라', nation:'🇷🇸 세르비아', period:'1856–1943', job:'발명가·전기공학자',
+        quote:'"현재는 그들의 것이지만, 미래는 내 것이다."',
+        value:'인류를 위한 발명, 진리 추구', achievement:'교류전기(AC) 시스템, 테슬라 코일, 무선 전력 연구',
+        failure:'에디슨과의 경쟁에서 재정적으로 파산, 죽을 때까지 빈곤',
+        lesson:'인정받지 못해도 신념을 지키는 용기' },
+      { emoji:'🔭', name:'장영실', nation:'🇰🇷 조선', period:'1390?–1450?', job:'발명가·과학기술자',
+        quote:'"백성이 시간을 알아야 농사를 지을 수 있다."',
+        value:'백성을 위한 실용 과학, 노력으로 신분 극복', achievement:'자격루, 앙부일구, 측우기 발명',
+        failure:'신분제의 한계로 노비 출신이라 역사에서 잊힐 뻔함',
+        lesson:'출신을 넘어 재능과 노력으로 시대를 바꾸는 힘' },
+      { emoji:'🧬', name:'마리 퀴리', nation:'🇵🇱 폴란드', period:'1867–1934', job:'물리학자·화학자',
+        quote:'"두려워할 것은 아무것도 없다. 이해해야 할 것만 있을 뿐이다."',
+        value:'탐구 정신, 성별·국적 차별 극복', achievement:'라듐·폴로늄 발견, 노벨상 2회 수상(물리·화학)',
+        failure:'여성이라는 이유로 파리 아카데미 입회 거부, 방사선 연구로 건강 악화',
+        lesson:'편견을 넘어 끝까지 진리를 향해 나아가는 의지' },
+      { emoji:'🤖', name:'이세돌', nation:'🇰🇷 한국', period:'1983–', job:'바둑기사',
+        quote:'"AI에게 진 것이 부끄럽지 않다. 인간의 한계를 확인한 것이다."',
+        value:'도전 정신, 인간과 기술의 공존 탐구', achievement:'세계 최강 바둑기사, 알파고와의 세기적 대결에서 1승',
+        failure:'알파고에 4:1로 패배, 이후 AI의 급성장으로 바둑 은퇴',
+        lesson:'패배를 인정하고 새로운 의미를 찾는 성숙함' },
+      { emoji:'💡', name:'에디슨', nation:'🇺🇸 미국', period:'1847–1931', job:'발명가·기업가',
+        quote:'"천재는 1%의 영감과 99%의 노력이다."',
+        value:'끊임없는 실험, 실용적 발명', achievement:'전구·축음기·영사기 등 1000개 이상 특허',
+        failure:'전구 발명 전 1만 번 실패, 테슬라와의 전류 전쟁에서 패배',
+        lesson:'실패를 데이터로 삼아 포기하지 않는 집요함' },
+    ],
+    '예술·창작': [
+      { emoji:'🎵', name:'베토벤', nation:'🇩🇪 독일', period:'1770–1827', job:'작곡가·피아니스트',
+        quote:'"음악은 모든 지혜와 철학보다 높은 계시다."',
+        value:'예술적 자유, 인간 정신의 승리', achievement:'9개 교향곡(운명·합창), 피아노 소나타, 현악 사중주',
+        failure:'26세부터 청력 잃기 시작, 완전히 귀가 들리지 않는 상태에서 9번 교향곡 완성',
+        lesson:'절망적 상황에서도 열정을 잃지 않는 불굴의 의지' },
+      { emoji:'🎨', name:'이중섭', nation:'🇰🇷 한국', period:'1916–1956', job:'화가',
+        quote:'"나는 소를 그린 것이 아니라 내 영혼을 그린 것이다."',
+        value:'가족 사랑, 민족 정체성', achievement:'황소·아이들 등 독창적 한국 근대 미술 개척',
+        failure:'한국전쟁으로 가족과 생이별, 극도의 빈곤과 정신질환으로 40세에 요절',
+        lesson:'고통 속에서도 예술로 사랑을 표현하는 힘' },
+      { emoji:'🎭', name:'셰익스피어', nation:'🇬🇧 영국', period:'1564–1616', job:'극작가·시인',
+        quote:'"세상은 무대요, 모든 남녀는 배우다."',
+        value:'인간 본성 탐구, 보편적 감정 표현', achievement:'햄릿·맥베스·로미오와 줄리엣 등 37편 희곡',
+        failure:'정규 대학 교육 없이 독학, 생전에는 학자들에게 무시당함',
+        lesson:'정식 교육보다 관찰과 열정이 위대한 작품을 만든다' },
+      { emoji:'🎤', name:'방탄소년단(BTS)', nation:'🇰🇷 한국', period:'2013–', job:'아이돌 그룹',
+        quote:'"나 자신을 사랑하는 것이 진정한 사랑의 시작이다."',
+        value:'자기 표현, 세대 공감, 문화적 다양성', achievement:'빌보드 1위, 유엔 연설, K-팝 세계화 선도',
+        failure:'데뷔 초 무명, 중소 기획사 출신으로 방송 출연 기회 거의 없음',
+        lesson:'진정성과 팬과의 소통이 세계적 성공을 만든다' },
+      { emoji:'✍️', name:'박경리', nation:'🇰🇷 한국', period:'1926–2008', job:'소설가',
+        quote:'"삶은 아픔이지만, 그 아픔이 우리를 단단하게 만든다."',
+        value:'민족의 삶과 역사, 여성 서사', achievement:'대하소설 《토지》(25년 집필, 5부 16권)',
+        failure:'남편과 아들을 잃은 개인적 비극, 좌익 전력으로 오랜 탄압',
+        lesson:'인생의 깊은 슬픔이 위대한 문학의 원천이 된다' },
+      { emoji:'🎬', name:'봉준호', nation:'🇰🇷 한국', period:'1969–', job:'영화감독',
+        quote:'"가장 개인적인 것이 가장 창의적인 것이다."',
+        value:'사회적 메시지, 장르의 경계 허물기', achievement:'기생충 아카데미 4관왕, 한국 영화 세계화 선도',
+        failure:'데뷔 초 흥행 실패와 제작사 압력, 수년간 무명 시절',
+        lesson:'자신만의 시각을 포기하지 않으면 세계가 주목한다' },
+    ],
+    '사회·정치': [
+      { emoji:'✊', name:'넬슨 만델라', nation:'🇿🇦 남아공', period:'1918–2013', job:'정치인·인권운동가',
+        quote:'"나는 지지 않는다. 나는 이기거나, 배운다."',
+        value:'정의, 평등, 용서', achievement:'아파르트헤이트 철폐, 남아공 최초 흑인 대통령, 노벨평화상',
+        failure:'27년 감옥 생활, 석방 후에도 끊임없는 정치적 위협',
+        lesson:'분노를 용서로 바꾸는 것이 진정한 강함이다' },
+      { emoji:'🕊️', name:'유관순', nation:'🇰🇷 조선', period:'1902–1920', job:'독립운동가',
+        quote:'"내 손톱이 빠져나가고 내 귀와 코가 잘리고 내 손과 다리가 부러져도 그 고통은 이길 수 있사오나, 나라를 잃은 고통만은 견딜 수 없습니다."',
+        value:'조국 독립, 민족 자존심', achievement:'3·1운동 아우내 만세운동 주도, 민족정신의 상징',
+        failure:'일제에 체포돼 혹독한 고문 끝에 18세에 순국',
+        lesson:'어린 나이에도 거대한 부당함 앞에 목소리를 높이는 용기' },
+      { emoji:'🌹', name:'마틴 루터 킹', nation:'🇺🇸 미국', period:'1929–1968', job:'목사·인권운동가',
+        quote:'"어둠으로 어둠을 쫓아낼 수 없다. 빛만이 그것을 할 수 있다."',
+        value:'비폭력, 평등, 사랑', achievement:'흑인 민권운동 주도, 워싱턴 대행진, 노벨평화상',
+        failure:'FBI 감시, 수차례 투옥, 39세에 암살',
+        lesson:'폭력이 아닌 말과 행동으로 세상을 바꾸는 힘' },
+      { emoji:'📖', name:'안중근', nation:'🇰🇷 조선', period:'1879–1910', job:'독립운동가·사상가',
+        quote:'"하루라도 책을 읽지 않으면 입 안에 가시가 돋는다."',
+        value:'동양 평화, 교육, 독립', achievement:'이토 히로부미 저격, 동양평화론 집필',
+        failure:'의거 후 체포되어 31세에 순국, 동양평화론 미완성으로 남김',
+        lesson:'실천하는 지식인, 지행합일의 삶' },
+      { emoji:'⚖️', name:'마하트마 간디', nation:'🇮🇳 인도', period:'1869–1948', job:'독립운동가·철학자',
+        quote:'"당신이 세상에서 보고 싶은 변화가 되어라."',
+        value:'비폭력, 진실, 단순한 삶', achievement:'인도 독립운동 이끔, 비폭력 저항 철학 창시',
+        failure:'여러 차례 투옥, 힌두-무슬림 분열을 막지 못하고 암살',
+        lesson:'삶 자체가 메시지가 되는 일관성' },
+      { emoji:'🌺', name:'신사임당', nation:'🇰🇷 조선', period:'1504–1551', job:'예술가·학자',
+        quote:'"배움에 끝이 없듯, 붓끝에도 끝이 없다."',
+        value:'학문과 예술, 자녀 교육', achievement:'초충도 등 예술 작품, 이율곡의 어머니, 5만원권 초상',
+        failure:'여성이라는 이유로 공식 기록이 거의 남지 않음',
+        lesson:'시대의 한계 속에서도 자신의 재능을 꽃피우는 삶' },
+    ],
+    '교육·철학': [
+      { emoji:'🏺', name:'소크라테스', nation:'🇬🇷 그리스', period:'BC470–BC399', job:'철학자',
+        quote:'"나는 내가 아무것도 모른다는 것을 안다."',
+        value:'진리 탐구, 문답법, 자기 인식', achievement:'서양 철학의 아버지, 플라톤·아리스토텔레스에게 영향',
+        failure:'아테네 시민의 고발로 사형 선고, 독배를 마시고 죽음',
+        lesson:'질문이 세상을 바꾸는 가장 강력한 힘이다' },
+      { emoji:'📐', name:'페스탈로치', nation:'🇨🇭 스위스', period:'1746–1827', job:'교육가',
+        quote:'"머리, 가슴, 손 — 세 가지가 균형을 이루어야 한다."',
+        value:'아동 중심 교육, 빈민 교육', achievement:'근대 교육학의 아버지, 전인 교육 이론 정립',
+        failure:'여러 학교 설립 시도가 잇달아 실패, 재정난과 교육자들의 반발',
+        lesson:'실패를 반복하면서도 교육 신념을 포기하지 않는 열정' },
+      { emoji:'🎓', name:'이황', nation:'🇰🇷 조선', period:'1501–1570', job:'성리학자·교육가',
+        quote:'"배우고 또 배워도 충분하지 않다."',
+        value:'학문 탐구, 제자 양성, 도덕적 삶', achievement:'성리학 집대성, 도산서원 설립, 1000원권 초상',
+        failure:'여러 차례 벼슬을 거절하고 낙향, 평생 병약한 몸으로 공부',
+        lesson:'지식을 삶으로 실천하는 선비 정신' },
+      { emoji:'🌍', name:'파울로 프레이리', nation:'🇧🇷 브라질', period:'1921–1997', job:'교육철학자',
+        quote:'"교육은 세상을 바꾸는 가장 강력한 무기다."',
+        value:'비판적 사고, 피억압자 해방', achievement:'《페다고지》 저술, 문맹 퇴치 프로그램 개발',
+        failure:'군사 쿠데타로 투옥, 15년간 망명 생활',
+        lesson:'교육이 억압에 맞서는 해방의 도구가 될 수 있다' },
+      { emoji:'📚', name:'방정환', nation:'🇰🇷 조선', period:'1899–1931', job:'아동문화운동가·교육가',
+        quote:'"어린이를 내려다보지 말고 올려다보아라."',
+        value:'아동 인권, 어린이 문화', achievement:'어린이날 제정, 잡지 《어린이》 창간, 아동문학 개척',
+        failure:'일제 감시 속 독립운동 병행, 과로로 32세에 요절',
+        lesson:'가장 작은 존재에 대한 존중이 사회를 바꾼다' },
+      { emoji:'🏛️', name:'아리스토텔레스', nation:'🇬🇷 그리스', period:'BC384–BC322', job:'철학자·과학자',
+        quote:'"탁월함은 습관이다. 우리는 반복적으로 하는 것이 된다."',
+        value:'논리, 덕, 중용', achievement:'논리학·윤리학·정치학·생물학 체계 정립, 알렉산더 대왕의 스승',
+        failure:'플라톤 사후 아테네에서 추방 위기, 마케도니아 출신으로 차별',
+        lesson:'모든 분야에 걸친 호기심이 인류 지식의 토대를 만든다' },
+    ],
+    '경제·기업': [
+      { emoji:'🍏', name:'스티브 잡스', nation:'🇺🇸 미국', period:'1955–2011', job:'기업인·디자이너',
+        quote:'"혁신은 리더와 추종자를 구분하는 기준이다."',
+        value:'혁신, 디자인, 단순함', achievement:'아이폰·맥·아이패드 혁신, 애플을 세계 최고 기업으로',
+        failure:'자신이 창업한 애플에서 쫓겨남, 이후 복귀해 재건',
+        lesson:'실패가 새로운 관점을 열어주는 기회가 된다' },
+      { emoji:'🚗', name:'정주영', nation:'🇰🇷 한국', period:'1915–2001', job:'기업인',
+        quote:'"이봐, 해봤어?"',
+        value:'도전 정신, 불굴의 의지', achievement:'현대그룹 창업, 조선·건설·자동차 산업 개척',
+        failure:'소를 팔아 도망쳤다 다시 시작, 쌀가게·건설 사업 수차례 실패',
+        lesson:'가난과 학벌을 넘어 의지로 시대를 개척하는 기업가 정신' },
+      { emoji:'📦', name:'제프 베이조스', nation:'🇺🇸 미국', period:'1964–', job:'기업인',
+        quote:'"나는 실패를 두려워하지 않는다. 시도하지 않는 것을 두려워한다."',
+        value:'고객 중심, 장기적 사고, 혁신', achievement:'아마존 창업, 클라우드·우주사업 개척',
+        failure:'아마존 초기 수년간 적자, 수많은 사업 실패(파이어폰 등)',
+        lesson:'장기적 비전을 위해 단기 실패를 감수하는 인내' },
+      { emoji:'🏭', name:'유일한', nation:'🇰🇷 한국', period:'1895–1971', job:'기업인·독립운동가',
+        quote:'"기업의 이익은 사회에 돌려줘야 한다."',
+        value:'정직한 경영, 사회 환원', achievement:'유한양행 창업, 전 재산 사회 환원, 독립운동 지원',
+        failure:'미국 유학 후 귀국했지만 일제 치하 경영의 어려움',
+        lesson:'이익보다 가치를 먼저 생각하는 기업가의 본보기' },
+      { emoji:'🌐', name:'빌 게이츠', nation:'🇺🇸 미국', period:'1955–', job:'기업인·자선사업가',
+        quote:'"성공을 축하하는 것도 좋지만, 실패의 교훈에 집중하는 것이 더 중요하다."',
+        value:'기술 혁신, 글로벌 문제 해결', achievement:'마이크로소프트 창업, 빌앤멜린다 게이츠 재단',
+        failure:'하버드 중퇴, 초기 MS 독점 소송 위기, 잘못된 경영 판단 다수',
+        lesson:'기술로 번 돈을 세상 문제 해결에 쓰는 책임감' },
+      { emoji:'🛍️', name:'김범수', nation:'🇰🇷 한국', period:'1966–', job:'기업인',
+        quote:'"실패는 끝이 아니라 다음 도전의 시작이다."',
+        value:'도전, 재도전, 사회적 기여', achievement:'한게임·카카오 창업, 국내 1위 메신저 카카오톡 탄생',
+        failure:'삼성SDS 퇴사 후 창업 실패, 한게임 매각 후 카카오로 재도전',
+        lesson:'실패 후 완전히 다른 분야에서 더 크게 성공하는 집념' },
+    ],
+    '스포츠·도전': [
+      { emoji:'⚽', name:'손흥민', nation:'🇰🇷 한국', period:'1992–', job:'축구선수',
+        quote:'"나는 항상 발전할 수 있다고 믿는다."',
+        value:'끝없는 노력, 겸손, 팀워크', achievement:'EPL 득점왕, 토트넘 에이스, 아시아 최고 축구선수',
+        failure:'어린 시절 독일에서의 외로운 타국 생활, 부상으로 인한 위기',
+        lesson:'실력과 인성을 함께 갖춘 선수가 세계를 감동시킨다' },
+      { emoji:'🏊', name:'박태환', nation:'🇰🇷 한국', period:'1989–', job:'수영선수',
+        quote:'"포기하지 않는 한 끝난 것이 아니다."',
+        value:'인내, 재기, 도전', achievement:'올림픽 금메달, 세계선수권 제패, 아시아 수영 역사를 바꿈',
+        failure:'올림픽 도핑 출전 정지, 선수 생명 위기를 딛고 복귀',
+        lesson:'가장 깊은 바닥에서도 다시 일어서는 용기' },
+      { emoji:'🥊', name:'무하마드 알리', nation:'🇺🇸 미국', period:'1942–2016', job:'권투선수',
+        quote:'"불가능은 아무것도 아니다."',
+        value:'자존감, 신념, 사회 정의', achievement:'헤비급 세계 챔피언 3회, 20세기 가장 위대한 운동선수',
+        failure:'베트남전 징집 거부로 챔피언 박탈 및 3년 공백, 파킨슨병',
+        lesson:'링 밖에서도 신념을 위해 싸우는 용기' },
+      { emoji:'🏅', name:'이봉주', nation:'🇰🇷 한국', period:'1970–', job:'마라토너',
+        quote:'"42.195km는 나와의 싸움이다."',
+        value:'인내, 자기 극복', achievement:'올림픽 은메달, 보스턴·시카고 마라톤 우승, 한국 마라톤 영웅',
+        failure:'아틀란타 올림픽 금메달을 코앞에서 놓침, 이후 수년간 부상',
+        lesson:'묵묵히 자신과 싸워 이기는 것이 진정한 챔피언이다' },
+      { emoji:'🎿', name:'에드먼드 힐러리', nation:'🇳🇿 뉴질랜드', period:'1919–2008', job:'등반가·탐험가',
+        quote:'"산이 나를 이긴 것이 아니라, 내가 나를 이긴 것이다."',
+        value:'도전, 용기, 겸손', achievement:'에베레스트 최초 등정, 남극 탐험, 네팔 학교 건립',
+        failure:'에베레스트 2번 실패 후 3번째 도전에 성공',
+        lesson:'실패는 성공을 위한 준비다' },
+      { emoji:'🏋️', name:'류현진', nation:'🇰🇷 한국', period:'1987–', job:'야구선수',
+        quote:'"마운드에서 내가 통제할 수 있는 건 나 자신뿐이다."',
+        value:'자기 관리, 집중력, 평정심', achievement:'KBO 최고 투수, 메이저리그 사이영상 투표 2위',
+        failure:'팔꿈치 수술로 2년간 공백, 복귀 후 재활과 재도전',
+        lesson:'부상과 슬럼프도 자신을 다스리면 반드시 돌아온다' },
+    ],
+    '의학·복지': [
+      { emoji:'🏥', name:'슈바이처', nation:'🇩🇪 독일', period:'1875–1965', job:'의사·신학자',
+        quote:'"나는 생명에 대한 경외심을 가지고 있다."',
+        value:'생명 존중, 봉사, 희생', achievement:'아프리카 의료 봉사 50년, 노벨평화상',
+        failure:'박사 3개 분야 취득 후 의대에 다시 입학, 많은 사람들이 무모하다고 비웃음',
+        lesson:'자신의 모든 재능을 타인을 위해 쓰는 삶의 가치' },
+      { emoji:'💉', name:'지석영', nation:'🇰🇷 조선', period:'1855–1935', job:'의학자·국어학자',
+        quote:'"백성의 생명을 구하는 것이 진정한 애국이다."',
+        value:'공중 보건, 민족 계몽', achievement:'우두법(천연두 백신) 도입, 한국 근대 의학 개척',
+        failure:'일본에서 배워온 우두법 시행 시 백성들의 극심한 반발과 의심',
+        lesson:'낯선 진리를 위험을 무릅쓰고 전파하는 선구자 정신' },
+      { emoji:'🌺', name:'플로렌스 나이팅게일', nation:'🇬🇧 영국', period:'1820–1910', job:'간호사·통계학자',
+        quote:'"나는 내가 할 수 있는 일을 했다. 당신도 할 수 있다."',
+        value:'헌신, 데이터 기반 개혁, 인간 존엄', achievement:'근대 간호학 창시, 병원 위생 혁명, 사망률 42%→2% 낮춤',
+        failure:'여성이라는 이유로 의사 직업 거부당함, 만성 질환으로 평생 투병',
+        lesson:'데이터와 통계로 사회를 바꾸는 과학적 인도주의' },
+      { emoji:'🔬', name:'이종욱', nation:'🇰🇷 한국', period:'1945–2006', job:'의사·WHO 사무총장',
+        quote:'"건강은 권리다."',
+        value:'글로벌 보건, 평등한 의료', achievement:'WHO 6대 사무총장, 소아마비 퇴치 운동 주도',
+        failure:'한국인 최초 WHO 수장이었지만 재임 중 뇌졸중으로 갑작스럽게 사망',
+        lesson:'국경을 넘어 인류의 건강을 위해 헌신하는 글로벌 리더십' },
+      { emoji:'👩‍⚕️', name:'테레사 수녀', nation:'🇲🇰 알바니아', period:'1910–1997', job:'수도자·사회활동가',
+        quote:'"어제는 지나갔다. 내일은 아직 오지 않았다. 오늘만이 있을 뿐이다."',
+        value:'무조건적 사랑, 가난한 자 섬김', achievement:'인도 콜카타에서 극빈자 돌봄, 노벨평화상',
+        failure:'평생 내면의 영적 공허함과 싸웠다고 고백, 그럼에도 봉사를 멈추지 않음',
+        lesson:'느끼지 못해도 행동으로 사랑을 실천하는 것' },
+      { emoji:'🧪', name:'허준', nation:'🇰🇷 조선', period:'1539–1615', job:'의학자',
+        quote:'"병을 고치는 것은 약이 아니라 사람이다."',
+        value:'백성 의료, 의학 체계화', achievement:'동의보감 집필, 조선 의학 집대성, 유네스코 기록유산',
+        failure:'임진왜란 중 의주까지 선조를 호종, 동의보감 완성까지 15년',
+        lesson:'평생을 바쳐 지식을 체계화하면 후세에 영원히 남는다' },
+    ],
+    '환경·생태': [
+      { emoji:'🌳', name:'왕가리 마타이', nation:'🇰🇪 케냐', period:'1940–2011', job:'환경운동가·정치인',
+        quote:'"나무 한 그루를 심을 때, 나는 희망을 심는다."',
+        value:'환경 보전, 여성 권리, 민주주의', achievement:'그린벨트 운동으로 5100만 그루 식수, 아프리카 최초 여성 노벨평화상',
+        failure:'독재 정권에 의해 투옥과 탄압을 반복적으로 경험',
+        lesson:'작은 행동 하나가 수백만 명을 움직이는 운동이 된다' },
+      { emoji:'🐋', name:'레이첼 카슨', nation:'🇺🇸 미국', period:'1907–1964', job:'해양생물학자·작가',
+        quote:'"자연을 이해하는 자는 결코 혼자가 아니다."',
+        value:'자연 경외, 과학적 글쓰기', achievement:'《침묵의 봄》으로 현대 환경운동 촉발, DDT 금지 이끔',
+        failure:'화학업계의 맹렬한 공격, 암 투병 중에 집필',
+        lesson:'진실을 알리는 한 권의 책이 세상을 바꾼다' },
+      { emoji:'🌱', name:'최재천', nation:'🇰🇷 한국', period:'1954–', job:'생물학자·교수',
+        quote:'"자연을 모르고서는 인간도 모른다."',
+        value:'통섭, 자연과 인간의 공존', achievement:'통섭 개념 도입, 개미 연구, 생태 글쓰기 대중화',
+        failure:'학문의 경계를 넘나드는 연구 스타일로 오랜 기간 비주류 취급',
+        lesson:'경계를 넘는 사고가 새로운 세계를 연다' },
+      { emoji:'🌊', name:'제인 구달', nation:'🇬🇧 영국', period:'1934–', job:'동물행동학자·환경운동가',
+        quote:'"모든 날이 중요하다. 우리가 영향을 미칠 수 있다."',
+        value:'생명 존중, 인내, 공존', achievement:'침팬지 연구 60년, UN 평화대사, 청소년 환경 교육',
+        failure:'학위 없이 현장 연구 시작, 학계의 냉대와 의심',
+        lesson:'자격증보다 열정과 관찰이 더 위대한 발견을 만든다' },
+      { emoji:'♻️', name:'그레타 툰베리', nation:'🇸🇪 스웨덴', period:'2003–', job:'기후활동가',
+        quote:'"집이 불타고 있다. 우리는 당장 행동해야 한다."',
+        value:'기후 정의, 과학적 사실 직시', achievement:'기후 파업 운동 창시, UN 기후 연설, 타임 올해의 인물',
+        failure:'아스퍼거 증후군으로 학교생활 어려움, 세계 지도자들의 비난과 조롱',
+        lesson:'나이와 장애를 넘어 행동하는 청소년이 세상을 바꾼다' },
+      { emoji:'🌏', name:'최재천', nation:'🇰🇷 한국', period:'1954–', job:'생물학자·교수',
+        quote:'"자연을 모르고서는 인간도 모른다."',
+        value:'통섭, 자연과 인간의 공존', achievement:'통섭 개념 도입, 개미 연구, 생태 글쓰기 대중화',
+        failure:'학문의 경계를 넘나드는 연구 스타일로 오랜 기간 비주류 취급',
+        lesson:'경계를 넘는 사고가 새로운 세계를 연다' },
+    ],
   };
-  let dreamAnswers = [];
 
-  function selectDreamTheme(theme, el) {
-    document.querySelectorAll('.qdream-theme-btn').forEach(b => b.classList.remove('active'));
+  let currentDreamCat = '과학·기술';
+  let currentRolemodel = null;
+  let dreamQAnswers = [];
+  let dreamDeclares = [];
+  let dreamActiveTab = 'story';
+  let dreamRecTab = 'q';
+
+  const dreamCatMeta = {
+    '과학·기술': { color:'#0ea5e9', bg:'linear-gradient(135deg,#0c4a6e,#0ea5e9)', desc:'🔬 탐구와 발명으로 세상의 원리를 밝혀낸 위인들을 만나보세요!' },
+    '예술·창작': { color:'#ec4899', bg:'linear-gradient(135deg,#831843,#ec4899)', desc:'🎨 아름다움과 창의성으로 시대를 넘어 감동을 전한 위인들을 만나보세요!' },
+    '사회·정치': { color:'#10b981', bg:'linear-gradient(135deg,#064e3b,#10b981)', desc:'🌍 불의에 맞서 더 나은 세상을 만들기 위해 싸운 위인들을 만나보세요!' },
+    '교육·철학': { color:'#f59e0b', bg:'linear-gradient(135deg,#78350f,#f59e0b)', desc:'📚 진리를 탐구하고 가르침으로 인류를 밝힌 위인들을 만나보세요!' },
+    '경제·기업': { color:'#6366f1', bg:'linear-gradient(135deg,#1e1b4b,#6366f1)', desc:'💼 아이디어와 도전으로 새로운 세상을 개척한 위인들을 만나보세요!' },
+    '스포츠·도전': { color:'#f43f5e', bg:'linear-gradient(135deg,#4c0519,#f43f5e)', desc:'🏆 한계를 넘어 불가능에 도전한 위인들을 만나보세요!' },
+    '의학·복지': { color:'#14b8a6', bg:'linear-gradient(135deg,#042f2e,#14b8a6)', desc:'🏥 생명을 살리고 약자를 섬긴 위인들을 만나보세요!' },
+    '환경·생태': { color:'#84cc16', bg:'linear-gradient(135deg,#1a2e05,#84cc16)', desc:'🌿 자연과 공존하며 지구를 지킨 위인들을 만나보세요!' },
+  };
+
+  // 각 위인마다 맞춤 질문 프롬프트 3개
+  const dreamQPrompts = {
+    '아이작 뉴턴':  ['사과가 떨어지는 것을 보고 만유인력을 발견했다면, 오늘 나는 어떤 일상의 현상에서 새로운 법칙을 발견할 수 있을까?','혼자 연구하며 고독을 견딘 뉴턴처럼, 나는 어떤 목표를 위해 외로움을 감수할 수 있을까?','뉴턴이 연금술에 빠진 것처럼, 나는 어떤 잘못된 길에 빠질 위험이 있고 어떻게 극복할까?'],
+    '니콜라 테슬라':['테슬라가 에디슨에게 인정받지 못했지만 포기하지 않았다면, 나는 세상이 알아주지 않아도 계속할 수 있는 일이 있을까?','가난하게 죽었지만 미래를 선물한 테슬라처럼, 현재의 보상보다 더 중요한 가치가 있다면 그것은 무엇일까?','테슬라의 무선 에너지 꿈은 아직도 실현 중이다. 내가 완성하지 못해도 미래에 누군가가 이어갈 꿈이 있다면?'],
+    '장영실':       ['노비 신분이었던 장영실이 세종대왕의 신임을 얻은 것처럼, 나는 어떤 재능으로 시대의 한계를 넘을 수 있을까?','백성을 위한 발명을 했던 장영실처럼, 나의 재능을 누구를 위해 쓰고 싶은가?','역사에서 잊힐 뻔했던 장영실처럼, 지금 세상에 알려지지 않은 숨은 영웅은 누구일까?'],
+    '마리 퀴리':    ['여성이라는 이유로 차별받으면서도 노벨상을 두 번 받은 퀴리처럼, 나는 어떤 편견을 극복하고 싶은가?','방사선으로 건강을 잃으면서도 연구를 멈추지 않은 것처럼, 나는 어떤 대가를 치르더라도 포기하지 않을 것이 있을까?','퀴리가 폴로늄을 조국의 이름으로 명명한 것처럼, 나는 무엇으로 나의 정체성을 표현하고 싶은가?'],
+    '이세돌':       ['AI에게 진 이세돌은 "인간의 한계를 확인했다"고 했다. 나에게도 이런 경험이 있다면?','1승을 거둔 이세돌처럼, 불가능해 보이는 상황에서 작은 승리의 의미는 무엇일까?','AI 시대에 인간만이 할 수 있는 것은 무엇이라고 생각하는가?'],
+    '베토벤':       ['귀가 들리지 않아도 음악을 만든 베토벤처럼, 나에게 가장 큰 약점이 오히려 강점이 될 수 있다면?','9번 교향곡을 귀가 완전히 먼 상태에서 쓴 것처럼, 나는 어떤 상상력으로 보이지 않는 것을 창조할 수 있을까?','운명 교향곡처럼 고통을 예술로 승화시킨다면, 나의 가장 힘든 경험을 어떻게 표현하고 싶은가?'],
+  };
+
+  function selectDreamCat(cat, el) {
+    currentDreamCat = cat;
+    document.getElementById('dreamCatBtns').querySelectorAll('.dream-cat-btn').forEach(b=>b.classList.remove('active'));
     el.classList.add('active');
-    const hint = document.getElementById('dreamHint');
-    hint.textContent = dreamHints[theme] || '';
-    hint.style.display = 'block';
-    document.getElementById('dreamWriteLabel').textContent = `✏️ "${theme}"에 대한 나만의 질문을 자유롭게 써보세요`;
+    const meta = dreamCatMeta[cat] || {};
+    const banner = document.getElementById('dreamCatBanner');
+    banner.style.display = 'block';
+    banner.style.background = meta.bg || 'var(--ink2)';
+    banner.style.color = 'white';
+    banner.innerHTML = meta.desc || '';
+    renderDreamModelGrid();
   }
 
-  function submitDreamAnswer() {
-    const ans = document.getElementById('dreamAnswer').value.trim();
-    const fb  = document.getElementById('dreamFeedback');
-    if (!ans) { fb.className='qplay-feedback'; fb.style.display='block'; fb.textContent='질문을 먼저 입력해주세요!'; return; }
-    const theme = document.querySelector('.qdream-theme-btn.active')?.textContent || '꿈';
-    dreamAnswers.unshift({ theme, ans, date: new Date().toLocaleDateString('ko-KR') });
-    fb.className = 'qplay-feedback success';
-    fb.style.display = 'block';
-    fb.innerHTML = `🌟 멋진 질문이에요! 이 질문이 당신의 꿈을 이끌어줄 거예요.`;
-    document.getElementById('dreamAnswer').value = '';
-    renderDreamList();
-    setTimeout(() => { fb.style.display = 'none'; }, 2500);
-  }
-
-  function renderDreamList() {
-    const el = document.getElementById('dreamList');
-    if (!dreamAnswers.length) { el.innerHTML = ''; return; }
-    el.innerHTML = dreamAnswers.map(d => `
-      <div class="qdream-item">
-        <div class="qdream-item-meta">${d.theme} · ${d.date}</div>
-        ${d.ans}
+  function renderDreamModelGrid() {
+    const models = rolemodels[currentDreamCat] || [];
+    const cardGrads = [
+      'linear-gradient(160deg,#0c4a6e,#0369a1)',
+      'linear-gradient(160deg,#4c1d95,#7c3aed)',
+      'linear-gradient(160deg,#064e3b,#047857)',
+      'linear-gradient(160deg,#7c2d12,#c2410c)',
+      'linear-gradient(160deg,#1e1b4b,#4338ca)',
+      'linear-gradient(160deg,#701a75,#a21caf)',
+    ];
+    document.getElementById('dreamModelGrid').innerHTML = models.map((m,i) => `
+      <div class="dream-model-card" style="background:${cardGrads[i%6]}" onclick="openDreamModal(${i})">
+        <div class="dream-card-bg">
+          <div class="dream-card-period-tag">${m.period}</div>
+          <div class="dream-card-emoji-big">${m.emoji}</div>
+          <div class="dream-card-name-big">${m.name}</div>
+          <div class="dream-card-nation-tag">${m.nation}</div>
+          <div class="dream-card-job-tag">${m.job}</div>
+        </div>
+        <div class="dream-card-ask-row">
+          <button class="dream-card-ask-btn-new">📝 자세히 보고 질문하기 →</button>
+        </div>
       </div>`).join('');
   }
 
-  // ── 4. 질문 북콘서트 ──
+  function openDreamModal(idx) {
+    const m = rolemodels[currentDreamCat][idx];
+    currentRolemodel = m;
+    const meta = dreamCatMeta[currentDreamCat] || { bg:'linear-gradient(135deg,#1e1b4b,#8b5cf6)' };
+    const cardGrads = ['linear-gradient(160deg,#0c4a6e,#0369a1)','linear-gradient(160deg,#4c1d95,#7c3aed)','linear-gradient(160deg,#064e3b,#047857)','linear-gradient(160deg,#7c2d12,#c2410c)','linear-gradient(160deg,#1e1b4b,#4338ca)','linear-gradient(160deg,#701a75,#a21caf)'];
+
+    // 프로필 헤더
+    document.getElementById('dreamModalProfile').style.background = cardGrads[idx%5];
+    document.getElementById('dreamModalProfile').innerHTML = `
+      <div class="dream-modal-profile-inner">
+        <div class="dream-modal-profile-emoji">${m.emoji}</div>
+        <div class="dream-modal-profile-info">
+          <div class="dream-modal-profile-name">${m.name}</div>
+          <div class="dream-modal-profile-sub">
+            <span class="dream-modal-profile-tag">${m.nation}</span>
+            <span class="dream-modal-profile-tag">${m.period}</span>
+            <span class="dream-modal-profile-tag">${m.job}</span>
+          </div>
+          <div class="dream-modal-profile-quote">${m.quote}</div>
+        </div>
+      </div>`;
+
+    // 스토리 탭
+    document.getElementById('dreamPaneStory').innerHTML = `
+      <div class="dream-story-quote">${m.quote}</div>
+      <div class="dream-story-grid">
+        <div class="dream-story-item" style="background:#eff6ff;">
+          <div class="dream-story-label" style="color:#1d4ed8;">🏆 업적</div>
+          <div class="dream-story-text">${m.achievement}</div>
+        </div>
+        <div class="dream-story-item" style="background:#f0fdf4;">
+          <div class="dream-story-label" style="color:#15803d;">💙 가치관</div>
+          <div class="dream-story-text">${m.value}</div>
+        </div>
+        <div class="dream-story-item" style="background:#fff7ed;">
+          <div class="dream-story-label" style="color:#c2410c;">💪 실패와 극복</div>
+          <div class="dream-story-text">${m.failure}</div>
+        </div>
+        <div class="dream-story-item" style="background:#faf5ff;">
+          <div class="dream-story-label" style="color:#7c3aed;">🌱 배울 점</div>
+          <div class="dream-story-text">${m.lesson}</div>
+        </div>
+      </div>`;
+
+    // 질문 탭
+    const prompts = dreamQPrompts[m.name] || [
+      `${m.name}의 가장 힘들었던 순간에 무엇이 포기하지 않게 했을까?`,
+      `${m.name}처럼 세상을 바꾸려면 나는 지금 무엇을 시작해야 할까?`,
+      `${m.name}의 삶에서 나와 가장 닮은 점은 무엇이고, 가장 다른 점은 무엇일까?`,
+    ];
+    const pColors = ['#0ea5e9','#8b5cf6','#10b981'];
+    document.getElementById('dreamPaneQuestion').querySelector('.dream-q-prompts').innerHTML =
+      prompts.map((p,i) => `
+        <div class="dream-q-prompt" onclick="fillDreamQuestion(this.querySelector('.dream-q-text-inner').textContent)">
+          <span class="dream-q-prompt-num" style="background:${pColors[i]}">Q${i+1}</span>
+          <span class="dream-q-text-inner">${p}</span>
+        </div>`).join('');
+    document.getElementById('dreamModalLabel').textContent = `✏️ ${m.name}에게 묻고 싶은 질문을 써보세요`;
+    document.getElementById('dreamModalAnswer').value = '';
+    document.getElementById('dreamModalFeedback').style.display = 'none';
+
+    // 선언문 탭
+    document.getElementById('dreamDeclareIntro').innerHTML =
+      `✨ <strong>${m.name}</strong>의 삶에서 영감을 받아 나만의 꿈 선언문을 써보세요.<br>
+      예시: "나는 ${m.name}처럼 ${m.value.split(',')[0]}하고 싶다. 왜냐하면..."`;
+    document.getElementById('dreamDeclareText').value = '';
+    document.getElementById('dreamDeclareFeedback').style.display = 'none';
+
+    switchDreamTab('story');
+    document.getElementById('dreamModalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function switchDreamTab(tab) {
+    dreamActiveTab = tab;
+    ['story','question','declare'].forEach(t => {
+      document.getElementById('dreamPane'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===tab?'block':'none';
+    });
+    document.getElementById('dmTab1').classList.toggle('active', tab==='story');
+    document.getElementById('dmTab2').classList.toggle('active', tab==='question');
+    document.getElementById('dmTab3').classList.toggle('active', tab==='declare');
+  }
+
+  function fillDreamQuestion(text) {
+    document.getElementById('dreamModalAnswer').value = text + ' ';
+    document.getElementById('dreamModalAnswer').focus();
+  }
+
+  function closeDreamModal() {
+    document.getElementById('dreamModalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function submitDreamModalAnswer() {
+    const ans = document.getElementById('dreamModalAnswer').value.trim();
+    const fb  = document.getElementById('dreamModalFeedback');
+    if (!ans) { fb.className='qplay-feedback'; fb.style.display='block'; fb.textContent='질문을 먼저 입력해주세요!'; return; }
+    const m = currentRolemodel;
+    dreamQAnswers.unshift({ name:m.name, nation:m.nation, emoji:m.emoji, ans, date:new Date().toLocaleDateString('ko-KR') });
+    fb.className='qplay-feedback success'; fb.style.display='block';
+    fb.innerHTML=`🌟 멋진 질문이에요! ${m.name}의 삶에서 깊이 탐구해볼 질문입니다.`;
+    document.getElementById('dreamModalAnswer').value='';
+    renderDreamRecords();
+    renderPortfolio();
+    setTimeout(()=>{ fb.style.display='none'; },2000);
+  }
+
+  function submitDreamDeclare() {
+    const txt = document.getElementById('dreamDeclareText').value.trim();
+    const fb  = document.getElementById('dreamDeclareFeedback');
+    if (!txt) { fb.className='qplay-feedback'; fb.style.display='block'; fb.textContent='선언문을 먼저 입력해주세요!'; return; }
+    const m = currentRolemodel;
+    dreamDeclares.unshift({ name:m.name, emoji:m.emoji, txt, date:new Date().toLocaleDateString('ko-KR') });
+    fb.className='qplay-feedback badge'; fb.style.display='block';
+    fb.innerHTML=`🌟 나만의 꿈 선언문이 기록됐어요! ${m.name}의 정신을 이어받아 꿈을 향해 나아가세요!`;
+    document.getElementById('dreamDeclareText').value='';
+    renderDreamRecords();
+    renderPortfolio();
+    setTimeout(()=>{ closeDreamModal(); },2000);
+  }
+
+  function switchDreamRec(type, el) {
+    dreamRecTab = type;
+    document.querySelectorAll('.dream-rec-tab').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('dreamQList').style.display = type==='q'?'flex':'none';
+    document.getElementById('dreamDeclareList').style.display = type==='d'?'flex':'none';
+  }
+
+  function renderDreamRecords() {
+    const sec = document.getElementById('dreamRecordSection');
+    const hasAny = dreamQAnswers.length || dreamDeclares.length;
+    sec.style.display = hasAny ? 'block' : 'none';
+
+    document.getElementById('dreamQList').innerHTML = dreamQAnswers.length
+      ? dreamQAnswers.map(d=>`
+          <div class="qdream-item">
+            <div class="qdream-item-meta">${d.emoji} ${d.name} · ${d.date}</div>
+            ${d.ans}
+          </div>`).join('')
+      : '';
+
+    document.getElementById('dreamDeclareList').innerHTML = dreamDeclares.length
+      ? dreamDeclares.map(d=>`
+          <div class="qdream-item declare">
+            <div class="qdream-item-meta">🌟 꿈 선언문 · ${d.emoji} ${d.name} · ${d.date}</div>
+            ${d.txt}
+          </div>`).join('')
+      : '';
+  }
+
+  // 초기 렌더
+  window.addEventListener('load', () => {
+    renderDreamModelGrid();
+    renderBookGrid();
+  });
+  // ── 4. 질문 북콘서트 (신버전) ──
+  const bookCatMeta = {
+    '과학·기술': { color:'#0ea5e9', bg:'linear-gradient(135deg,#0c4a6e,#0369a1)', desc:'🔬 우주·AI·수학·생명과학의 경이로움을 탐구하는 책들' },
+    '인문·철학': { color:'#8b5cf6', bg:'linear-gradient(135deg,#4c1d95,#6d28d9)', desc:'📖 인간 존재와 삶의 의미를 묻는 깊이 있는 책들' },
+    '사회·경제': { color:'#10b981', bg:'linear-gradient(135deg,#064e3b,#047857)', desc:'🌐 세상을 움직이는 구조와 경제의 원리를 다루는 책들' },
+    '예술·창작': { color:'#ec4899', bg:'linear-gradient(135deg,#831843,#be185d)', desc:'🎨 창의성과 표현의 힘을 일깨우는 책들' },
+    '환경·생태': { color:'#84cc16', bg:'linear-gradient(135deg,#1a2e05,#365314)', desc:'🌿 지구와 생명의 소중함을 일깨우는 책들' },
+    '의료·보건': { color:'#14b8a6', bg:'linear-gradient(135deg,#042f2e,#0f766e)', desc:'🏥 생명·건강·의학의 경이로움을 탐구하는 책들' },
+    '교육·심리': { color:'#f59e0b', bg:'linear-gradient(135deg,#78350f,#b45309)', desc:'🧠 배움과 마음의 비밀을 풀어주는 책들' },
+    '법·정치':   { color:'#6366f1', bg:'linear-gradient(135deg,#1e1b4b,#3730a3)', desc:'⚖️ 정의·자유·민주주의를 탐구하는 책들' },
+    '스포츠·도전':{ color:'#f43f5e', bg:'linear-gradient(135deg,#4c0519,#9f1239)', desc:'🏆 한계를 넘어 꿈을 향해 달리는 이야기들' },
+    '미디어·정보':{ color:'#f97316', bg:'linear-gradient(135deg,#431407,#9a3412)', desc:'💻 디지털 시대의 정보와 미디어를 비판적으로 읽는 법' },
+  };
+
+  const bookQTypes = [
+    { id:'factual',    icon:'🔍', label:'사실 탐구',  mission:'"이 책에서 가장 중요한 사실이나 개념은 무엇인가?" 를 묻는 질문을 써보세요.', pts:10 },
+    { id:'inferential',icon:'🧩', label:'숨은 의미',  mission:'"저자가 말하지 않았지만 숨겨진 메시지는 무엇일까?" 를 추론하는 질문을 써보세요.', pts:15 },
+    { id:'critical',   icon:'⚖️', label:'비판 탐구',  mission:'"이 책의 주장에 반론을 제기한다면?" 비판적 질문을 써보세요.', pts:20 },
+    { id:'applied',    icon:'🚀', label:'현실 연결',  mission:'"이 책의 내용을 내 삶이나 우리 사회에 적용한다면?" 을 질문해보세요.', pts:20 },
+    { id:'creative',   icon:'💡', label:'상상 질문',  mission:'"이 책의 세계관을 완전히 뒤집는다면?" 상상력 넘치는 질문을 써보세요!', pts:30 },
+  ];
+
   const bookData = {
     '과학·기술': [
-      { cover:'🔬', title:'코스모스', author:'칼 세이건', desc:'우주와 인간의 관계를 탐구하는 과학 에세이. 별에서 온 우리의 이야기.' },
-      { cover:'🤖', title:'호모 데우스', author:'유발 하라리', desc:'인공지능·생명공학 시대 인류의 미래를 탐색한다.' },
-      { cover:'⚗️', title:'페르마의 마지막 정리', author:'사이먼 싱', desc:'350년 수학 난제의 증명 여정을 통해 수학의 아름다움을 보여준다.' },
+      { cover:'🌌', title:'코스모스', author:'칼 세이건', genre:'천문학', desc:'우주의 탄생부터 인류의 미래까지, 과학적 상상력을 최대로 펼친 역대 최고의 과학 교양서.', keywords:['우주','진화','인류'], quote:'"우주는 과거에도 있었고, 현재에도 있으며, 미래에도 있을 것이다."' },
+      { cover:'🤖', title:'사피엔스', author:'유발 하라리', genre:'인류사', desc:'호모 사피엔스가 어떻게 지구를 정복했는지를 탐구하는 세계적 베스트셀러.', keywords:['인류','협력','허구'], quote:'"인간은 허구를 믿는 유일한 동물이다."' },
+      { cover:'🧬', title:'이기적 유전자', author:'리처드 도킨스', genre:'진화생물학', desc:'유전자의 눈으로 생명과 진화를 새롭게 바라보는 과학 고전.', keywords:['유전자','진화','이기심'], quote:'"우리는 유전자가 만든 생존 기계다."' },
+      { cover:'⚛️', title:'시간의 역사', author:'스티븐 호킹', genre:'물리학', desc:'블랙홀과 빅뱅, 시간의 본질을 일반인도 이해할 수 있게 쓴 과학 고전.', keywords:['시간','블랙홀','우주'], quote:'"우주를 이해하는 것이 인간의 가장 위대한 승리다."' },
+      { cover:'🔬', title:'파인만 씨 농담도 잘하시네', author:'리처드 파인만', genre:'물리학', desc:'노벨 물리학상 수상자 파인만의 유쾌하고 천재적인 삶의 이야기.', keywords:['호기심','창의','도전'], quote:'"모르는 것을 즐기는 것이 과학이다."' },
+      { cover:'🦠', title:'거의 모든 것의 역사', author:'빌 브라이슨', genre:'과학사', desc:'우주·지구·생명·인류의 역사를 흥미롭게 풀어낸 과학 교양의 결정판.', keywords:['역사','지구','생명'], quote:'"우리가 존재한다는 것 자체가 기적이다."' },
+      { cover:'🧠', title:'뇌 과학의 모든 것', author:'에릭 캔델', genre:'신경과학', desc:'기억·학습·감정을 지배하는 뇌의 비밀을 탐구하는 최고의 신경과학 입문서.', keywords:['뇌','기억','감정'], quote:'"기억이 곧 자아다."' },
+      { cover:'💡', title:'왜 세상은 존재하는가', author:'짐 홀트', genre:'과학철학', desc:'존재의 근원을 묻는 가장 근본적인 질문에 도전하는 지적 여정.', keywords:['존재','철학','우주'], quote:'"왜 아무것도 없는 대신 무언가가 있는가?"' },
+      { cover:'🚀', title:'마션', author:'앤디 위어', genre:'SF', desc:'화성에 혼자 남겨진 우주비행사의 생존 이야기. 현실 과학을 바탕으로 한 스릴 넘치는 SF.', keywords:['화성','생존','과학'], quote:'"나는 과학으로 이 문제를 해결하겠다."' },
+      { cover:'🌍', title:'총·균·쇠', author:'재레드 다이아몬드', genre:'문명사', desc:'왜 어떤 문명은 번성하고 어떤 문명은 사라졌는지를 파헤치는 퓰리처상 수상작.', keywords:['문명','환경','불평등'], quote:'"역사는 지리가 만든다."' },
     ],
     '인문·철학': [
-      { cover:'🦁', title:'소크라테스의 변명', author:'플라톤', desc:'질문으로 진리를 찾은 철학자 소크라테스의 마지막 이야기.' },
-      { cover:'🌅', title:'어린 왕자', author:'생텍쥐페리', desc:'어른들이 잊어버린 소중한 것들에 대한 철학적 동화.' },
-      { cover:'📜', title:'죽음의 수용소에서', author:'빅터 프랭클', desc:'극한의 고통 속에서도 의미를 찾는 인간 정신에 대하여.' },
+      { cover:'🌹', title:'어린 왕자', author:'생텍쥐페리', genre:'철학동화', desc:'전 세계 2억 부 이상 팔린 불멸의 고전. 어른들이 잊은 소중한 것들을 일깨운다.', keywords:['순수','관계','본질'], quote:'"가장 중요한 것은 눈에 보이지 않는다."' },
+      { cover:'🕯️', title:'죽음의 수용소에서', author:'빅터 프랭클', genre:'실존철학', desc:'나치 수용소에서 살아남은 심리학자가 발견한 삶의 의미에 관한 불굴의 이야기.', keywords:['의미','고통','자유'], quote:'"모든 것을 빼앗겨도 태도만은 빼앗길 수 없다."' },
+      { cover:'🏛️', title:'소크라테스의 변명', author:'플라톤', genre:'철학', desc:'질문으로 진리를 찾은 철학자의 최후. 서양 철학의 출발점이 된 고전 명작.', keywords:['질문','진리','죽음'], quote:'"나는 내가 아무것도 모른다는 것을 안다."' },
+      { cover:'📖', title:'데미안', author:'헤르만 헤세', genre:'성장소설', desc:'자아를 찾아가는 청소년의 내면 여정. 100년 넘게 전 세계 청소년에게 사랑받는 성장소설.', keywords:['자아','성장','각성'], quote:'"새는 알을 깨고 나온다."' },
+      { cover:'🌊', title:'월든', author:'헨리 데이비드 소로우', genre:'자연철학', desc:'숲속에 홀로 살며 단순한 삶의 진리를 찾은 2년간의 기록.', keywords:['자연','단순함','자유'], quote:'"나는 깊이 살고, 삶의 본질을 탐구하고 싶었다."' },
+      { cover:'🎭', title:'햄릿', author:'셰익스피어', genre:'희곡', desc:'사느냐 죽느냐의 질문으로 시작하는 인간 내면의 가장 깊은 탐구.', keywords:['존재','복수','광기'], quote:'"사느냐 죽느냐, 그것이 문제로다."' },
+      { cover:'🌀', title:'변신', author:'프란츠 카프카', genre:'소설', desc:'어느 날 벌레로 변한 한 남자의 이야기. 현대 사회의 소외와 가족을 날카롭게 그린다.', keywords:['소외','가족','정체성'], quote:'"나는 갑자기 낯선 존재가 되었다."' },
+      { cover:'🦅', title:'갈매기의 꿈', author:'리처드 바크', genre:'우화', desc:'한계를 넘어 더 높이 날기를 꿈꾸는 갈매기 조나단의 이야기.', keywords:['꿈','한계','자유'], quote:'"완벽함은 포기하지 않는 것이다."' },
+      { cover:'🌸', title:'채식주의자', author:'한강', genre:'소설', desc:'노벨문학상 작가 한강의 대표작. 인간의 폭력성과 저항을 그린 충격적인 소설.', keywords:['저항','폭력','자유'], quote:'"나는 더 이상 꿈을 꾸지 않겠어."' },
+      { cover:'💎', title:'82년생 김지영', author:'조남주', genre:'소설', desc:'한국 사회 여성의 삶을 담담하게 그린 100만 부 이상 팔린 베스트셀러.', keywords:['페미니즘','일상','사회'], quote:'"나는 누구인가, 나는 어디에 있는가."' },
     ],
     '사회·경제': [
-      { cover:'💰', title:'돈의 속성', author:'김승호', desc:'돈을 벌고 지키는 법보다 돈을 바라보는 올바른 시각에 대해.' },
-      { cover:'🌍', title:'총, 균, 쇠', author:'재레드 다이아몬드', desc:'인류 문명의 불평등이 생긴 이유를 환경에서 찾는다.' },
-      { cover:'📊', title:'넛지', author:'탈러·선스타인', desc:'선택 설계로 더 나은 결정을 이끄는 행동경제학 이야기.' },
+      { cover:'⚖️', title:'정의란 무엇인가', author:'마이클 샌델', genre:'정치철학', desc:'하버드 최고의 명강의. 공정과 정의에 대한 가장 쉽고 깊은 철학 탐구.', keywords:['정의','공정','공동체'], quote:'"올바른 삶이란 무엇인가?"' },
+      { cover:'💰', title:'돈의 속성', author:'김승호', genre:'경제', desc:'국내 최고의 자수성가 사업가가 들려주는 돈에 대한 철학.', keywords:['돈','가치','태도'], quote:'"돈을 존중하는 자에게 돈이 온다."' },
+      { cover:'📊', title:'넛지', author:'탈러·선스타인', genre:'행동경제학', desc:'노벨경제학상 수상 이론. 작은 설계가 어떻게 큰 변화를 만드는지 보여준다.', keywords:['선택','심리','설계'], quote:'"작은 밀침이 큰 변화를 만든다."' },
+      { cover:'🤝', title:'공정하다는 착각', author:'마이클 샌델', genre:'사회철학', desc:'능력주의가 왜 불평등을 심화시키는지를 탐구한 세계적 화제작.', keywords:['능력주의','공정','겸손'], quote:'"성공은 순전히 내 덕이 아니다."' },
+      { cover:'🌐', title:'21세기 자본', author:'토마 피케티', genre:'경제', desc:'왜 빈부 격차가 커지는지 방대한 데이터로 분석한 경제학의 혁명.', keywords:['불평등','자본','세금'], quote:'"자본은 스스로 불평등을 키운다."' },
+      { cover:'🏘️', title:'나는 왜 이 일을 하는가', author:'사이먼 사이넥', genre:'경영', desc:'"왜"에서 시작하라는 골든 서클 이론. 삶의 목적을 찾는 청소년에게 강력 추천.', keywords:['목적','리더십','동기'], quote:'"사람들은 당신이 무엇을 하는지가 아니라 왜 하는지에 끌린다."' },
+      { cover:'📈', title:'부자 아빠 가난한 아빠', author:'로버트 기요사키', genre:'재테크', desc:'전 세계 4000만 부 판매. 돈이 일하게 만드는 법을 청소년도 이해할 수 있게 쓴 책.', keywords:['자산','부자','교육'], quote:'"학교는 돈을 버는 법을 가르치지 않는다."' },
+      { cover:'🌱', title:'트렌드 코리아', author:'김난도 외', genre:'트렌드', desc:'매년 출간되는 한국 사회 트렌드 분석서. 청소년도 세상의 흐름을 읽을 수 있다.', keywords:['트렌드','사회','미래'], quote:'"시대를 읽는 자가 기회를 잡는다."' },
+      { cover:'🔑', title:'설득의 심리학', author:'로버트 치알디니', genre:'심리학', desc:'왜 사람들은 설득당하는가. 사회적 영향력의 법칙을 밝힌 세계적 베스트셀러.', keywords:['설득','심리','관계'], quote:'"사람을 움직이는 6가지 법칙이 있다."' },
+      { cover:'🌍', title:'왜 세계의 절반은 굶주리는가', author:'장 지글러', genre:'인권', desc:'세계 식량 문제와 불평등을 고발하는 아버지와 아들의 대화 형식 책. 청소년 필독서.', keywords:['기아','불평등','인권'], quote:'"굶주림은 자연재해가 아니라 인재다."' },
     ],
     '예술·창작': [
-      { cover:'🎨', title:'예술가여, 이것이 두렵지 않은가', author:'줄리아 카메론', desc:'창의성을 되찾고 예술적 자아를 발견하는 12주 여정.' },
-      { cover:'✍️', title:'글쓰기의 감각', author:'스티븐 킹', desc:'이야기를 만드는 힘과 작가로 사는 삶에 대한 회고.' },
-      { cover:'🎭', title:'연금술사', author:'파울로 코엘료', desc:'꿈을 향해 나아가는 용기에 대한 우화적 소설.' },
+      { cover:'✍️', title:'글쓰기의 감각', author:'스티븐 킹', genre:'글쓰기', desc:'공포소설의 대가 스티븐 킹이 직접 쓴 창작의 비밀. 모든 글 쓰는 사람의 필독서.', keywords:['글쓰기','창의','이야기'], quote:'"많이 읽고 많이 써라. 그것이 전부다."' },
+      { cover:'🌟', title:'연금술사', author:'파울로 코엘료', genre:'우화소설', desc:'전 세계 6500만 부 판매. 꿈을 향해 나아가는 용기를 주는 세기의 우화.', keywords:['꿈','여행','징조'], quote:'"온 우주가 너의 꿈이 이루어지도록 돕는다."' },
+      { cover:'🎨', title:'아티스트 웨이', author:'줄리아 카메론', genre:'창작', desc:'막혀있던 창의성을 되찾는 12주 프로그램. 전 세계 500만 명이 경험한 창작의 기적.', keywords:['창의성','두려움','회복'], quote:'"창의성은 선택이 아니라 본능이다."' },
+      { cover:'🖼️', title:'빈센트가 사랑한 그림', author:'빈센트 반 고흐', genre:'예술', desc:'불꽃 같은 삶을 산 천재 화가 고흐의 편지와 작품으로 만나는 예술의 열정.', keywords:['열정','고독','색채'], quote:'"나는 더 나은 그림을 위해 미쳐간다."' },
+      { cover:'📸', title:'사진의 미래', author:'수잔 손태그', genre:'사진론', desc:'이미지가 어떻게 세상을 바꾸는지 탐구한 미디어 비평의 고전.', keywords:['이미지','현실','예술'], quote:'"사진 한 장이 천 마디 말보다 강하다."' },
+      { cover:'🎵', title:'음악은 왜 우리를 행복하게 하는가', author:'스테판 코엘슈', genre:'음악', desc:'음악이 뇌와 감정에 미치는 영향을 뇌과학으로 탐구한 흥미로운 책.', keywords:['음악','뇌','감정'], quote:'"음악은 인간만이 가진 선물이다."' },
+      { cover:'🎬', title:'영화란 무엇인가', author:'앙드레 바쟁', genre:'영화', desc:'영화 비평의 아버지가 쓴 영화 예술의 본질에 대한 불멸의 고전.', keywords:['영화','리얼리즘','예술'], quote:'"영화는 현실의 창이다."' },
+      { cover:'📚', title:'위대한 개츠비', author:'F. 스콧 피츠제럴드', genre:'소설', desc:'아메리칸 드림의 허상을 그린 20세기 최고의 소설. 화려함 뒤 공허함을 탐구한다.', keywords:['꿈','허상','욕망'], quote:'"우리는 계속 앞으로 나아간다. 조류에 맞서며."' },
+      { cover:'🌈', title:'색채를 들고 달리는 여자', author:'베르나르 베르베르', genre:'SF소설', desc:'독창적인 상상력으로 인간의 본질을 탐구하는 프랑스 최고의 이야기꾼.', keywords:['상상력','독창성','인간'], quote:'"가장 멀리 가는 사람은 가장 멀리 상상하는 사람이다."' },
+      { cover:'🎭', title:'나는 배우다', author:'김혜자', genre:'에세이', desc:'국민 배우 김혜자가 들려주는 삶과 연기, 예술에 대한 진솔한 이야기.', keywords:['연기','삶','진심'], quote:'"진짜 연기는 삶에서 나온다."' },
     ],
     '환경·생태': [
-      { cover:'🌿', title:'침묵의 봄', author:'레이첼 카슨', desc:'살충제가 생태계를 파괴한다는 사실을 세상에 알린 환경 고전.' },
-      { cover:'🌊', title:'바다가 보이는 교실', author:'이완', desc:'바다 생태계와 인간의 관계를 탐구하는 생태 에세이.' },
-      { cover:'♻️', title:'두 번째 지구는 없다', author:'타일러 라쉬', desc:'기후위기 시대 청소년이 알아야 할 환경 행동 안내서.' },
+      { cover:'🌿', title:'침묵의 봄', author:'레이첼 카슨', genre:'환경', desc:'현대 환경운동의 시작을 알린 불후의 고전. DDT 사용을 금지시킨 책.', keywords:['살충제','생태계','경고'], quote:'"자연은 침묵을 강요받고 있다."' },
+      { cover:'🌍', title:'두 번째 지구는 없다', author:'타일러 라쉬', genre:'기후', desc:'외국인이 바라본 한국의 환경 문제와 기후위기 해결책을 제시한 베스트셀러.', keywords:['기후','행동','청소년'], quote:'"우리에게 플랜 B는 없다."' },
+      { cover:'🌱', title:'나무를 심은 사람', author:'장 지오노', genre:'생태', desc:'평생 나무를 심으며 황무지를 숲으로 바꾼 한 남자의 감동적인 이야기.', keywords:['나무','희망','헌신'], quote:'"한 사람이 세상을 바꿀 수 있다."' },
+      { cover:'🐾', title:'동물농장', author:'조지 오웰', genre:'우화소설', desc:'동물을 통해 권력과 부패를 풍자한 20세기 최고의 우화. 사회 비판의 교과서.', keywords:['권력','평등','부패'], quote:'"모든 동물은 평등하다. 하지만 어떤 동물은 더 평등하다."' },
+      { cover:'🦁', title:'사자와 마녀와 옷장', author:'C.S. 루이스', genre:'판타지', desc:'자연의 경이로움과 선악의 싸움을 담은 전 세계 어린이·청소년 필독 판타지.', keywords:['자연','선악','용기'], quote:'"용기는 두려움이 없는 것이 아니라 두려움에도 나아가는 것이다."' },
+      { cover:'🌊', title:'고래와 나', author:'최재천', genre:'생태', desc:'세계적 생물학자가 들려주는 자연과 인간의 공존에 관한 따뜻한 이야기.', keywords:['생태','공존','경이'], quote:'"우리는 자연의 일부다."' },
+      { cover:'☀️', title:'기후 변화 쫌 아는 10대', author:'최원형', genre:'기후교육', desc:'청소년을 위한 기후 변화 입문서. 쉽고 명확하게 기후 위기를 설명한다.', keywords:['기후위기','탄소','미래'], quote:'"지금 행동하지 않으면 내일은 없다."' },
+      { cover:'🍃', title:'숲은 고요하지 않다', author:'페터 볼레벤', genre:'식물학', desc:'나무가 서로 대화하고 협력한다는 사실을 밝힌 경이로운 자연 관찰 베스트셀러.', keywords:['나무','소통','생태'], quote:'"나무도 느끼고, 기억하고, 돕는다."' },
+      { cover:'♻️', title:'나는 쓰레기 없이 산다', author:'비 존슨', genre:'환경실천', desc:'제로 웨이스트 삶의 선구자가 들려주는 쓰레기 없이 사는 구체적인 방법.', keywords:['쓰레기','미니멀','실천'], quote:'"덜 쓰는 것이 더 많이 사는 것이다."' },
+      { cover:'🌸', title:'동물들의 위대한 여행', author:'데이비드 조지 해스켈', genre:'자연', desc:'나무 한 그루 주변의 생태계를 1년간 관찰한 퓰리처상 후보 자연 에세이.', keywords:['관찰','생태','경이'], quote:'"가장 작은 것에서 가장 큰 세계가 펼쳐진다."' },
     ],
     '의료·보건': [
-      { cover:'🧬', title:'이기적 유전자', author:'리처드 도킨스', desc:'유전자의 관점에서 생명과 진화를 새롭게 바라본다.' },
-      { cover:'🧠', title:'뇌과학의 모든 것', author:'에릭 캔델', desc:'기억·학습·감정의 신경과학적 원리를 탐구한다.' },
-      { cover:'💊', title:'아픔이 길이 되려면', author:'김승섭', desc:'사회적 불평등과 건강의 관계를 밝히는 사회역학 이야기.' },
+      { cover:'🧠', title:'정신과 의사의 뇌 이야기', author:'정재승', genre:'뇌과학', desc:'우리나라 최고의 뇌과학자가 들려주는 뇌의 신비. 청소년도 쉽게 읽을 수 있는 뇌과학 입문서.', keywords:['뇌','의식','행동'], quote:'"당신의 모든 결정은 뇌가 내린다."' },
+      { cover:'😴', title:'우리는 왜 잠을 자야 할까', author:'매슈 워커', genre:'수면의학', desc:'잠의 놀라운 비밀과 수면 부족이 가져오는 위험을 과학적으로 탐구한 세계적 베스트셀러.', keywords:['수면','건강','뇌'], quote:'"수면은 삶의 사치가 아니라 필수다."' },
+      { cover:'🏃', title:'운동의 뇌과학', author:'웬디 스즈키', genre:'운동의학', desc:'운동이 어떻게 뇌를 바꾸고 삶을 변화시키는지 탐구한 과학적 연구서.', keywords:['운동','뇌','집중력'], quote:'"운동은 뇌를 위한 최고의 약이다."' },
+      { cover:'🍎', title:'음식의 역습', author:'마이클 폴란', genre:'식품', desc:'"먹되 너무 많이 먹지 말고 주로 채소를 먹어라." 현대인의 식습관을 바꾼 베스트셀러.', keywords:['음식','건강','자연'], quote:'"당신이 먹는 것이 당신이다."' },
+      { cover:'💊', title:'아픔이 길이 되려면', author:'김승섭', genre:'사회역학', desc:'사회적 불평등이 어떻게 건강에 영향을 미치는지 밝히는 사회역학의 명저.', keywords:['불평등','건강','차별'], quote:'"아픔에는 사회적 원인이 있다."' },
+      { cover:'🧬', title:'유전자의 내밀한 역사', author:'싯다르타 무케르지', genre:'유전학', desc:'퓰리처상 수상. 유전자 과학의 역사와 미래를 담은 청소년도 읽을 수 있는 명저.', keywords:['유전자','역사','미래'], quote:'"유전자는 운명이 아니라 가능성이다."' },
+      { cover:'🌿', title:'내 몸 사용설명서', author:'마이클 로이젠·메멧 오즈', genre:'건강', desc:'청소년부터 어른까지 쉽게 읽을 수 있는 건강 관리의 모든 것.', keywords:['건강','습관','몸'], quote:'"몸은 관리받을 때 가장 잘 작동한다."' },
+      { cover:'🔬', title:'세균과의 전쟁', author:'마틴 블레이저', genre:'미생물학', desc:'항생제 남용이 우리 몸의 미생물 생태계를 어떻게 파괴하는지 경고한다.', keywords:['미생물','항생제','면역'], quote:'"우리 몸에는 우리보다 더 많은 세균이 산다."' },
+      { cover:'🩺', title:'의사는 왜 거짓말을 하는가', author:'폴 칼라니티', genre:'의학', desc:'31세에 폐암 선고를 받은 의사가 쓴 삶과 죽음에 관한 감동적인 성찰.', keywords:['죽음','삶','의미'], quote:'"죽음을 알 때 비로소 삶이 보인다."' },
+      { cover:'💙', title:'정신건강 쫌 아는 10대', author:'하지현', genre:'청소년 심리', desc:'청소년의 불안·우울·자존감 문제를 정신건강 전문의가 쉽게 설명한다.', keywords:['불안','자존감','마음'], quote:'"감정은 다스리는 것이 아니라 이해하는 것이다."' },
     ],
     '교육·심리': [
-      { cover:'🧒', title:'성장 마인드셋', author:'캐럴 드웩', desc:'재능보다 노력을 믿는 마음이 성공을 만든다는 심리학.' },
-      { cover:'💡', title:'몰입의 즐거움', author:'미하이 칙센트미하이', desc:'최적 경험 상태 "몰입"이 삶을 어떻게 바꾸는가.' },
-      { cover:'🤝', title:'공감의 시대', author:'제레미 리프킨', desc:'공감 능력의 진화와 더불어 사는 삶의 가능성을 탐구.' },
+      { cover:'🌱', title:'성장 마인드셋', author:'캐럴 드웩', genre:'심리학', desc:'재능보다 노력이 중요하다는 심리학 연구. 전 세계 교육 혁신의 출발점이 된 명저.', keywords:['노력','성장','가능성'], quote:'"아직"이라는 두 글자가 삶을 바꾼다.' },
+      { cover:'💪', title:'그릿', author:'앤절라 더크워스', genre:'심리학', desc:'왜 재능보다 열정과 끈기가 더 중요한가. 성공의 비밀을 밝힌 세계적 베스트셀러.', keywords:['끈기','열정','성공'], quote:'"재능은 노력 앞에 패한다."' },
+      { cover:'🌊', title:'몰입의 즐거움', author:'미하이 칙센트미하이', genre:'긍정심리학', desc:'"몰입(flow)" 개념을 처음 제시한 명저. 어떻게 하면 최고의 경험을 할 수 있는지 알려준다.', keywords:['몰입','행복','창의'], quote:'"최고의 순간은 노력 없이 오지 않는다."' },
+      { cover:'🎯', title:'1만 시간의 법칙', author:'말콤 글래드웰', genre:'심리학', desc:'전문가가 되기 위해 필요한 조건을 탐구. 아웃라이어라 불리는 성공자들의 비밀.', keywords:['연습','전문성','기회'], quote:'"천재는 타고나는 것이 아니라 만들어진다."' },
+      { cover:'🧒', title:'10대를 위한 완벽한 진로 공부법', author:'한국진로교육학회', genre:'진로', desc:'청소년이 스스로 진로를 탐색하고 설계할 수 있는 실용적인 가이드.', keywords:['진로','자기이해','미래'], quote:'"나를 아는 것이 진로의 시작이다."' },
+      { cover:'🔑', title:'자기 혁명', author:'김미경', genre:'자기계발', desc:'대한민국 최고의 동기부여 강사가 들려주는 꿈을 실현하는 방법.', keywords:['꿈','실천','도전'], quote:'"꿈은 이루어진다. 단, 준비한 사람에게."' },
+      { cover:'🌙', title:'불안을 다스리는 법', author:'베셀 반 데어 콜크', genre:'심리치료', desc:'트라우마가 몸과 마음에 미치는 영향과 치유의 방법을 탐구한 심리학 명저.', keywords:['불안','치유','몸'], quote:'"몸은 마음의 기억을 저장한다."' },
+      { cover:'🤝', title:'관계를 읽는 시간', author:'문요한', genre:'관계심리', desc:'인간관계의 심리학을 청소년도 이해할 수 있게 풀어낸 국내 베스트셀러.', keywords:['관계','소통','자존감'], quote:'"좋은 관계는 좋은 나로부터 시작된다."' },
+      { cover:'📚', title:'공부란 무엇인가', author:'김영민', genre:'교육철학', desc:'서울대 교수가 쓴 공부의 본질에 관한 인문학적 성찰. 청소년에게 공부의 의미를 일깨운다.', keywords:['공부','의미','인문학'], quote:'"공부는 나를 더 나은 사람으로 만드는 것이다."' },
+      { cover:'💡', title:'생각하는 10대를 위한 철학 에세이', author:'마르틴 코헨', genre:'철학', desc:'10대가 스스로 생각하는 힘을 기를 수 있는 철학적 질문들로 가득 찬 책.', keywords:['철학','생각','질문'], quote:'"묻는 것이 배움의 시작이다."' },
     ],
     '법·정치': [
-      { cover:'⚖️', title:'정의란 무엇인가', author:'마이클 샌델', desc:'공리주의·자유주의·덕 윤리학으로 정의를 다각도로 논한다.' },
-      { cover:'🗳️', title:'민주주의란 무엇인가', author:'로버트 달', desc:'민주주의의 이상과 현실, 그리고 미래를 탐구한다.' },
-      { cover:'📰', title:'한나 아렌트의 생각', author:'한나 아렌트', desc:'전체주의의 기원과 인간의 조건을 날카롭게 분석한다.' },
+      { cover:'🌐', title:'국가란 무엇인가', author:'유시민', genre:'정치', desc:'대한민국 최고의 글쟁이 유시민이 쓴 국가와 민주주의에 대한 명쾌한 해설서.', keywords:['국가','민주','시민'], quote:'"좋은 국가는 좋은 시민이 만든다."' },
+      { cover:'📜', title:'헌법의 상상력', author:'성낙인', genre:'법학', desc:'청소년도 이해할 수 있는 대한민국 헌법 해설서. 헌법이 우리 삶에 미치는 영향을 알려준다.', keywords:['헌법','권리','민주'], quote:'"헌법은 국민의 약속이다."' },
+      { cover:'🤜', title:'시민 불복종', author:'헨리 데이비드 소로우', genre:'정치철학', desc:'불의한 법에 저항하는 시민의 의무를 탐구. 간디와 마틴 루터 킹에게 영감을 준 고전.', keywords:['저항','양심','용기'], quote:'"불의한 법을 따르는 것이 더 큰 죄다."' },
+      { cover:'🗳️', title:'민주주의는 어떻게 무너지는가', author:'스티븐 레비츠키·루칸 웨이', genre:'정치학', desc:'현대 민주주의의 위기를 분석한 세계적 화제작. 민주주의의 소중함을 일깨운다.', keywords:['민주주의','독재','경고'], quote:'"민주주의는 하루아침에 무너지지 않는다."' },
+      { cover:'⚖️', title:'정의란 무엇인가', author:'마이클 샌델', genre:'정치철학', desc:'하버드 최고의 강의록. 정의와 공정에 대한 가장 치열한 철학적 탐구.', keywords:['정의','공정','도덕'], quote:'"정의는 개인의 문제가 아니라 공동체의 문제다."' },
+      { cover:'📰', title:'팩트체크', author:'뉴스타파', genre:'저널리즘', desc:'가짜 뉴스가 넘치는 시대, 진실을 찾는 방법을 가르쳐주는 미디어 리터러시 가이드.', keywords:['팩트체크','언론','진실'], quote:'"진실은 저절로 밝혀지지 않는다."' },
+      { cover:'🌍', title:'총과 폭탄보다 강한 것', author:'필립 짐바르도', genre:'심리학', desc:'스탠퍼드 감옥 실험을 통해 인간의 악과 선의 경계를 탐구한 심리학 명저.', keywords:['권력','악','상황'], quote:'"악은 특별한 사람이 하는 게 아니다."' },
+      { cover:'🏛️', title:'법 앞에서', author:'프란츠 카프카', genre:'소설', desc:'거대한 법 체계 앞에 무력한 개인의 이야기. 법과 권력의 부조리를 날카롭게 그린다.', keywords:['법','권력','부조리'], quote:'"법은 때로 인간을 보호하지 않는다."' },
+      { cover:'👥', title:'우리는 왜 극단적이 되는가', author:'캐스 선스타인', genre:'사회심리', desc:'집단 극화 현상을 분석한 책. 왜 사람들이 점점 극단적으로 변하는지를 설명한다.', keywords:['극단주의','여론','민주주의'], quote:'"집단은 개인보다 더 극단적이 된다."' },
+      { cover:'🌱', title:'10대를 위한 세계 인권 선언', author:'유니세프', genre:'인권', desc:'세계 인권 선언의 내용을 청소년이 이해하기 쉽게 해설한 필독서.', keywords:['인권','평등','자유'], quote:'"모든 인간은 태어날 때부터 자유롭고 평등하다."' },
     ],
-    '스포츠·체육': [
-      { cover:'🏃', title:'달리기를 말할 때 내가 하고 싶은 이야기', author:'무라카미 하루키', desc:'달리기를 통해 배운 삶의 철학을 담담하게 풀어낸다.' },
-      { cover:'⚽', title:'축구화를 신은 소크라테스', author:'세바스티앙 로슈', desc:'스포츠와 철학, 승리와 의미를 연결하는 독특한 에세이.' },
-      { cover:'🏊', title:'수영하는 사람', author:'린 콕스', desc:'극한의 수영에 도전하며 한계를 넘는 인간 의지의 이야기.' },
+    '스포츠·도전': [
+      { cover:'🏃', title:'달리기를 말할 때 내가 하고 싶은 이야기', author:'무라카미 하루키', genre:'에세이', desc:'베스트셀러 작가 하루키가 달리기를 통해 발견한 삶의 철학.', keywords:['달리기','인내','고독'], quote:'"달리는 것은 살아가는 것이다."' },
+      { cover:'⚽', title:'나는 꽉 찬 삶을 살기로 했다', author:'박지성', genre:'자서전', desc:'맨유의 전설 박지성이 들려주는 포기하지 않는 삶의 이야기. 청소년 필독 자서전.', keywords:['도전','포기','성장'], quote:'"내 발의 두 번째 엄지는 없지만 꿈은 있다."' },
+      { cover:'🏊', title:'다시 한번 해봐', author:'박태환', genre:'자서전', desc:'올림픽 금메달리스트 박태환이 도핑 파동을 딛고 다시 일어선 재기의 이야기.', keywords:['재기','용기','포기않기'], quote:'"포기하지 않는 한 끝난 것이 아니다."' },
+      { cover:'🥊', title:'가장 위대한 선수', author:'무하마드 알리', genre:'스포츠', desc:'불가능을 넘어선 권투 챔피언의 삶과 신념. 스포츠를 넘어 인권 운동의 상징.', keywords:['자신감','신념','저항'], quote:'"불가능은 아무것도 아니다."' },
+      { cover:'🏔️', title:'에베레스트 베이스캠프까지', author:'이소선', genre:'도전', desc:'일반인이 에베레스트 베이스캠프에 도전하는 이야기. 꿈을 향한 도전의 감동.', keywords:['도전','목표','포기'], quote:'"정상이 아니어도 괜찮다. 나아가는 것이 중요하다."' },
+      { cover:'💪', title:'멈추지 마, 다시 한번 해봐', author:'김연아', genre:'자서전', desc:'피겨 여왕 김연아의 성장과 도전을 담은 청소년 필독 자서전.', keywords:['완벽','노력','성장'], quote:'"연습이 완벽을 만든다."' },
+      { cover:'🎯', title:'그릿: 스포츠 편', author:'앤절라 더크워스', genre:'스포츠심리', desc:'세계 최고 스포츠 선수들의 정신력을 분석한 스포츠 심리학의 정수.', keywords:['끈기','정신력','훈련'], quote:'"재능은 출발점일 뿐이다."' },
+      { cover:'🏅', title:'올림픽 이야기', author:'데이비드 왈레친스키', genre:'스포츠역사', desc:'올림픽을 통해 본 인류의 도전과 평화의 이야기. 감동적인 에피소드로 가득하다.', keywords:['올림픽','평화','도전'], quote:'"참가하는 것이 이기는 것보다 중요하다."' },
+      { cover:'🚴', title:'투르 드 프랑스', author:'랜스 암스트롱', genre:'스포츠', desc:'암을 극복하고 세계 최고의 자전거 경주를 7번 제패한 불굴의 이야기.', keywords:['극복','암','도전'], quote:'"암이 나를 더 강하게 만들었다."' },
+      { cover:'🌟', title:'손흥민: 아버지의 축구 교실', author:'손웅정', genre:'자서전', desc:'손흥민을 세계적 선수로 키운 아버지 손웅정이 들려주는 진짜 교육 이야기.', keywords:['교육','기본기','꿈'], quote:'"기본을 완벽히 하면 응용은 저절로 된다."' },
     ],
     '미디어·정보': [
-      { cover:'📱', title:'필터 버블', author:'엘리 프레이저', desc:'알고리즘이 우리의 세계관을 어떻게 좁히는지 분석한다.' },
-      { cover:'💻', title:'인터넷이 우리를 바보로 만드는가', author:'니컬러스 카', desc:'디지털 미디어가 사고방식에 미치는 영향을 탐구한다.' },
-      { cover:'📡', title:'구글은 어떻게 일하는가', author:'슈미트·로젠버그', desc:'혁신 기업의 문화와 사고방식을 통해 미래를 배운다.' },
+      { cover:'📱', title:'필터 버블', author:'엘리 프레이저', genre:'미디어', desc:'SNS 알고리즘이 우리의 세계관을 좁히고 있다는 충격적인 분석. 필독 미디어 교양서.', keywords:['알고리즘','편향','다양성'], quote:'"우리는 보고 싶은 것만 보도록 설계됐다."' },
+      { cover:'🔍', title:'팩트풀니스', author:'한스 로슬링', genre:'통계', desc:'데이터로 세상을 올바르게 바라보는 법. 우리의 편견과 오해를 바로잡는 세계적 베스트셀러.', keywords:['데이터','편견','진실'], quote:'"세상은 우리 생각보다 훨씬 나아지고 있다."' },
+      { cover:'🧠', title:'생각하지 않는 사람들', author:'니컬러스 카', genre:'미디어', desc:'인터넷이 우리의 사고방식을 어떻게 바꾸는지 탐구한 퓰리처상 후보작.', keywords:['인터넷','집중력','뇌'], quote:'"구글은 우리를 편리하게 만들었지만 깊이 생각하는 능력을 앗아갔다."' },
+      { cover:'📸', title:'미디어의 이해', author:'마셜 맥루한', genre:'미디어이론', desc:'"미디어는 메시지다"라는 말로 유명한 미디어 이론의 고전. 현대 디지털 사회를 예견했다.', keywords:['미디어','메시지','기술'], quote:'"미디어는 메시지다."' },
+      { cover:'🤖', title:'AI 2041', author:'카이푸 리', genre:'AI', desc:'AI 전문가가 쓴 2041년의 세상. 소설 형식으로 AI 미래를 생생하게 그려낸다.', keywords:['AI','미래','직업'], quote:'"AI는 우리 삶을 근본적으로 바꿀 것이다."' },
+      { cover:'💬', title:'클릭을 멈춰라', author:'나이르 이얄', genre:'디지털웰빙', desc:'스마트폰과 SNS에 중독된 현대인을 위한 디지털 디톡스 가이드.', keywords:['중독','집중력','디톡스'], quote:'"당신의 시간은 당신의 것이어야 한다."' },
+      { cover:'🌐', title:'유튜브는 어떻게 세상을 바꾸는가', author:'크리스 스토켈-워커', genre:'미디어', desc:'유튜브가 문화·정치·경제에 미치는 영향을 분석한 최신 미디어 탐구서.', keywords:['유튜브','크리에이터','영향력'], quote:'"모든 사람이 방송국을 가질 수 있다."' },
+      { cover:'🔐', title:'10대를 위한 사이버 보안', author:'김홍선', genre:'보안', desc:'청소년이 알아야 할 개인정보 보호와 사이버 안전의 모든 것.', keywords:['보안','개인정보','해킹'], quote:'"디지털 세상에서 나를 지키는 법을 알아야 한다."' },
+      { cover:'📰', title:'저널리즘이란 무엇인가', author:'빌 코바치·톰 로젠스탈', genre:'저널리즘', desc:'진짜 뉴스와 가짜 뉴스를 구별하는 법. 언론의 본질을 탐구한 미디어 교양서.', keywords:['언론','진실','비판적사고'], quote:'"진실에 충성하는 것이 저널리즘의 첫 번째 의무다."' },
+      { cover:'🌟', title:'나는 소셜미디어 없이 살기로 했다', author:'칼 뉴포트', genre:'디지털미니멀', desc:'SNS를 끊고 더 깊고 의미 있는 삶을 사는 법을 제안하는 화제의 책.', keywords:['소셜미디어','집중','삶'], quote:'"연결이 많을수록 외로워지는 역설을 깨라."' },
     ],
   };
+
   let currentBookCat = '과학·기술';
   let currentBook = null;
+  let currentBookIdx = null;
+  let bookQType = 'factual';
+  let bookRecords = []; // { title, type, q, date }
+  let bookStats = { read: new Set(), total: 0 };
 
   function selectBookCat(cat, el) {
     currentBookCat = cat;
-    document.getElementById('bookCategoryBtns').querySelectorAll('.qbook-cat-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('bookCategoryBtns').querySelectorAll('.book-cat-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
+    const meta = bookCatMeta[cat] || {};
+    const desc = document.getElementById('bookCatDesc');
+    desc.style.display = 'block';
+    desc.style.background = meta.bg || 'var(--ink2)';
+    desc.style.color = 'white';
+    desc.textContent = meta.desc || '';
     renderBookGrid();
   }
 
   function renderBookGrid() {
     const books = bookData[currentBookCat] || [];
-    document.getElementById('bookGrid').innerHTML = books.map((b,i) => `
-      <div class="qbook-card">
-        <div class="qbook-card-cover">${b.cover}</div>
-        <div class="qbook-card-title">${b.title}</div>
-        <div class="qbook-card-author">✍️ ${b.author}</div>
-        <div class="qbook-card-desc">${b.desc}</div>
-        <button class="qbook-ask-btn" onclick="openBookModal(${i})">📝 질문하기</button>
-      </div>`).join('');
+    const meta = bookCatMeta[currentBookCat] || { color:'#0ea5e9' };
+    document.getElementById('bookGrid').innerHTML = books.map((b,i) => {
+      const questioned = bookRecords.some(r => r.title === b.title);
+      return `
+        <div class="book-card${questioned?' questioned':''}" style="--bcc:${meta.color}" onclick="openBookModal(${i})">
+          <div class="book-card-spine"></div>
+          <div class="book-card-body">
+            <div class="book-card-cover-emoji">${b.cover}</div>
+            <div class="book-card-badge">${b.genre}</div>
+            <div class="book-card-title">${b.title}</div>
+            <div class="book-card-author">${b.author}</div>
+            ${questioned ? '<div class="book-card-read-mark">✅ 질문 완료</div>' : ''}
+          </div>
+          <div class="book-card-footer">
+            <button class="book-card-ask-btn">📝 질문하기</button>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   function openBookModal(idx) {
     const b = bookData[currentBookCat][idx];
     currentBook = b;
-    document.getElementById('bookModalContent').innerHTML = `
-      <div class="qbook-modal-header">
-        <div class="qbook-modal-cover">${b.cover}</div>
-        <div class="qbook-modal-info">
-          <h3>${b.title}</h3>
-          <p>✍️ ${b.author}</p>
-          <p style="margin-top:8px;">${b.desc}</p>
+    currentBookIdx = idx;
+    bookQType = 'factual';
+    const meta = bookCatMeta[currentBookCat] || { bg:'linear-gradient(135deg,#0c4a6e,#0369a1)' };
+
+    // 헤더
+    document.getElementById('bookModalHeader').style.background = meta.bg;
+    document.getElementById('bookModalHeader').innerHTML = `
+      <div class="book-modal-header-inner">
+        <div class="book-modal-cover-big">${b.cover}</div>
+        <div class="book-modal-info">
+          <div class="book-modal-title">${b.title}</div>
+          <div class="book-modal-author">✍️ ${b.author}</div>
+          <div class="book-modal-tags">
+            <span class="book-modal-tag">${b.genre}</span>
+            ${b.keywords.map(k=>`<span class="book-modal-tag">#${k}</span>`).join('')}
+          </div>
         </div>
       </div>`;
+
+    // 소개 탭
+    document.getElementById('bookPaneInfo').innerHTML = `
+      <div class="book-info-desc">${b.desc}</div>
+      <div class="book-info-keywords">
+        ${b.keywords.map(k=>`<span class="book-info-keyword">#${k}</span>`).join('')}
+      </div>
+      <div class="book-info-quotes">
+        <div class="book-info-quote">${b.quote}</div>
+      </div>`;
+
+    // 질문 유형 탭 렌더
+    renderBookQTypes();
     document.getElementById('bookAnswer').value = '';
     document.getElementById('bookFeedback').style.display = 'none';
+
+    // 기록 탭
+    renderBookRecordPane();
+
+    switchBookTab('info');
     document.getElementById('bookModalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
+  }
+
+  function renderBookQTypes() {
+    document.getElementById('bookQTypeRow').innerHTML = bookQTypes.map(t => `
+      <button class="book-q-type-btn${bookQType===t.id?' active':''}" onclick="selectBookQType('${t.id}')">${t.icon} ${t.label}</button>`).join('');
+    updateBookQMission();
+  }
+
+  function selectBookQType(id) {
+    bookQType = id;
+    renderBookQTypes();
+  }
+
+  function updateBookQMission() {
+    const t = bookQTypes.find(x=>x.id===bookQType);
+    if (t) document.getElementById('bookQMission').innerHTML = `<span style="font-size:18px">${t.icon}</span> <strong>[${t.label}]</strong> ${t.mission}`;
+  }
+
+  function switchBookTab(tab) {
+    ['info','question','record'].forEach(t => {
+      document.getElementById('bookPane'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===tab?'block':'none';
+    });
+    document.getElementById('bmTab1').classList.toggle('active', tab==='info');
+    document.getElementById('bmTab2').classList.toggle('active', tab==='question');
+    document.getElementById('bmTab3').classList.toggle('active', tab==='record');
+  }
+
+  function renderBookRecordPane() {
+    const myRecords = bookRecords.filter(r => r.title === currentBook?.title);
+    const el = document.getElementById('bookRecordList');
+    el.innerHTML = myRecords.length
+      ? myRecords.map(r=>`
+          <div class="book-record-item">
+            <div class="book-record-type">${r.type}</div>
+            <div class="book-record-q">${r.q}</div>
+            <div class="book-record-meta">${r.date}</div>
+          </div>`).join('')
+      : '<div style="text-align:center;padding:32px;color:#94a3b8;font-size:14px;">아직 이 책에 대한 질문이 없어요.<br>질문하기 탭에서 첫 질문을 써보세요!</div>';
   }
 
   function closeBookModal() {
@@ -3827,9 +4908,40 @@
     const ans = document.getElementById('bookAnswer').value.trim();
     const fb  = document.getElementById('bookFeedback');
     if (!ans) { fb.className='qplay-feedback'; fb.style.display='block'; fb.textContent='질문을 먼저 입력해주세요!'; return; }
-    fb.className = 'qplay-feedback success';
-    fb.style.display = 'block';
-    fb.innerHTML = `📚 훌륭한 질문이에요!<br><em>"${currentBook?.title}"</em>을 더 깊이 탐구해 보세요.`;
+    const t = bookQTypes.find(x=>x.id===bookQType);
+    const record = { title: currentBook.title, cover: currentBook.cover, type: `${t.icon} ${t.label}`, q: ans, date: new Date().toLocaleDateString('ko-KR') };
+    bookRecords.unshift(record);
+    bookStats.read.add(currentBook.title);
+    bookStats.total++;
+    fb.className='qplay-feedback badge'; fb.style.display='block';
+    fb.innerHTML=`📚 [${t.label}] 질문 기록 완료! +${t.pts}점<br><em>"${currentBook.title}"</em>에 대한 훌륭한 탐구 질문이에요.`;
+    document.getElementById('bookAnswer').value='';
+    updateBookStats();
+    renderBookRecordPane();
+    renderBookAllRecords();
+    renderBookGrid();
+    renderPortfolio();
+    setTimeout(()=>{ switchBookTab('record'); },1200);
+  }
+
+  function updateBookStats() {
+    document.getElementById('bookReadCount').textContent = bookStats.read.size;
+    document.getElementById('bookQCount').textContent = bookStats.total;
+    const levels = ['📖','📚','🔖','🌟','👑'];
+    const lvl = Math.min(Math.floor(bookStats.total/5), levels.length-1);
+    document.getElementById('bookLevelBadge').textContent = levels[lvl];
+  }
+
+  function renderBookAllRecords() {
+    const sec = document.getElementById('bookAllRecords');
+    if (!bookRecords.length) { sec.style.display='none'; return; }
+    sec.style.display = 'block';
+    document.getElementById('bookAllList').innerHTML = bookRecords.map(r=>`
+      <div class="book-record-item">
+        <div class="book-record-meta">${r.cover} ${r.title} · ${r.date}</div>
+        <div class="book-record-type">${r.type}</div>
+        <div class="book-record-q">${r.q}</div>
+      </div>`).join('');
   }
 
   // 초기 렌더
@@ -3878,11 +4990,10 @@
         } catch(e) {}
       }
 
-      // 필터 적용
-      let filtered = entries;
+      // 필터 적용 (학생만 표시, role 필터 제거)
+      let filtered = entries.filter(e => e.role === 'student');
       if (qgalFilter.grade   !== 'all') filtered = filtered.filter(e => e.grade   === qgalFilter.grade);
       if (qgalFilter.subject !== 'all') filtered = filtered.filter(e => e.subject === qgalFilter.subject);
-      if (qgalFilter.role    !== 'all') filtered = filtered.filter(e => e.role    === qgalFilter.role);
 
       // 최신순 정렬
       filtered.sort((a, b) => b.id - a.id);
@@ -3891,21 +5002,10 @@
 
       if (!filtered.length) { empty.style.display = 'block'; return; }
 
-      const students = filtered.filter(e => e.role === 'student');
-      const teachers = filtered.filter(e => e.role === 'teacher');
-
-      // 통계
-      stats.style.display = 'flex';
-      document.getElementById('qgalTotalNum').textContent   = filtered.length;
-      document.getElementById('qgalStudentNum').textContent = students.length;
-      document.getElementById('qgalTeacherNum').textContent = teachers.length;
-
-      // 컬럼 렌더
+      // 렌더 (학생만, 단일 리스트)
       board.style.display = 'block';
-      document.getElementById('qgalStudentCount').textContent = students.length + '개';
-      document.getElementById('qgalTeacherCount').textContent = teachers.length + '개';
-      document.getElementById('qgalStudentList').innerHTML = renderQGalItems(students, '#0ea5e9');
-      document.getElementById('qgalTeacherList').innerHTML = renderQGalItems(teachers, '#f59e0b');
+      document.getElementById('qgalStudentCount').textContent = `🎒 학생 질문 ${filtered.length}개`;
+      document.getElementById('qgalStudentList').innerHTML = renderQGalItems(filtered, '#0ea5e9');
 
     } catch(err) {
       loading.style.display = 'none';
@@ -4582,7 +5682,7 @@
   }
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeModal(); closeContestModal(); closeAuthModal(); closeSubjectModal(); closeIntegratedModal(); }
+    if (e.key === 'Escape') { closeModal(); closeContestModal(); closeAuthModal(); closeSubjectModal(); closeIntegratedModal(); closeDreamModal(); closeBookModal(); }
   });
 
   // Intersection Observer for fade-in

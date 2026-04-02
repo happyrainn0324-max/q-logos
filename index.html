@@ -1972,7 +1972,7 @@
     <button class="auth-close" onclick="closeAuthModal()">✕</button>
     <div class="auth-logo">🏫</div>
     <div class="auth-title">질문하는 인천공항중학교</div>
-    <div class="auth-subtitle">학생 · 학부모 · 교직원 전용 서비스입니다</div>
+    <div class="auth-subtitle">한 번 가입하면 어떤 기기에서도 같은 정보로 로그인할 수 있어요</div>
 
     <!-- 로그인 / 회원가입 탭 -->
     <div class="auth-tabs">
@@ -3123,7 +3123,7 @@
     el.className = 'auth-msg ' + type;
   }
 
-  function handleAuthSubmit() {
+  async function handleAuthSubmit() {
     let key, displayName;
 
     if (userType === 'student') {
@@ -3146,25 +3146,55 @@
       displayName = dept + ' ' + sname + ' 선생님';
     }
 
-    const storageKey = 'qschool_user:' + key;
+    const sharedKey = 'qschool_user:' + key;
+    const localKey  = 'qschool_local:' + key;
     setMsg('처리 중...', '');
+
+    const userData = { key, displayName, type: userType, createdAt: new Date().toISOString() };
+
+    // shared storage 사용 가능 여부 확인
+    const hasShared = typeof window.storage !== 'undefined';
 
     try {
       if (authMode === 'signup') {
-        // 이미 가입 여부 확인
-        const existing = localStorage.getItem(storageKey);
-        if (existing) { setMsg('이미 가입된 정보입니다. 로그인을 이용해주세요.', 'error'); return; }
-        const userData = { key, displayName, type: userType, createdAt: new Date().toISOString() };
-        localStorage.setItem(storageKey, JSON.stringify(userData));
-        setMsg('✅ 회원가입이 완료됐습니다! 로그인해주세요.', 'success');
+        if (hasShared) {
+          // ── 공유 DB에 저장 (다른 기기에서도 로그인 가능) ──
+          let existing = null;
+          try { existing = await window.storage.get(sharedKey, true); } catch(e) {}
+          if (existing) { setMsg('이미 가입된 정보입니다. 로그인을 이용해주세요.', 'error'); return; }
+          await window.storage.set(sharedKey, JSON.stringify(userData), true);
+        }
+        // 로컬에도 백업 저장
+        localStorage.setItem(localKey, JSON.stringify(userData));
+        setMsg('✅ 회원가입 완료! 어떤 기기에서도 같은 정보로 로그인할 수 있어요.', 'success');
         switchAuthTab('login');
+
       } else {
-        // 로그인: localStorage에서 사용자 확인
-        const result = localStorage.getItem(storageKey);
-        if (!result) { setMsg('가입 정보를 찾을 수 없습니다. 회원가입을 먼저 해주세요.', 'error'); return; }
-        const user = JSON.parse(result);
-        // 세션 저장
+        // ── 로그인: 공유 DB 우선 → 로컬 폴백 ──
+        let user = null;
+
+        if (hasShared) {
+          try {
+            const result = await window.storage.get(sharedKey, true);
+            if (result) user = JSON.parse(result.value);
+          } catch(e) {}
+        }
+
+        // 공유 DB에 없으면 로컬에서 확인 (같은 기기에서 가입한 경우)
+        if (!user) {
+          const local = localStorage.getItem(localKey);
+          if (local) user = JSON.parse(local);
+        }
+
+        if (!user) {
+          setMsg('가입 정보를 찾을 수 없습니다. 먼저 회원가입을 해주세요.', 'error');
+          return;
+        }
+
+        // 세션 저장 (이 기기에서 자동 로그인)
         localStorage.setItem('qschool_session', JSON.stringify(user));
+        // 로컬 백업도 갱신
+        localStorage.setItem(localKey, JSON.stringify(user));
         showCustomLoggedIn(user);
         setMsg('✅ 로그인 성공!', 'success');
         setTimeout(() => { closeAuthModal(); }, 700);
@@ -3192,6 +3222,18 @@
         showCustomLoggedIn(user);
       }
     } catch(e) {}
+  }
+
+  // 로그아웃 시 shared session도 정리
+  async function handleLogoutShared() {
+    localStorage.removeItem('qschool_session');
+    localStorage.removeItem('qschool_user');
+    if (typeof window.storage !== 'undefined') {
+      try { await window.storage.delete('session', false); } catch(e) {}
+    }
+    document.querySelector('.custom-login-btn').style.display = 'inline-block';
+    document.getElementById('navUser').style.display = 'none';
+    document.getElementById('navAvatar').style.display = '';
   }
   // ⚠️ 아래 YOUR_GOOGLE_CLIENT_ID 부분을 Google Cloud Console에서 발급받은 클라이언트 ID로 교체하세요.
   const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
@@ -3530,122 +3572,139 @@
   const qsuggestTypeKeys = ['factual', 'inferential', 'critical', 'applied', 'reflective', 'creative'];
 
   // 과목별 + 유형별 질문 템플릿
-  const qTemplates = {
-    factual:    (s,t,u) => `${s} 수업에서 "${t||u||s}"의 핵심 개념이나 주요 사실은 무엇인가요?`,
-    inferential:(s,t,u) => `"${t||u||s}"에서 나타나는 현상의 원인과 결과는 서로 어떻게 연결되어 있을까요?`,
-    critical:   (s,t,u) => `"${t||u||s}"에 대한 다양한 관점 중, 어떤 주장이 가장 타당하고 그 이유는 무엇인가요?`,
-    applied:    (s,t,u) => `"${t||u||s}"에서 배운 내용을 우리 일상생활이나 사회 문제에 어떻게 적용할 수 있을까요?`,
-    reflective: (s,t,u) => `"${t||u||s}"을(를) 배우면서 나의 생각이나 가치관이 어떻게 달라졌나요?`,
-    creative:   (s,t,u) => `"${t||u||s}"의 개념을 완전히 새로운 방식으로 바꾼다면 어떤 모습일까요? 기존의 틀을 깨는 아이디어를 상상해 보세요.`,
-  };
+  // ── 질문 유형별 생성 함수 (주제와 사고방식 진짜 융합) ──
+  // 각 유형은 t=주제, u=단원, s=과목을 받아 그 유형만의 고유한 사고를 유발하는 질문을 생성
+  function buildQuestions(s, t, u) {
+    const core = t || u || s; // 핵심 주제어
 
-  // 과목별 맞춤 질문
-  const qSubjectTemplates = {
-    '국어': {
-      factual:    (t,u) => `"${t||u||'이 작품'}"에서 글쓴이가 전달하려는 핵심 메시지는 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 작품'}"의 등장인물이 그런 선택을 한 이유는 무엇이라고 생각하나요?`,
-      critical:   (t,u) => `"${t||u||'이 글'}"의 주장에서 논리적으로 부족한 점이나 반박할 수 있는 부분은 무엇인가요?`,
-      applied:    (t,u) => `"${t||u||'이 작품'}"의 상황이 오늘날 우리 사회에서 일어난다면 어떻게 달라질까요?`,
-      reflective: (t,u) => `"${t||u||'이 작품'}"을 읽고 내 삶에서 되돌아보게 된 점은 무엇인가요?`,
-      creative:   (t,u) => `"${t||u||'이 작품'}"의 결말을 완전히 다르게 쓴다면 어떤 이야기가 될까요?`,
-    },
-    '과학': {
-      factual:    (t,u) => `"${t||u||'이 현상'}"이 일어나는 과학적 원리와 조건은 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 실험'}"의 결과가 예상과 다르게 나왔다면 그 원인은 무엇일까요?`,
-      critical:   (t,u) => `"${t||u||'이 과학적 주장'}"을 뒷받침하는 근거가 충분한지 어떻게 검증할 수 있을까요?`,
-      applied:    (t,u) => `"${t||u||'이 과학 원리'}"를 활용해 우리 주변의 문제를 해결할 수 있는 방법은 무엇일까요?`,
-      reflective: (t,u) => `"${t||u||'이 과학 개념'}"을 배우기 전과 후, 자연을 바라보는 나의 시각은 어떻게 달라졌나요?`,
-      creative:   (t,u) => `"${t||u||'이 과학 원리'}"를 응용한 전혀 새로운 발명품을 만든다면 무엇을 만들고 싶나요?`,
-    },
-    '사회': {
-      factual:    (t,u) => `"${t||u||'이 사회 현상'}"은 언제, 어디서, 어떤 이유로 발생하게 되었나요?`,
-      inferential:(t,u) => `"${t||u||'이 사회 문제'}"가 해결되지 않으면 앞으로 우리 사회는 어떻게 변할까요?`,
-      critical:   (t,u) => `"${t||u||'이 정책이나 제도'}"가 모든 사람에게 공평하게 적용되고 있는지, 누가 소외될 수 있는지 생각해보세요.`,
-      applied:    (t,u) => `"${t||u||'이 사회 개념'}"을 이용해 우리 학교나 지역의 문제를 해결할 수 있는 방안은 무엇인가요?`,
-      reflective: (t,u) => `"${t||u||'이 사회 현상'}"을 배우고 나서 나는 어떤 시민이 되어야겠다고 생각하게 되었나요?`,
-      creative:   (t,u) => `"${t||u||'이 사회 문제'}"를 완전히 새로운 방식으로 해결하는 미래 사회를 상상해보세요.`,
-    },
-    '수학': {
-      factual:    (t,u) => `"${t||u||'이 수학 개념'}"의 정의와 공식, 그리고 적용 조건은 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 수학 원리'}"가 성립하는 이유를 다른 방법으로도 증명할 수 있을까요?`,
-      critical:   (t,u) => `"${t||u||'이 풀이 방법'}"이 가장 효율적인 방법인지, 더 간단한 방법은 없는지 생각해보세요.`,
-      applied:    (t,u) => `"${t||u||'이 수학 개념'}"을 실생활의 어떤 문제에 적용할 수 있을까요?`,
-      reflective: (t,u) => `"${t||u||'이 수학 개념'}"을 처음 배울 때 어렵게 느꼈던 점은 무엇이고, 어떻게 이해하게 되었나요?`,
-      creative:   (t,u) => `"${t||u||'이 수학 원리'}"를 이용해 나만의 새로운 문제를 만들어보면 어떤 문제가 나올까요?`,
-    },
-    '역사': {
-      factual:    (t,u) => `"${t||u||'이 역사적 사건'}"은 언제, 어디서, 어떤 배경에서 일어났나요?`,
-      inferential:(t,u) => `"${t||u||'이 역사적 사건'}"이 일어나지 않았다면 오늘날 우리 삶은 어떻게 달라졌을까요?`,
-      critical:   (t,u) => `"${t||u||'이 역사적 인물이나 사건'}"에 대해 당시 사람들과 현재 우리가 다르게 평가하는 이유는 무엇일까요?`,
-      applied:    (t,u) => `"${t||u||'이 역사적 교훈'}"을 오늘날의 사회 문제에 적용한다면 어떤 시사점을 얻을 수 있을까요?`,
-      reflective: (t,u) => `"${t||u||'이 역사'}"를 배우고 나서 나는 현재를 살아가는 방식에 대해 무엇을 다시 생각하게 되었나요?`,
-      creative:   (t,u) => `만약 내가 "${t||u||'이 시대'}"에 살았다면 어떤 선택을 했을지 상상해보세요.`,
-    },
-    '도덕': {
-      factual:    (t,u) => `"${t||u||'이 도덕적 개념'}"의 의미와 우리 삶에서 중요한 이유는 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 상황'}"에서 다른 선택을 했다면 어떤 결과가 나왔을까요?`,
-      critical:   (t,u) => `"${t||u||'이 도덕적 판단'}"이 항상 옳다고 볼 수 있을까요? 반대 입장은 어떤 근거를 가질 수 있나요?`,
-      applied:    (t,u) => `"${t||u||'이 도덕적 가치'}"를 학교생활에서 실천할 수 있는 구체적인 방법은 무엇인가요?`,
-      reflective: (t,u) => `"${t||u||'이 주제'}"를 배우면서 나의 행동과 태도 중 바꾸고 싶은 점이 있다면 무엇인가요?`,
-      creative:   (t,u) => `"${t||u||'이 도덕적 딜레마'}"를 모두가 만족할 수 있는 새로운 방식으로 해결한다면 어떻게 할 수 있을까요?`,
-    },
-    '진로': {
-      factual:    (t,u) => `"${t||u||'진로'}" 주제에서 알아야 할 핵심 정보나 사실은 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'진로'}"를 탐색할 때 나의 흥미·강점·가치관이 어떻게 연결될까요?`,
-      critical:   (t,u) => `"${t||u||'진로'}"에 대한 사회의 기대가 나 자신에게 정말 맞는 것인지 어떻게 판단할 수 있을까요?`,
-      applied:    (t,u) => `"${t||u||'진로'}"와 관련해 지금 내가 실제로 실천할 수 있는 탐색 활동은 무엇인가요?`,
-      reflective: (t,u) => `"${t||u||'진로'}"를 생각하면서 내가 진짜 원하는 삶의 모습에 대해 되돌아본 점이 있나요?`,
-      creative:   (t,u) => `"${t||u||'진로'}"의 개념을 완전히 새롭게 정의한다면, 나만의 진로는 어떤 모습일까요?`,
-    },
-    '영어': {
-      factual:    (t,u) => `"${t||u||'이 주제'}"와 관련해 텍스트에서 확인할 수 있는 핵심 사실은 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 주제'}"에서 필자가 직접 말하지 않은 숨겨진 의도는 무엇일까요?`,
-      critical:   (t,u) => `"${t||u||'이 주제'}"에서 제시된 주장의 근거가 충분한지, 다른 시각은 없는지 생각해보세요.`,
-      applied:    (t,u) => `"${t||u||'이 주제'}"에서 배운 내용을 실제 생활에서 어떻게 활용할 수 있을까요?`,
-      reflective: (t,u) => `"${t||u||'이 주제'}"를 통해 다른 문화를 접하면서 내 관점이 어떻게 달라졌나요?`,
-      creative:   (t,u) => `"${t||u||'이 주제'}"를 바탕으로 나만의 의견을 표현한다면 어떻게 쓰고 싶나요?`,
-    },
-    '정보': {
-      factual:    (t,u) => `"${t||u||'이 정보 개념'}"의 원리나 동작 방식은 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 알고리즘'}"에서 문제가 발생한다면 어떤 부분이 원인일까요?`,
-      critical:   (t,u) => `"${t||u||'이 기술'}"이 사회에 미치는 긍정적·부정적 영향을 어떻게 균형 있게 볼 수 있을까요?`,
-      applied:    (t,u) => `"${t||u||'이 정보 기술'}"을 활용해 우리 학교나 일상의 문제를 해결한다면?`,
-      reflective: (t,u) => `"${t||u||'이 주제'}"를 배우면서 디지털 기술을 사용하는 나의 태도에서 바꾸고 싶은 점은?`,
-      creative:   (t,u) => `"${t||u||'이 정보 개념'}"을 활용해 세상을 더 좋게 만드는 새로운 아이디어를 상상해보세요.`,
-    },
-    '기술·가정': {
-      factual:    (t,u) => `"${t||u||'이 기술·가정 주제'}"에서 알아야 할 핵심 원리나 방법은 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 기술'}"이 우리 일상에 가져온 변화와 앞으로의 발전 방향은 무엇일까요?`,
-      critical:   (t,u) => `"${t||u||'이 생활 방식'}"이 환경이나 사회에 미치는 문제점은 없는지 생각해보세요.`,
-      applied:    (t,u) => `"${t||u||'이 주제'}"에서 배운 내용을 가정이나 학교생활에서 직접 활용할 방법은?`,
-      reflective: (t,u) => `"${t||u||'이 주제'}"를 배우면서 나의 생활 습관에 대해 다시 생각하게 된 점은 무엇인가요?`,
-      creative:   (t,u) => `"${t||u||'이 기술 원리'}"를 이용해 나만의 새로운 발명품을 만든다면 무엇을 만들고 싶나요?`,
-    },
-    '음악': {
-      factual:    (t,u) => `"${t||u||'이 음악'}"의 핵심 요소(박자, 화음, 형식 등)는 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 음악'}"이 만들어진 시대적 배경은 음악의 분위기와 어떤 관계가 있을까요?`,
-      critical:   (t,u) => `"${t||u||'이 음악'}"이 뛰어나다는 평가가 모든 사람에게 같은 의미일까요?`,
-      applied:    (t,u) => `"${t||u||'이 음악 개념'}"을 이용해 우리 일상의 감정을 음악으로 표현한다면?`,
-      reflective: (t,u) => `"${t||u||'이 음악'}"을 배우면서 내 감정이나 생각이 어떻게 변했나요?`,
-      creative:   (t,u) => `"${t||u||'이 음악 요소'}"를 새로운 방식으로 조합한다면 어떤 음악이 탄생할까요?`,
-    },
-    '미술': {
-      factual:    (t,u) => `"${t||u||'이 미술 작품'}"에서 사용된 기법, 재료, 구성 요소는 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 작품'}"에서 작가가 표현하려 한 감정이나 메시지는 무엇일까요?`,
-      critical:   (t,u) => `"${t||u||'이 작품'}"이 예술로 인정받는 이유와 그 기준이 공정한지 생각해보세요.`,
-      applied:    (t,u) => `"${t||u||'이 기법'}"을 활용해 우리 학교의 문제를 시각적으로 표현한다면?`,
-      reflective: (t,u) => `"${t||u||'이 작품'}"을 감상하면서 나 자신에 대해 새롭게 발견한 점은 무엇인가요?`,
-      creative:   (t,u) => `"${t||u||'이 미술 개념'}"을 완전히 다른 재료로 표현한다면 어떤 작품이 탄생할까요?`,
-    },
-    '체육': {
-      factual:    (t,u) => `"${t||u||'이 스포츠'}"의 핵심 규칙, 원리, 기술은 무엇인가요?`,
-      inferential:(t,u) => `"${t||u||'이 운동'}"을 꾸준히 할 때와 하지 않을 때 어떤 차이가 생길까요?`,
-      critical:   (t,u) => `"${t||u||'이 스포츠'}"에서 승리만을 강조하는 문화가 바람직한지 생각해보세요.`,
-      applied:    (t,u) => `"${t||u||'이 체육 주제'}"에서 배운 내용을 일상 건강 관리에 어떻게 적용할 수 있을까요?`,
-      reflective: (t,u) => `"${t||u||'이 활동'}"을 통해 나 자신에 대해 새롭게 느낀 점은 무엇인가요?`,
-      creative:   (t,u) => `"${t||u||'이 스포츠'}"의 규칙을 새롭게 바꾼다면 어떤 운동이 탄생할까요?`,
-    },
-  };
+    return {
+      // 【사실적】 단순 정의 금지 → 개념 간 관계·조건·차이를 묻는다
+      factual: (() => {
+        const variants = [
+          () => core + '이(가) 성립하기 위해 반드시 갖춰야 할 조건은 무엇이고, 그 조건이 하나라도 빠지면 어떻게 달라지나요?',
+          () => core + '을(를) 구성하는 핵심 요소들은 서로 어떤 관계로 연결되어 있나요?',
+          () => core + '과(와) 비슷해 보이지만 실제로는 다른 개념은 무엇이고, 그 차이는 어디서 생기나요?',
+          () => core + '이(가) 작동하거나 적용되는 상황과 그렇지 않은 상황을 나누는 기준은 무엇인가요?',
+        ];
+        return variants[Math.floor(Math.random() * variants.length)]();
+      })(),
+
+      // 【추론적】 "왜?" 단순 질문 금지 → 숨겨진 패턴·인과·구조를 끌어낸다
+      inferential: (() => {
+        const variants = [
+          () => core + '에서 나타나는 현상이 계속 이어진다면, 5년 후에는 어떤 결과가 쌓여 있을까요? 그 흐름을 단계별로 추적해보세요.',
+          () => core + '에는 겉으로 드러나지 않는 전제나 가정이 숨어 있습니다. 그것이 무엇인지, 그리고 그 전제가 틀렸을 때 결론이 어떻게 바뀌는지 생각해보세요.',
+          () => core + '이(가) 지금의 모습을 갖게 된 데는 어떤 연쇄적 원인들이 있었을까요? 가장 결정적인 고리는 어디였을까요?',
+          () => core + '에서 가장 영향을 많이 받는 사람(또는 요소)은 누구이며, 그 이유는 무엇인가요?',
+        ];
+        return variants[Math.floor(Math.random() * variants.length)]();
+      })(),
+
+      // 【비판적】 찬반 금지 → 숨겨진 전제·소외된 관점·논리적 한계를 드러낸다
+      critical: (() => {
+        const variants = [
+          () => core + '을(를) 당연하게 여기는 시각에서 가장 많이 소외되거나 불리해지는 사람은 누구이며, 그 이유는 무엇인가요?',
+          () => core + '에 대해 우리가 흔히 받아들이는 설명에서 빠져 있는 관점이나 반례는 무엇인가요?',
+          () => core + '이(가) 옳다는 주장이 성립하려면 어떤 전제가 참이어야 하는지 따져보고, 그 전제를 의심해보세요.',
+          () => core + '의 주류적 해석에 가장 강하게 반론을 제기할 수 있는 입장은 무엇이고, 그 근거는 얼마나 타당한가요?',
+        ];
+        return variants[Math.floor(Math.random() * variants.length)]();
+      })(),
+
+      // 【적용적】 추상적 "어디에 쓸까?" 금지 → 학교·인천·사회 구체 문제에 전이
+      applied: (() => {
+        const variants = [
+          () => core + '의 원리를 우리 학교(또는 인천공항 지역)의 실제 문제 하나에 적용한다면, 구체적으로 어떤 변화가 가능할까요?',
+          () => core + '을(를) 모르는 사람과 아는 사람은 같은 상황에서 어떻게 다른 선택을 하게 될까요? 실제 사례를 떠올려 설명해보세요.',
+          () => core + '이(가) 우리 일상에서 이미 작동하고 있는 사례를 찾고, 그 사례에서 어떤 원리가 어떻게 쓰이고 있는지 분석해보세요.',
+          () => core + '을(를) 해결책으로 사용할 수 있는 사회 문제를 하나 선택하고, 실제로 적용할 때 생길 수 있는 가장 큰 장애물은 무엇인지 생각해보세요.',
+        ];
+        return variants[Math.floor(Math.random() * variants.length)]();
+      })(),
+
+      // 【성찰적】 막연한 감상 금지 → 배우기 전/후 생각 변화·내 경험과의 충돌에 집중
+      reflective: (() => {
+        const variants = [
+          () => core + '을(를) 배우기 전에 나는 어떻게 생각하고 있었고, 지금은 무엇이 달라졌나요? 그 변화를 만든 결정적인 순간은 언제였나요?',
+          () => core + '이(가) 나의 일상적인 선택이나 행동 방식과 충돌하는 지점이 있다면 어디이고, 그 불편함에서 무엇을 알 수 있나요?',
+          () => core + '을(를) 배운 지금, 과거의 내가 했던 어떤 판단이나 행동을 다르게 보게 되었나요?',
+          () => core + '에 대해 나는 아직 어떤 부분을 불확실하게 느끼나요? 그 불확실함이 오히려 나에게 어떤 질문을 만들어내고 있나요?',
+        ];
+        return variants[Math.floor(Math.random() * variants.length)]();
+      })(),
+
+      // 【창의적】 "상상해보세요" 막연 지시 금지 → 역발상·재조합·미래 상상 구체 전략
+      creative: (() => {
+        const variants = [
+          () => core + '의 가장 핵심적인 전제를 정반대로 뒤집었을 때, 어떤 전혀 새로운 개념이나 시스템이 탄생할 수 있을까요?',
+          () => core + '을(를) 완전히 다른 분야(예: 예술, 스포츠, 요리, 건축 등)의 언어로 번역한다면 어떻게 표현할 수 있을까요? 그 번역이 새롭게 드러내는 것은?',
+          () => '100년 후 사람들이 ' + core + '을(를) 돌아본다면 지금 우리의 어떤 생각을 가장 이상하게 여길까요? 그리고 그때의 대안은 무엇일까요?',
+          () => core + '이(가) 존재하지 않는 세계를 설계해보세요. 그 세계에서 사람들은 지금과 어떻게 다르게 살아가고 있을까요?',
+        ];
+        return variants[Math.floor(Math.random() * variants.length)]();
+      })(),
+    };
+  }
+
+  // 과목 특성을 반영한 추가 변형 (buildQuestions 위에 과목 특성 레이어)
+  function buildSubjectQuestions(s, t, u) {
+    const base = buildQuestions(s, t, u);
+    const core = t || u || s;
+
+    const overrides = {
+      '국어': {
+        factual:     () => '이 ' + core + '에서 글쓴이가 선택한 표현 방식(문체·어조·구조)은 독자에게 어떤 효과를 만들어내며, 다른 방식을 썼다면 어떻게 달라졌을까요?',
+        inferential: () => core + '의 등장인물(또는 화자)이 말하지 않고 침묵한 부분에서 우리는 무엇을 읽어낼 수 있나요?',
+        applied:     () => core + '에서 다루는 갈등 상황이 오늘날 우리 교실이나 SNS에서 일어난다면 어떤 방식으로 나타날까요?',
+      },
+      '과학': {
+        factual:     () => core + '이(가) 일어나는 데 필요한 조건과 그 조건 중 하나가 변했을 때 결과가 어떻게 달라지는지 단계별로 설명해보세요.',
+        inferential: () => '실험에서 ' + core + '의 결과가 예측과 달랐다면, 어떤 변수가 영향을 미쳤을지 가장 가능성 높은 원인부터 순서대로 추론해보세요.',
+        creative:    () => core + '의 원리를 거꾸로 이용해서 기존에 없던 완전히 새로운 기술이나 도구를 설계한다면 어떤 것을 만들 수 있을까요?',
+      },
+      '사회': {
+        critical:    () => core + '에 관한 정책이나 제도가 만들어질 때, 그 논의 테이블에 참여하지 못한 집단은 누구이며, 그들의 목소리가 빠진 결과는 무엇인가요?',
+        applied:     () => core + '의 개념을 인천공항 주변 지역사회의 실제 문제에 적용할 때, 가장 먼저 해결해야 할 장애물은 무엇인가요?',
+        reflective:  () => core + '을(를) 배운 후, 나는 "좋은 시민"의 의미를 이전과 어떻게 다르게 이해하게 되었나요?',
+      },
+      '역사': {
+        factual:     () => core + '이(가) 발생하기 위해 그 이전에 어떤 조건들이 쌓여야 했으며, 그중 가장 결정적인 것은 무엇이었나요?',
+        inferential: () => core + '이(가) 일어나지 않았다면 지금 우리 삶에서 당연하게 여기는 것 중 무엇이 존재하지 않았을까요?',
+        critical:    () => core + '에 대한 역사 교과서의 서술에서 어떤 집단의 목소리가 중심이고, 누구의 관점이 빠져 있을까요?',
+      },
+      '수학': {
+        factual:     () => core + '이(가) 성립하는 조건과 성립하지 않는 반례를 각각 찾고, 그 경계를 결정하는 것은 무엇인지 설명해보세요.',
+        inferential: () => core + '의 공식이나 규칙이 왜 그런 형태로 정해졌는지, 다른 방식으로도 같은 결론에 도달할 수 있는지 탐구해보세요.',
+        creative:    () => core + '의 핵심 아이디어를 수학이 아닌 일상의 언어로 완전히 새롭게 설명한다면 어떤 비유나 이야기로 표현할 수 있을까요?',
+      },
+      '도덕': {
+        factual:     () => core + '이(가) 도덕적 원칙으로 작동하려면 어떤 상황에서도 일관되게 적용될 수 있어야 합니다. 그 일관성을 깨는 예외 상황을 찾아보세요.',
+        critical:    () => core + '에 따라 행동하는 것이 옳다는 주장과, 그것이 오히려 해가 될 수 있다는 주장을 각각 구체적 상황으로 뒷받침해보세요.',
+        reflective:  () => core + '에 대한 나의 입장이 가족, 친구, 사회의 기대와 다를 때, 나는 어떤 기준으로 판단해야 할까요?',
+      },
+      '진로': {
+        factual:     () => core + '이(가) 직업 선택에 실제로 영향을 미치는 방식은 연구나 사례를 통해 어떻게 확인되고 있나요?',
+        inferential: () => '내가 지금 중요하게 생각하는 ' + core + '이(가) 10년 후에도 같을 것이라고 확신할 수 있나요? 그것이 변할 수 있는 계기는 무엇일까요?',
+        critical:    () => '"좋아하는 일을 직업으로 삼아야 한다"는 말이 ' + core + '의 관점에서 항상 맞는 조언인지, 어떤 경우에 이 말이 오히려 해가 될 수 있는지 생각해보세요.',
+        applied:     () => core + '을(를) 기준으로 지금 내가 경험할 수 있는 활동(동아리, 봉사, 체험학습 등)을 선택한다면, 어떤 기준으로 어떤 활동을 고르겠나요?',
+        reflective:  () => '나는 ' + core + '을(를) 얼마나 솔직하게 알고 있나요? 주변의 기대나 트렌드에 영향을 받은 부분은 없는지 돌아봐주세요.',
+        creative:    () => '미래에는 ' + core + '보다 더 중요한 직업 선택 기준이 생길 수 있다고 상상해보세요. 그것은 무엇이고, 왜 그렇게 될까요?',
+      },
+      '영어': {
+        factual:     () => core + '를 다루는 영어 텍스트에서 필자가 선택한 단어나 표현이 한국어로 번역될 때 미묘하게 달라지는 의미는 무엇인가요?',
+        inferential: () => core + '에 대한 영어권 필자의 관점과 우리나라에서 일반적으로 생각하는 관점 사이에 어떤 차이가 있으며, 그 차이는 어디서 비롯될까요?',
+        creative:    () => core + '을(를) 주제로 다른 나라 친구에게 설명하는 짧은 글을 쓴다면, 문화적 차이를 어떻게 다루어야 할까요?',
+      },
+    };
+
+    const ov = overrides[s];
+    if (ov) {
+      Object.keys(ov).forEach(type => {
+        base[type] = ov[type]();
+      });
+    }
+    return base;
+  }
 
   async function onClickGenerateBtn() {
     const saved = JSON.parse(localStorage.getItem('myq_list') || '[]');
@@ -3755,6 +3814,20 @@ JSON 형식으로만 반환:
 }`;
 
     let generated = null;
+
+    // API 호출 및 응답 파싱 (견고한 버전)
+    const tryParseJSON = (raw) => {
+      // 1차: 그대로 파싱
+      try { return JSON.parse(raw); } catch(e) {}
+      // 2차: 코드블록 제거 후 파싱
+      const stripped = raw.replace(/```[\w]*\n?/g, '').replace(/```/g, '').trim();
+      try { return JSON.parse(stripped); } catch(e) {}
+      // 3차: { } 범위만 추출
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (match) { try { return JSON.parse(match[0]); } catch(e) {} }
+      return null;
+    };
+
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -3766,20 +3839,32 @@ JSON 형식으로만 반환:
           messages: [{ role: 'user', content: userPrompt }]
         })
       });
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error('[API 오류]', res.status, err);
+        throw new Error('API ' + res.status);
+      }
+
       const data = await res.json();
-      const text = data.content.map(i => i.text || '').join('').replace(/```json\n?|```/g, '').trim();
-      generated = JSON.parse(text);
+      console.log('[API 응답]', data);
+
+      const rawText = data.content.map(i => i.text || '').join('');
+      console.log('[원본 텍스트]', rawText);
+
+      generated = tryParseJSON(rawText);
+
+      if (!generated || !generated.factual) {
+        console.error('[파싱 실패] 원본:', rawText);
+        throw new Error('JSON 파싱 실패');
+      }
+
+      console.log('[파싱 성공]', generated);
+
     } catch(e) {
-      console.error('[질문 생성 오류]', e);
-      const tmpl = qSubjectTemplates[subject] || null;
-      generated = {
-        factual:     tmpl ? tmpl.factual(topic,unit)     : qTemplates.factual(subject,topic,unit),
-        inferential: tmpl ? tmpl.inferential(topic,unit) : qTemplates.inferential(subject,topic,unit),
-        critical:    tmpl ? tmpl.critical(topic,unit)    : qTemplates.critical(subject,topic,unit),
-        applied:     tmpl ? tmpl.applied(topic,unit)     : qTemplates.applied(subject,topic,unit),
-        reflective:  tmpl ? tmpl.reflective(topic,unit)  : qTemplates.reflective(subject,topic,unit),
-        creative:    tmpl ? tmpl.creative(topic,unit)    : qTemplates.creative(subject,topic,unit),
-      };
+      console.error('[질문 생성 오류 - 폴백 실행]', e.message);
+      // 폴백: 로컬 템플릿
+      generated = buildSubjectQuestions(subject, topic, unit);
     }
 
     qsuggestTypeKeys.forEach((k, i) => {

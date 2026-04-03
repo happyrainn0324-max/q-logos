@@ -7,6 +7,211 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+KR:wght@700;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  // ── localStorage에 저장된 Firebase config 불러오기 ──
+  let db = null;
+  let fbReady = false;
+
+  async function initFirebase() {
+    const saved = localStorage.getItem('qschool_firebase_config');
+    if (!saved) return false;
+    let cfg;
+    try { cfg = JSON.parse(saved); } catch(e) { return false; }
+    if (!cfg.apiKey || !cfg.projectId) return false;
+    try {
+      const app = getApps().length ? getApps()[0] : initializeApp(cfg);
+      db = getFirestore(app);
+      // 연결 테스트
+      await getDoc(doc(db, '_ping', 'test'));
+      fbReady = true;
+      console.log('[Firebase] ✅ 연결 성공:', cfg.projectId);
+      showFbStatus(true);
+      return true;
+    } catch(e) {
+      console.warn('[Firebase] 연결 실패:', e.message);
+      db = null;
+      fbReady = false;
+      showFbStatus(false, e.message);
+      return false;
+    }
+  }
+
+  function showFbStatus(ok, msg) {
+    const bar = document.getElementById('fbStatusBar');
+    if (!bar) return;
+    if (ok) {
+      bar.innerHTML = '🔥 Firebase 연결됨 — 모든 기기에서 데이터 동기화 중';
+      bar.style.cssText = 'display:block;background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;margin:0 32px 16px;text-align:center;';
+    } else {
+      bar.innerHTML = '⚠️ Firebase 미연결 — 현재 이 기기에만 저장됩니다. <button onclick="openFbSetup()" style="margin-left:8px;background:#4f46e5;color:white;border:none;border-radius:8px;padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit;">설정하기</button>';
+      bar.style.cssText = 'display:block;background:#fffbeb;color:#92400e;border:1px solid #fcd34d;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;margin:0 32px 16px;text-align:center;';
+    }
+  }
+
+  window.QDB = {
+    get ready() { return fbReady; },
+
+    async saveUser(key, data) {
+      localStorage.setItem('qschool_user:' + key, JSON.stringify(data));
+      if (!db) return true;
+      try { await setDoc(doc(db, 'users', key), { ...data, updatedAt: new Date().toISOString() }); } catch(e) { console.warn('[QDB.saveUser]', e); }
+      return true;
+    },
+
+    async getUser(key) {
+      if (db) {
+        try {
+          const snap = await getDoc(doc(db, 'users', key));
+          if (snap.exists()) {
+            const d = snap.data();
+            localStorage.setItem('qschool_user:' + key, JSON.stringify(d));
+            return d;
+          }
+        } catch(e) { console.warn('[QDB.getUser]', e); }
+      }
+      const local = localStorage.getItem('qschool_user:' + key);
+      return local ? JSON.parse(local) : null;
+    },
+
+    async saveQ(userKey, entry) {
+      const id = String(entry.id || Date.now());
+      const list = JSON.parse(localStorage.getItem('myq_list') || '[]');
+      const idx = list.findIndex(e => String(e.id) === id);
+      if (idx >= 0) list[idx] = entry; else list.unshift(entry);
+      localStorage.setItem('myq_list', JSON.stringify(list));
+      if (!db || !userKey) return;
+      try { await setDoc(doc(db, 'questions', userKey + '_' + id), { ...entry, userKey, _ts: new Date().toISOString() }); }
+      catch(e) { console.warn('[QDB.saveQ]', e); }
+    },
+
+    async loadMyQ(userKey) {
+      // 로컬에서 이 사용자 것만 필터
+      const all = JSON.parse(localStorage.getItem('myq_list') || '[]');
+      const local = userKey
+        ? all.filter(e => e.userKey === userKey || e.authorKey === userKey)
+        : all;
+
+      if (!db || !userKey) return local;
+
+      try {
+        const q = query(collection(db, 'questions'), where('userKey', '==', userKey), orderBy('id', 'desc'), limit(300));
+        const snap = await getDocs(q);
+        const remote = snap.docs.map(d => d.data());
+
+        // 로컬 + 원격 병합 (id 기준 중복 제거, remote 우선)
+        const map = new Map();
+        remote.forEach(r => map.set(String(r.id), r));
+        local.forEach(l => { if (!map.has(String(l.id))) map.set(String(l.id), l); });
+        const merged = [...map.values()].sort((a, b) => Number(b.id) - Number(a.id));
+
+        // 로컬 전체 목록에서 이 유저 것 교체 후 저장
+        const others = all.filter(e => e.userKey !== userKey && e.authorKey !== userKey);
+        localStorage.setItem('myq_list', JSON.stringify([...merged, ...others]));
+
+        return merged;
+      } catch(e) {
+        console.warn('[QDB.loadMyQ]', e);
+        return local;
+      }
+    },
+
+    async loadGallery(gradeFilter, subjectFilter) {
+      if (db) {
+        try {
+          const q = query(collection(db, 'questions'), where('role', '==', 'student'), orderBy('id', 'desc'), limit(500));
+          const snap = await getDocs(q);
+          let res = snap.docs.map(d => d.data());
+          if (gradeFilter   && gradeFilter   !== 'all') res = res.filter(e => e.grade   === gradeFilter);
+          if (subjectFilter && subjectFilter !== 'all') res = res.filter(e => e.subject === subjectFilter);
+          return res;
+        } catch(e) { console.warn('[QDB.loadGallery]', e); }
+      }
+      let all = JSON.parse(localStorage.getItem('myq_list') || '[]').filter(e => e.role === 'student');
+      if (gradeFilter   && gradeFilter   !== 'all') all = all.filter(e => e.grade   === gradeFilter);
+      if (subjectFilter && subjectFilter !== 'all') all = all.filter(e => e.subject === subjectFilter);
+      return all;
+    },
+
+    async deleteQ(userKey, id) {
+      const saved = JSON.parse(localStorage.getItem('myq_list') || '[]').filter(e => String(e.id) !== String(id));
+      localStorage.setItem('myq_list', JSON.stringify(saved));
+      if (!db || !userKey) return;
+      try { await deleteDoc(doc(db, 'questions', userKey + '_' + String(id))); } catch(e) {}
+    },
+
+    async clearMyQ(userKey) {
+      localStorage.removeItem('myq_list');
+      if (!db || !userKey) return;
+      try {
+        const q = query(collection(db, 'questions'), where('userKey', '==', userKey));
+        const snap = await getDocs(q);
+        await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+      } catch(e) {}
+    },
+
+    async syncOnLogin(userKey) {
+      if (!userKey) return;
+      // Firebase 연결 여부 무관하게 항상 loadMyQ 호출 (로컬 필터 + 원격 병합)
+      const data = await this.loadMyQ(userKey);
+      console.log('[QDB] 로그인 동기화:', data.length, '개 질문 로드 (Firebase:', !!db, ')');
+      return data;
+    }
+  };
+
+  // Firebase 설정 저장 (관리자용)
+  window.saveFbConfig = async function() {
+    const cfg = {
+      apiKey:            document.getElementById('fbApiKey').value.trim(),
+      authDomain:        document.getElementById('fbAuthDomain').value.trim(),
+      projectId:         document.getElementById('fbProjectId').value.trim(),
+      storageBucket:     document.getElementById('fbStorageBucket').value.trim(),
+      messagingSenderId: document.getElementById('fbMsgSenderId').value.trim(),
+      appId:             document.getElementById('fbAppId').value.trim(),
+    };
+    if (!cfg.apiKey || !cfg.projectId) { alert('API Key와 Project ID는 필수입니다.'); return; }
+    localStorage.setItem('qschool_firebase_config', JSON.stringify(cfg));
+    const btn = document.getElementById('fbSaveBtn');
+    btn.textContent = '🔄 연결 중...';
+    btn.disabled = true;
+    const ok = await initFirebase();
+    if (ok) {
+      document.getElementById('fbSetupOverlay').style.display = 'none';
+      alert('✅ Firebase 연결 성공! 이제 모든 기기에서 데이터가 동기화됩니다.');
+    } else {
+      btn.textContent = '저장 & 연결 테스트';
+      btn.disabled = false;
+      alert('❌ 연결에 실패했습니다. Firebase Console에서 Firestore가 활성화되어 있는지, 보안 규칙에서 읽기/쓰기가 허용되어 있는지 확인해주세요.');
+    }
+  };
+  window.openFbSetup = function() {
+    const saved = localStorage.getItem('qschool_firebase_config');
+    if (saved) {
+      try {
+        const c = JSON.parse(saved);
+        document.getElementById('fbApiKey').value        = c.apiKey || '';
+        document.getElementById('fbAuthDomain').value    = c.authDomain || '';
+        document.getElementById('fbProjectId').value     = c.projectId || '';
+        document.getElementById('fbStorageBucket').value = c.storageBucket || '';
+        document.getElementById('fbMsgSenderId').value   = c.messagingSenderId || '';
+        document.getElementById('fbAppId').value         = c.appId || '';
+      } catch(e) {}
+    }
+    document.getElementById('fbSetupOverlay').style.display = 'flex';
+  };
+  window.closeFbSetup = function() {
+    document.getElementById('fbSetupOverlay').style.display = 'none';
+  };
+
+  // 페이지 로드 시 자동 연결 시도
+  document.addEventListener('DOMContentLoaded', async () => {
+    await initFirebase();
+    if (!fbReady) showFbStatus(false);
+  });
+</script>
 <style>
   :root {
     --ink: #0a0a12;
@@ -2349,8 +2554,14 @@
     <button id="managerBtn" onclick="openManagerPage()" style="display:none;align-items:center;gap:6px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;border-radius:100px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:8px;box-shadow:0 4px 14px rgba(124,58,237,.35);transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
       👑 매니저
     </button>
+    <button onclick="openFbSetup()" id="fbSetupBtn" title="Firebase 클라우드 설정" style="background:transparent;border:1.5px solid #e2e2ec;border-radius:100px;padding:8px 14px;font-size:12px;font-weight:600;color:#5a5a7a;cursor:pointer;font-family:inherit;margin-left:8px;transition:all .2s;" onmouseover="this.style.borderColor='#f97316';this.style.color='#f97316'" onmouseout="this.style.borderColor='#e2e2ec';this.style.color='#5a5a7a'">
+      🔥 DB 설정
+    </button>
   </div>
 </nav>
+
+<!-- Firebase 연결 상태 바 -->
+<div id="fbStatusBar" style="display:none;"></div>
 
 <!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay" onclick="closeAuthModal(event)">
@@ -3533,44 +3744,57 @@
       displayName = dept + ' ' + sname + ' 선생님';
     }
 
-    const sharedKey = 'qschool_user:' + key;
-    const localKey  = 'qschool_local:' + key;
+    const localKey = 'qschool_user:' + key;   // QDB와 동일한 키 사용
     setMsg('처리 중...', '');
 
     const userData = { key, displayName, type: userType, createdAt: new Date().toISOString() };
 
-    // shared storage 사용 가능 여부 확인
-    const hasShared = typeof window.storage !== 'undefined';
+    // QDB 준비 여부 (Firebase module이 아직 로드 안 됐을 수도 있음)
+    const qdb = window.QDB;
 
     try {
       if (authMode === 'signup') {
-        if (hasShared) {
-          // ── 공유 DB에 저장 (다른 기기에서도 로그인 가능) ──
-          let existing = null;
-          try { existing = await window.storage.get(sharedKey, true); } catch(e) {}
-          if (existing) { setMsg('이미 가입된 정보입니다. 로그인을 이용해주세요.', 'error'); return; }
-          await window.storage.set(sharedKey, JSON.stringify(userData), true);
+        // ① 이미 가입됐는지 확인 (QDB 클라우드 → 로컬 순)
+        let existing = null;
+        if (qdb) {
+          existing = await qdb.getUser(key);
+        } else {
+          const loc = localStorage.getItem(localKey);
+          if (loc) { try { existing = JSON.parse(loc); } catch(e) {} }
         }
-        // 로컬에도 백업 저장
-        localStorage.setItem(localKey, JSON.stringify(userData));
+
+        if (existing) {
+          // 이미 가입됨 → 바로 로그인 처리해줌 (재가입 불필요)
+          localStorage.setItem('qschool_session', JSON.stringify(existing));
+          localStorage.setItem(localKey, JSON.stringify(existing));
+          showCustomLoggedIn(existing);
+          setMsg('이미 가입된 계정입니다. 자동으로 로그인되었습니다! ✅', 'success');
+          setTimeout(() => { closeAuthModal(); }, 1000);
+          if (qdb) qdb.syncOnLogin(existing.key).then(() => {
+            try { renderMyQList(); } catch(e) {}
+            try { renderPortfolio(); } catch(e) {}
+            try { loadQGallery(); } catch(e) {}
+          });
+          return;
+        }
+
+        // ② 신규 가입 저장
+        localStorage.setItem(localKey, JSON.stringify(userData)); // 로컬 항상 저장
+        if (qdb) await qdb.saveUser(key, userData);               // Firebase도 저장
+
         setMsg('✅ 회원가입 완료! 어떤 기기에서도 같은 정보로 로그인할 수 있어요.', 'success');
         switchAuthTab('login');
 
       } else {
-        // ── 로그인: 공유 DB 우선 → 로컬 폴백 ──
+        // ③ 로그인: QDB 클라우드 → 로컬 순으로 찾기
         let user = null;
 
-        if (hasShared) {
-          try {
-            const result = await window.storage.get(sharedKey, true);
-            if (result) user = JSON.parse(result.value);
-          } catch(e) {}
-        }
+        if (qdb) user = await qdb.getUser(key);
 
-        // 공유 DB에 없으면 로컬에서 확인 (같은 기기에서 가입한 경우)
         if (!user) {
-          const local = localStorage.getItem(localKey);
-          if (local) user = JSON.parse(local);
+          // 로컬 백업에서 찾기 (Firebase 미연결 or 오프라인)
+          const loc = localStorage.getItem(localKey);
+          if (loc) { try { user = JSON.parse(loc); } catch(e) {} }
         }
 
         if (!user) {
@@ -3578,16 +3802,25 @@
           return;
         }
 
-        // 세션 저장 (이 기기에서 자동 로그인)
+        // 세션 + 로컬 백업 저장
         localStorage.setItem('qschool_session', JSON.stringify(user));
-        // 로컬 백업도 갱신
         localStorage.setItem(localKey, JSON.stringify(user));
+
+        // 클라우드 데이터 동기화
+        if (qdb) {
+          qdb.syncOnLogin(user.key).then(() => {
+            try { renderMyQList(); } catch(e) {}
+            try { renderPortfolio(); } catch(e) {}
+            try { loadQGallery(); } catch(e) {}
+          });
+        }
+
         showCustomLoggedIn(user);
         setMsg('✅ 로그인 성공!', 'success');
         setTimeout(() => { closeAuthModal(); }, 700);
       }
     } catch(err) {
-      console.error(err);
+      console.error('[Auth]', err);
       setMsg('오류가 발생했습니다. 다시 시도해주세요.', 'error');
     }
   }
@@ -3675,6 +3908,20 @@
 
   // 페이지 로드: 구글 세션(localStorage) + 커스텀 세션(persistent) 복원
   window.addEventListener('load', () => {
+    // ── 구 버전 키 마이그레이션: 'qschool_local:' → 'qschool_user:' ──
+    // 이전에 qschool_local: 키로 저장된 회원 데이터를 qschool_user: 키로 복사
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('qschool_local:')) {
+          const newKey = k.replace('qschool_local:', 'qschool_user:');
+          if (!localStorage.getItem(newKey)) {
+            localStorage.setItem(newKey, localStorage.getItem(k));
+          }
+        }
+      }
+    } catch(e) {}
+
     // 구글 로그인 복원
     const saved = localStorage.getItem('qschool_user');
     if (saved) { const user = JSON.parse(saved); showLoggedIn(user); }
@@ -3745,11 +3992,18 @@
   };
 
   // 전체 포트폴리오 항목 수집
-  function collectAllPfEntries() {
+  async function collectAllPfEntries() {
     const entries = [];
+    const currentUser = getCurrentUser();
+    const userKey = currentUser ? (currentUser.key || currentUser.email || '') : '';
 
-    // 1. 오늘의 나의 질문
-    const myqList = JSON.parse(localStorage.getItem('myq_list') || '[]');
+    // 1. 오늘의 나의 질문 — QDB에서 로드
+    let myqList;
+    if (window.QDB && userKey) {
+      myqList = await window.QDB.loadMyQ(userKey);
+    } else {
+      myqList = JSON.parse(localStorage.getItem('myq_list') || '[]');
+    }
     myqList.forEach(e => {
       const qs = [e.q1, e.q2, e.q3].filter(Boolean);
       entries.push({
@@ -3837,8 +4091,8 @@
     renderPortfolio();
   }
 
-  function renderPortfolio() {
-    const all = collectAllPfEntries();
+  async function renderPortfolio() {
+    const all = await collectAllPfEntries();
     const filtered = pfSourceFilter === 'all' ? all : all.filter(e => e.source === pfSourceFilter);
 
     // 통계 업데이트
@@ -3891,8 +4145,14 @@
   function filterPFSubject() {} // 하위 호환용 빈 함수
 
   async function deletePFEntry(id) {
-    const saved = JSON.parse(localStorage.getItem('myq_list') || '[]').filter(e => e.id !== id);
-    localStorage.setItem('myq_list', JSON.stringify(saved));
+    const currentUser = getCurrentUser();
+    const userKey = currentUser ? (currentUser.key || currentUser.email || '') : '';
+    if (window.QDB) {
+      await window.QDB.deleteQ(userKey, id);
+    } else {
+      const saved = JSON.parse(localStorage.getItem('myq_list') || '[]').filter(e => String(e.id) !== String(id));
+      localStorage.setItem('myq_list', JSON.stringify(saved));
+    }
 
     renderPortfolio();
     renderMyQList();
@@ -3937,11 +4197,19 @@
     const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
     const currentUser = getCurrentUser();
-    const authorKey = currentUser ? (currentUser.key || currentUser.email || currentUser.name || '') : '';
-    const entry = { role, grade, subject, unit, topic, q1, q2, q3, date: dateStr, id: Date.now(), authorKey };
-    const saved = JSON.parse(localStorage.getItem('myq_list') || '[]');
-    saved.unshift(entry);
-    localStorage.setItem('myq_list', JSON.stringify(saved));
+    const userKey = currentUser ? (currentUser.key || currentUser.email || currentUser.name || '') : '';
+    // authorKey와 userKey 모두 동일하게 저장 (조회 일관성 보장)
+    const entry = { role, grade, subject, unit, topic, q1, q2, q3, date: dateStr, id: Date.now(), authorKey: userKey, userKey };
+
+    // QDB로 저장 (클라우드 + 로컬 동시)
+    const qdb = window.QDB;
+    if (qdb) {
+      await qdb.saveQ(userKey, entry);
+    } else {
+      const saved = JSON.parse(localStorage.getItem('myq_list') || '[]');
+      saved.unshift(entry);
+      localStorage.setItem('myq_list', JSON.stringify(saved));
+    }
 
     // 폼 초기화
     [prefix+'-grade', prefix+'-subject'].forEach(id => document.getElementById(id).value = '');
@@ -5603,7 +5871,7 @@ JSON 형식으로만 반환:
     loadQGallery();
   }
 
-  function loadQGallery() {
+  async function loadQGallery() {
     const loading = document.getElementById('qgalLoading');
     const empty   = document.getElementById('qgalEmpty');
     const stats   = document.getElementById('qgalStats');
@@ -5615,25 +5883,22 @@ JSON 형식으로만 반환:
     board.style.display   = 'none';
 
     try {
-      // localStorage의 myq_list에서 읽기
-      const all = JSON.parse(localStorage.getItem('myq_list') || '[]');
+      let filtered;
+      if (window.QDB) {
+        filtered = await window.QDB.loadGallery(qgalFilter.grade, qgalFilter.subject);
+      } else {
+        const all = JSON.parse(localStorage.getItem('myq_list') || '[]');
+        filtered = all.filter(e => e.role === 'student');
+        if (qgalFilter.grade    !== 'all') filtered = filtered.filter(e => e.grade   === qgalFilter.grade);
+        if (qgalFilter.subject  !== 'all') filtered = filtered.filter(e => e.subject === qgalFilter.subject);
+      }
 
-      // 필터 적용 (학생만 표시)
-      let filtered = all.filter(e => e.role === 'student');
-      if (qgalFilter.grade   !== 'all') filtered = filtered.filter(e => e.grade   === qgalFilter.grade);
-      if (qgalFilter.subject !== 'all') filtered = filtered.filter(e => e.subject === qgalFilter.subject);
-
-      // 최신순 정렬
       filtered.sort((a, b) => b.id - a.id);
-
       loading.style.display = 'none';
-
       if (!filtered.length) { empty.style.display = 'block'; return; }
-
       board.style.display = 'block';
       document.getElementById('qgalStudentCount').textContent = `🎒 학생 질문 ${filtered.length}개`;
       document.getElementById('qgalStudentList').innerHTML = renderQGalItems(filtered, '#0ea5e9');
-
     } catch(err) {
       loading.style.display = 'none';
       empty.style.display   = 'block';
@@ -5668,8 +5933,15 @@ JSON 형식으로만 반환:
   // 페이지 로드 시 갤러리 초기 로드
   window.addEventListener('load', () => { loadQGallery(); });
 
-  function renderMyQList() {
-    const saved = JSON.parse(localStorage.getItem('myq_list') || '[]');
+  async function renderMyQList() {
+    const currentUser = getCurrentUser();
+    const userKey = currentUser ? (currentUser.key || currentUser.email || '') : '';
+    let saved;
+    if (window.QDB && userKey) {
+      saved = await window.QDB.loadMyQ(userKey);
+    } else {
+      saved = JSON.parse(localStorage.getItem('myq_list') || '[]');
+    }
     const listEl = document.getElementById('myqList');
     const cardsEl = document.getElementById('myqCards');
     if (!saved.length) { listEl.style.display = 'none'; return; }
@@ -5708,9 +5980,14 @@ JSON 형식으로만 반환:
   }
 
   async function deleteMyQ(id) {
-    const saved = JSON.parse(localStorage.getItem('myq_list') || '[]').filter(e => e.id !== id);
-    localStorage.setItem('myq_list', JSON.stringify(saved));
-
+    const currentUser = getCurrentUser();
+    const userKey = currentUser ? (currentUser.key || currentUser.email || '') : '';
+    if (window.QDB) {
+      await window.QDB.deleteQ(userKey, id);
+    } else {
+      const saved = JSON.parse(localStorage.getItem('myq_list') || '[]').filter(e => String(e.id) !== String(id));
+      localStorage.setItem('myq_list', JSON.stringify(saved));
+    }
     renderMyQList();
     renderPortfolio();
     loadQGallery();
@@ -5718,11 +5995,13 @@ JSON 형식으로만 반환:
 
   async function clearMyQ() {
     if (!confirm('저장된 질문을 모두 삭제할까요?')) return;
-    // shared storage에서도 모두 삭제
-    try {
-      // localStorage만 사용하므로 별도 삭제 불필요
-    } catch(e) {}
-    localStorage.removeItem('myq_list');
+    const currentUser = getCurrentUser();
+    const userKey = currentUser ? (currentUser.key || currentUser.email || '') : '';
+    if (window.QDB) {
+      await window.QDB.clearMyQ(userKey);
+    } else {
+      localStorage.removeItem('myq_list');
+    }
     renderMyQList();
     renderPortfolio();
     loadQGallery();
@@ -7711,6 +7990,57 @@ ${phaseContent[p]}
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- Firebase 설정 모달 -->
+<div id="fbSetupOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,5,20,.8);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:24px;flex-direction:column;">
+  <div style="background:white;border-radius:28px;padding:40px 36px;max-width:520px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.3);position:relative;">
+    <button onclick="closeFbSetup()" style="position:absolute;top:16px;right:18px;background:#f1f5f9;border:none;color:#64748b;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;">✕</button>
+    <div style="text-align:center;font-size:28px;margin-bottom:8px;">🔥</div>
+    <h2 style="font-size:20px;font-weight:900;color:#0a0a12;text-align:center;margin-bottom:6px;">Firebase 연결 설정</h2>
+    <p style="font-size:13px;color:#5a5a7a;text-align:center;margin-bottom:24px;">Firebase Console에서 복사한 config 값을 입력하세요.<br>한 번 설정하면 모든 기기에서 데이터가 동기화됩니다.</p>
+
+    <div style="background:#f8fafc;border-radius:14px;padding:16px 18px;margin-bottom:20px;font-size:12px;color:#475569;line-height:1.8;">
+      <strong>설정 방법:</strong><br>
+      1. <a href="https://console.firebase.google.com" target="_blank" style="color:#4f46e5;">console.firebase.google.com</a> 접속<br>
+      2. 프로젝트 만들기 → <strong>Firestore Database</strong> 활성화 (테스트 모드)<br>
+      3. 프로젝트 설정 → 앱 추가(웹) → config 복사 후 아래에 입력
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div>
+        <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">API Key <span style="color:#f43f5e">*</span></label>
+        <input id="fbApiKey" type="text" placeholder="AIzaSy..." style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:monospace;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'"/>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Auth Domain</label>
+        <input id="fbAuthDomain" type="text" placeholder="your-project.firebaseapp.com" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:monospace;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'"/>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Project ID <span style="color:#f43f5e">*</span></label>
+        <input id="fbProjectId" type="text" placeholder="your-project-id" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:monospace;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Storage Bucket</label>
+          <input id="fbStorageBucket" type="text" placeholder="your-project.appspot.com" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:monospace;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'"/>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Messaging Sender ID</label>
+          <input id="fbMsgSenderId" type="text" placeholder="000000000000" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:monospace;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'"/>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">App ID</label>
+        <input id="fbAppId" type="text" placeholder="1:000000000000:web:..." style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:monospace;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'"/>
+      </div>
+    </div>
+
+    <button id="fbSaveBtn" onclick="saveFbConfig()" style="width:100%;margin-top:20px;padding:14px;background:linear-gradient(135deg,#4f46e5,#0ea5e9);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:all .2s;">
+      저장 & 연결 테스트
+    </button>
+    <p style="font-size:11px;color:#94a3b8;text-align:center;margin-top:12px;">설정 값은 이 기기의 브라우저에 저장됩니다</p>
   </div>
 </div>
 

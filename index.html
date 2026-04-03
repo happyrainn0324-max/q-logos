@@ -1919,6 +1919,389 @@
     .cta-mini-grid { grid-template-columns: 1fr; }
     .qlogos-frame-card { padding: 28px 20px; }
   }
+
+  /* ── Q-LOGOS 프롬프트 생성 모달 ── */
+  .logos-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 3000;
+    background: rgba(5,5,20,.80); backdrop-filter: blur(12px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .logos-modal-overlay.open { display: flex; }
+  .logos-modal-box {
+    background: white; border-radius: 28px; width: 100%; max-width: 860px;
+    max-height: 92vh; overflow-y: auto; position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,.3); animation: modalIn .25s ease;
+  }
+  @keyframes modalIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:none} }
+  .logos-modal-head {
+    background: linear-gradient(135deg,#1e1b4b,#312e81,#1e3a5f);
+    padding: 28px 32px 24px; border-radius: 28px 28px 0 0;
+    position: relative;
+  }
+  .logos-modal-head h2 { font-size: 20px; font-weight: 900; color: white; margin-bottom: 4px; }
+  .logos-modal-head p  { font-size: 13px; color: rgba(255,255,255,.65); }
+  .logos-modal-close {
+    position: absolute; top: 18px; right: 20px;
+    background: rgba(255,255,255,.12); border: none; color: white;
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .logos-modal-close:hover { background: rgba(255,255,255,.25); }
+  .logos-modal-body { padding: 28px 32px 32px; }
+
+  /* 입력 폼 */
+  .logos-form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .logos-form-row.two { grid-template-columns: 1fr 1fr; }
+  .logos-field label { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px; letter-spacing: .03em; }
+  .logos-field select, .logos-field input, .logos-field textarea {
+    width: 100%; padding: 10px 13px; border: 1.5px solid #e2e8f0; border-radius: 10px;
+    font-size: 14px; font-family: 'Pretendard','Noto Sans KR',sans-serif; color: #0a0a12;
+    outline: none; transition: border-color .2s; box-sizing: border-box; background: #fafafa;
+  }
+  .logos-field select:focus, .logos-field input:focus, .logos-field textarea:focus { border-color: #4f46e5; background: white; }
+  .logos-field textarea { resize: vertical; min-height: 72px; }
+
+  /* 단계 선택 */
+  .logos-phase-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 20px; }
+  .logos-phase-btn {
+    padding: 12px 8px; border: 2px solid #e2e8f0; border-radius: 14px;
+    background: white; cursor: pointer; font-family: inherit; text-align: center;
+    transition: all .2s;
+  }
+  .logos-phase-btn:hover { border-color: #4f46e5; transform: translateY(-2px); }
+  .logos-phase-btn.active { border-color: transparent; color: white; }
+  .logos-phase-btn .ph-key { font-size: 20px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .logos-phase-btn .ph-num { font-size: 9px; font-weight: 700; opacity: .8; letter-spacing: .1em; margin-bottom: 2px; }
+  .logos-phase-btn .ph-name { font-size: 12px; font-weight: 800; }
+  .logos-phase-btn .ph-sub  { font-size: 10px; opacity: .8; margin-top: 2px; }
+
+  /* 생성 버튼 */
+  .logos-gen-btn {
+    width: 100%; padding: 14px; border: none; border-radius: 14px;
+    background: linear-gradient(135deg,#4f46e5,#7c3aed);
+    color: white; font-size: 15px; font-weight: 800;
+    cursor: pointer; font-family: inherit; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 6px 20px rgba(79,70,229,.35); margin-bottom: 20px;
+  }
+  .logos-gen-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(79,70,229,.45); }
+  .logos-gen-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+  /* 결과 */
+  .logos-result-wrap { display: none; }
+  .logos-result-wrap.show { display: block; }
+  .logos-result-phase-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .logos-result-tab {
+    padding: 7px 16px; border-radius: 100px; border: 2px solid #e2e8f0;
+    font-size: 12px; font-weight: 700; cursor: pointer; background: white;
+    font-family: inherit; color: #5a5a7a; transition: all .2s;
+  }
+  .logos-result-tab.active { color: white; border-color: transparent; }
+  .logos-result-panel { display: none; }
+  .logos-result-panel.active { display: block; animation: fadeUp .3s ease; }
+  .logos-result-card {
+    background: #f8f8ff; border-radius: 16px; padding: 20px 22px;
+    border-left: 4px solid #4f46e5; margin-bottom: 12px;
+  }
+  .logos-result-card .rc-head { font-size: 11px; font-weight: 800; color: #4f46e5; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .logos-result-card .rc-text { font-size: 14px; color: #0a0a12; line-height: 1.75; white-space: pre-wrap; }
+  .logos-copy-btn {
+    padding: 9px 20px; background: white; color: #4f46e5;
+    border: 1.5px solid #4f46e5; border-radius: 100px;
+    font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
+    transition: all .2s; margin-right: 8px; margin-bottom: 8px;
+  }
+  .logos-copy-btn:hover { background: #4f46e5; color: white; }
+  .logos-copy-all-btn {
+    padding: 9px 20px; background: #4f46e5; color: white;
+    border: none; border-radius: 100px;
+    font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
+    transition: all .2s; margin-bottom: 8px;
+  }
+  .logos-copy-all-btn:hover { background: #4338ca; }
+  .logos-divider { border: none; border-top: 1px solid #e2e2ec; margin: 20px 0; }
+  @keyframes spin2 { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+
+  /* ── Q-BOT 질문 꾸러미 모달 ── */
+  .qbot-overlay {
+    display:none; position:fixed; inset:0; z-index:3100;
+    background:rgba(5,5,20,.82); backdrop-filter:blur(12px);
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .qbot-overlay.open { display:flex; }
+  .qbot-box {
+    background:white; border-radius:28px; width:100%; max-width:880px;
+    max-height:92vh; overflow-y:auto; position:relative;
+    box-shadow:0 32px 80px rgba(0,0,0,.3); animation:modalIn .25s ease;
+  }
+  .qbot-head {
+    background:linear-gradient(135deg,#0369a1,#0ea5e9,#06b6d4);
+    padding:26px 32px 22px; border-radius:28px 28px 0 0; position:relative;
+  }
+  .qbot-head h2 { font-size:20px; font-weight:900; color:white; margin-bottom:4px; }
+  .qbot-head p  { font-size:13px; color:rgba(255,255,255,.7); }
+  .qbot-close {
+    position:absolute; top:16px; right:18px;
+    background:rgba(255,255,255,.15); border:none; color:white;
+    width:32px; height:32px; border-radius:50%; cursor:pointer;
+    font-size:14px; display:flex; align-items:center; justify-content:center;
+    transition:background .2s;
+  }
+  .qbot-close:hover { background:rgba(255,255,255,.28); }
+  .qbot-body { padding:26px 30px 32px; }
+
+  /* 폼 */
+  .qbot-form-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px; }
+  .qbot-form-row.two { grid-template-columns:1fr 1fr; }
+  .qbot-field label { display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:5px; letter-spacing:.04em; }
+  .qbot-field select, .qbot-field input {
+    width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:10px;
+    font-size:14px; font-family:inherit; color:#0a0a12; outline:none;
+    transition:border-color .2s; background:#fafafa; box-sizing:border-box;
+  }
+  .qbot-field select:focus, .qbot-field input:focus { border-color:#0ea5e9; background:white; }
+
+  /* 생성 버튼 */
+  .qbot-gen-btn {
+    width:100%; padding:13px; border:none; border-radius:12px;
+    background:linear-gradient(135deg,#0ea5e9,#06b6d4);
+    color:white; font-size:15px; font-weight:800;
+    cursor:pointer; font-family:inherit; transition:all .2s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 6px 20px rgba(14,165,233,.35); margin-bottom:20px;
+  }
+  .qbot-gen-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(14,165,233,.45); }
+
+  /* 결과 */
+  .qbot-result { display:none; }
+  .qbot-result.show { display:block; }
+  .qbot-info-bar {
+    background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px;
+    padding:12px 16px; margin-bottom:18px; font-size:13px; color:#0369a1; font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .qbot-step {
+    border-radius:16px; margin-bottom:14px; overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+  }
+  .qbot-step-head {
+    padding:13px 18px; display:flex; align-items:center; gap:12px; cursor:pointer;
+    transition:filter .15s;
+  }
+  .qbot-step-head:hover { filter:brightness(.95); }
+  .qbot-step-badge {
+    width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.25);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:900; color:white; flex-shrink:0;
+  }
+  .qbot-step-title { font-size:14px; font-weight:800; color:white; flex:1; }
+  .qbot-step-sub   { font-size:11px; color:rgba(255,255,255,.8); }
+  .qbot-step-arrow { font-size:12px; color:rgba(255,255,255,.7); transition:transform .2s; }
+  .qbot-step-body {
+    background:white; border:2px solid #e2e8f0; border-top:none;
+    border-radius:0 0 16px 16px; padding:18px 20px;
+    display:none;
+  }
+  .qbot-step-body.open { display:block; }
+  .qbot-step-desc { font-size:12px; color:#64748b; margin-bottom:14px; line-height:1.6; padding-bottom:12px; border-bottom:1px solid #f1f5f9; }
+  .qbot-kw-section { margin-bottom:14px; }
+  .qbot-kw-label { font-size:11px; font-weight:700; color:#475569; margin-bottom:8px; letter-spacing:.05em; }
+  .qbot-kw-chips { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px; }
+  .qbot-kw-chip {
+    padding:5px 14px; border-radius:100px; font-size:12px; font-weight:700;
+    cursor:pointer; border:2px solid transparent; transition:all .18s;
+    user-select:none;
+  }
+  .qbot-kw-chip:hover { transform:translateY(-1px); box-shadow:0 3px 10px rgba(0,0,0,.12); }
+  .qbot-q-box {
+    background:#f8f9ff; border:1.5px solid #e0e7ff; border-radius:10px;
+    padding:12px 14px; font-size:13px; color:#1e1e2e; line-height:1.7;
+    min-height:48px; margin-bottom:8px;
+  }
+  .qbot-q-box em { font-style:normal; font-weight:800; color:#0ea5e9; }
+  .qbot-compose-row { display:flex; gap:8px; align-items:center; }
+  .qbot-compose-input {
+    flex:1; padding:9px 13px; border:1.5px solid #e2e8f0; border-radius:10px;
+    font-size:13px; font-family:inherit; outline:none; transition:border-color .2s;
+  }
+  .qbot-compose-input:focus { border-color:#0ea5e9; }
+  .qbot-save-btn {
+    padding:9px 18px; background:#0ea5e9; color:white; border:none;
+    border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;
+    font-family:inherit; transition:all .2s; white-space:nowrap;
+  }
+  .qbot-save-btn:hover { background:#0284c7; }
+  .qbot-saved-badge {
+    display:inline-flex; align-items:center; gap:4px; background:#dcfce7;
+    color:#166534; border-radius:100px; padding:3px 10px; font-size:11px; font-weight:700;
+    margin-top:6px;
+  }
+
+  /* 하단 버튼 */
+  .qbot-action-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+  .qbot-copy-btn {
+    padding:9px 20px; background:white; color:#0ea5e9; border:1.5px solid #0ea5e9;
+    border-radius:100px; font-size:13px; font-weight:700; cursor:pointer;
+    font-family:inherit; transition:all .2s;
+  }
+  .qbot-copy-btn:hover { background:#0ea5e9; color:white; }
+  .qbot-copy-all-btn {
+    padding:9px 20px; background:#0ea5e9; color:white; border:none;
+    border-radius:100px; font-size:13px; font-weight:700; cursor:pointer;
+    font-family:inherit; transition:all .2s;
+  }
+  .qbot-copy-all-btn:hover { background:#0284c7; }
+  .qbot-divider { border:none; border-top:1px solid #e2e2ec; margin:18px 0; }
+
+
+  /* ── D-BOT 수업 설계 모달 ── */
+  .dbot-overlay {
+    display:none; position:fixed; inset:0; z-index:3200;
+    background:rgba(5,5,20,.82); backdrop-filter:blur(12px);
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .dbot-overlay.open { display:flex; }
+  .dbot-box {
+    background:white; border-radius:28px; width:100%; max-width:920px;
+    max-height:92vh; overflow-y:auto; position:relative;
+    box-shadow:0 32px 80px rgba(0,0,0,.3); animation:modalIn .25s ease;
+  }
+  .dbot-head {
+    background:linear-gradient(135deg,#4c1d95,#7c3aed,#a855f7);
+    padding:26px 32px 22px; border-radius:28px 28px 0 0; position:relative;
+  }
+  .dbot-head h2 { font-size:20px; font-weight:900; color:white; margin-bottom:4px; }
+  .dbot-head p  { font-size:13px; color:rgba(255,255,255,.72); line-height:1.6; }
+  .dbot-close {
+    position:absolute; top:16px; right:18px;
+    background:rgba(255,255,255,.15); border:none; color:white;
+    width:32px; height:32px; border-radius:50%; cursor:pointer;
+    font-size:14px; display:flex; align-items:center; justify-content:center;
+    transition:background .2s;
+  }
+  .dbot-close:hover { background:rgba(255,255,255,.28); }
+  .dbot-body { padding:26px 30px 32px; }
+
+  /* 폼 */
+  .dbot-form-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px; }
+  .dbot-form-grid.two { grid-template-columns:1fr 1fr; }
+  .dbot-field label { display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:5px; letter-spacing:.04em; }
+  .dbot-field select, .dbot-field input {
+    width:100%; padding:10px 13px; border:1.5px solid #e2e8f0; border-radius:10px;
+    font-size:14px; font-family:inherit; color:#0a0a12; outline:none;
+    transition:border-color .2s; background:#fafafa; box-sizing:border-box;
+  }
+  .dbot-field select:focus, .dbot-field input:focus { border-color:#7c3aed; background:white; }
+
+  /* 생성 버튼 */
+  .dbot-gen-btn {
+    width:100%; padding:14px; border:none; border-radius:12px;
+    background:linear-gradient(135deg,#7c3aed,#a855f7);
+    color:white; font-size:15px; font-weight:800;
+    cursor:pointer; font-family:inherit; transition:all .2s;
+    box-shadow:0 6px 20px rgba(124,58,237,.35); margin-bottom:22px;
+  }
+  .dbot-gen-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(124,58,237,.45); }
+
+  /* 결과 */
+  .dbot-result { display:none; }
+  .dbot-result.show { display:block; }
+
+  /* 수업 정보 바 */
+  .dbot-info-bar {
+    background:linear-gradient(135deg,#f5f3ff,#faf5ff);
+    border:1px solid #ddd6fe; border-radius:14px;
+    padding:14px 18px; margin-bottom:22px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .dbot-info-tag {
+    background:white; border:1px solid #c4b5fd; border-radius:100px;
+    padding:4px 12px; font-size:12px; font-weight:700; color:#6d28d9;
+  }
+
+  /* 핵심질문 섹션 */
+  .dbot-section-title {
+    font-size:16px; font-weight:900; color:#1e1e2e;
+    margin-bottom:14px; display:flex; align-items:center; gap:8px;
+  }
+  .dbot-section-title .badge {
+    font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
+    background:rgba(124,58,237,.1); color:#7c3aed;
+  }
+  .dbot-cq-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
+  .dbot-cq-card {
+    background:linear-gradient(135deg,#f5f3ff,#faf5ff);
+    border:1.5px solid #ddd6fe; border-radius:16px; padding:18px 16px;
+    position:relative; transition:all .2s;
+  }
+  .dbot-cq-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(124,58,237,.15); }
+  .dbot-cq-num {
+    width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#a855f7);
+    color:white; font-size:12px; font-weight:900;
+    display:flex; align-items:center; justify-content:center; margin-bottom:10px;
+  }
+  .dbot-cq-text { font-size:13px; font-weight:600; color:#1e1e2e; line-height:1.7; }
+
+  /* 단계별 활동 */
+  .dbot-phase-wrap { display:flex; flex-direction:column; gap:14px; margin-bottom:22px; }
+  .dbot-phase-card {
+    border-radius:18px; overflow:hidden;
+    box-shadow:0 2px 12px rgba(0,0,0,.07);
+  }
+  .dbot-phase-head {
+    padding:14px 20px; display:flex; align-items:center; gap:12px;
+    cursor:pointer; transition:filter .15s; user-select:none;
+  }
+  .dbot-phase-head:hover { filter:brightness(.94); }
+  .dbot-phase-icon {
+    width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.22);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:900; color:white; flex-shrink:0;
+  }
+  .dbot-phase-title { flex:1; }
+  .dbot-phase-title strong { display:block; font-size:14px; font-weight:800; color:white; }
+  .dbot-phase-title span  { font-size:11px; color:rgba(255,255,255,.78); }
+  .dbot-phase-chevron { font-size:12px; color:rgba(255,255,255,.7); transition:transform .22s; }
+  .dbot-phase-body {
+    background:white; border:2px solid #f1f5f9; border-top:none;
+    border-radius:0 0 18px 18px; padding:0; max-height:0;
+    overflow:hidden; transition:max-height .35s ease, padding .3s;
+  }
+  .dbot-phase-body.open { max-height:600px; padding:18px 20px; }
+  .dbot-activity-list { display:flex; flex-direction:column; gap:12px; }
+  .dbot-activity {
+    background:#fafbff; border-radius:12px; padding:14px 16px;
+    border-left:3px solid #7c3aed; display:flex; gap:12px; align-items:flex-start;
+  }
+  .dbot-activity-num {
+    width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:900; color:white; flex-shrink:0; margin-top:1px;
+  }
+  .dbot-activity-content { flex:1; }
+  .dbot-activity-title { font-size:15px; font-weight:800; color:#1e1e2e; margin-bottom:5px; }
+  .dbot-activity-desc  { font-size:14px; color:#5a5a7a; line-height:1.75; }
+  .dbot-activity-tip   { font-size:13px; color:#7c3aed; font-weight:700; margin-top:6px; }
+
+  /* 하단 복사 버튼 */
+  .dbot-action-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .dbot-copy-btn {
+    padding:10px 22px; background:white; color:#7c3aed; border:1.5px solid #7c3aed;
+    border-radius:100px; font-size:13px; font-weight:700;
+    cursor:pointer; font-family:inherit; transition:all .2s;
+  }
+  .dbot-copy-btn:hover { background:#7c3aed; color:white; }
+  .dbot-copy-all-btn {
+    padding:10px 22px; background:linear-gradient(135deg,#7c3aed,#a855f7); color:white; border:none;
+    border-radius:100px; font-size:13px; font-weight:700;
+    cursor:pointer; font-family:inherit; transition:all .2s;
+    box-shadow:0 4px 14px rgba(124,58,237,.3);
+  }
+  .dbot-copy-all-btn:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(124,58,237,.4); }
+  .dbot-divider { border:none; border-top:1px solid #e2e2ec; margin:20px 0; }
+
 </style>
 </head>
 <body>
@@ -2112,17 +2495,17 @@
 
   <!-- Right: Tall bot buttons -->
   <div class="hero-bots">
-    <button class="bot-btn bot-sky" onclick="window.open('https://chatgpt.com/g/g-6919857b00448191b7bd5a809f5c1bc9-inceongonghangjung-q-bot','_blank')">
+    <button class="bot-btn bot-sky" onclick="openQBotModal()">
       <span class="bot-icon">🤖</span>
       <span class="bot-title">학생 질문 설계<br/>Q-BOT</span>
-      <span class="bot-sub">학생용 질문 생성 도우미</span>
+      <span class="bot-sub">5단계 질문 꾸러미 생성</span>
     </button>
-    <button class="bot-btn bot-violet" onclick="window.open('https://chatgpt.com/g/g-6913c3f077bc8191a4a81724f22b6bbc-inceongonghangjung-d-bot','_blank')">
+    <button class="bot-btn bot-violet" onclick="openDbotModal()">
       <span class="bot-icon">💻</span>
       <span class="bot-title">교사 수업 설계<br/>D-BOT</span>
-      <span class="bot-sub">교사용 수업 설계 도우미</span>
+      <span class="bot-sub">핵심질문·창의활동 추천</span>
     </button>
-    <button class="bot-btn bot-teal">
+    <button class="bot-btn bot-teal" onclick="openLogosModal()">
       <span class="bot-icon">✨</span>
       <span class="bot-title">Q-LOGOS<br/>단계별 질문생성</span>
       <span class="bot-sub">5단계 프롬프트 시작</span>
@@ -5931,6 +6314,1203 @@ JSON 형식으로만 반환:
     });
   }, { threshold: 0.12 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // ══════════════════════════════════════════
+  // Q-LOGOS 단계별 프롬프트 생성
+  // ══════════════════════════════════════════
+  const logosPhaseInfo = {
+    launch:   { key:'L', num:'PHASE 1', name:'Launch',   sub:'질문 깨우기',   color:'linear-gradient(135deg,#0ea5e9,#06b6d4)',   textColor:'#0ea5e9' },
+    observe:  { key:'O', num:'PHASE 2', name:'Observe',  sub:'자료 관찰',     color:'linear-gradient(135deg,#10b981,#14b8a6)',   textColor:'#10b981' },
+    generate: { key:'G', num:'PHASE 3', name:'Generate', sub:'질문 생성',     color:'linear-gradient(135deg,#8b5cf6,#ec4899)',   textColor:'#8b5cf6' },
+    organize: { key:'O', num:'PHASE 4', name:'Organize', sub:'사고 구조화',   color:'linear-gradient(135deg,#f59e0b,#f97316)',   textColor:'#f59e0b' },
+    solve:    { key:'S', num:'PHASE 5', name:'Solve',    sub:'답하고 나누기', color:'linear-gradient(135deg,#f43f5e,#ec4899)',   textColor:'#f43f5e' },
+  };
+
+  // 각 단계별 프롬프트 생성 지침
+  const logosPhaseGuide = {
+    launch: `【PHASE 1 - Launch: 질문을 깨우는 출발】
+이 단계의 목적: 학생이 "왜?"라는 첫 질문을 스스로 품게 만드는 것.
+교사는 정답을 주지 않고, 학생의 내면에서 궁금증이 피어오르게 설계한다.
+
+생성할 내용:
+① 도입 자극 자료 제안 (3가지) — 해당 주제와 연결된 강렬한 영상/사진/통계/기사/실생활 장면
+② 교사 발문 스크립트 (3가지) — 학생이 자연스럽게 질문을 품게 만드는 열린 질문
+③ 학생 첫 반응 유도 활동 — "1분 생각 적기" 또는 "짝과 나눌 첫 질문"
+④ 이 단계에서 나오길 기대하는 학생 질문 예시 (3가지)`,
+
+    observe: `【PHASE 2 - Observe: 자료를 보고 질문 찾기】
+이 단계의 목적: 텍스트·그래프·사진 등 자료를 꼼꼼히 살피며 핵심 쟁점과 질문거리를 스스로 발견하게 한다.
+
+생성할 내용:
+① 탐구 자료 선정 가이드 (3종) — 해당 주제에 적합한 자료 유형과 구체적 예시
+② 자료 읽기 질문 프레임 — "무엇이 보이나?", "무엇이 이상한가?", "왜 이럴까?"
+③ 자료 분석 활동지 구조 — 학생이 자료를 보며 채울 수 있는 관찰 기록 틀
+④ 교사 관찰 포인트 — 학생이 놓치기 쉬운 핵심 쟁점 안내`,
+
+    generate: `【PHASE 3 - Generate: 질문 생성과 확장】
+이 단계의 목적: 학생이 개인 및 모둠 단위로 탐구 질문을 직접 만들고 정교화한다.
+
+생성할 내용:
+① 개인 질문 생성 프롬프트 (단계별 발전형)
+   - 1수준: 사실 확인 질문 예시 2개
+   - 2수준: 비교·분석 질문 예시 2개
+   - 3수준: 평가·창조 질문 예시 2개
+② 모둠 질문 정교화 활동 — 질문 투표 및 대표 질문 선정 방법
+③ 질문 확장 씨앗어 (5가지) — "만약~라면?", "~와 비교하면?", "왜 ~일까?" 등 맥락 적용
+④ 이 주제의 핵심 탐구 질문 (최종 2가지) — 수업 전체를 이끌 대표 질문`,
+
+    organize: `【PHASE 4 - Organize: 사고 정리와 구조화】
+이 단계의 목적: 생성된 질문들을 분류하고, 탐구 계획을 체계적으로 정리한다.
+
+생성할 내용:
+① 질문 분류 체계 — 해당 주제에 맞는 2~4개 카테고리와 분류 기준
+② KWL 차트 틀 — K(아는 것)/W(알고 싶은 것)/L(배운 것) 해당 주제 맞춤 버전
+③ 탐구 계획서 구조 — 탐구 질문 / 조사 방법 / 필요 자료 / 발표 형식을 담은 템플릿
+④ 논증 구조도 — 주장-근거-반론-재반론 틀을 해당 주제에 적용한 예시`,
+
+    solve: `【PHASE 5 - Solve: 답하기, 나누기, 성찰하기】
+이 단계의 목적: 탐구 결과를 표현·공유하고, 새로운 질문으로 순환을 완성한다.
+
+생성할 내용:
+① 결과 발표 형식 제안 (3가지) — 해당 주제와 학년에 어울리는 발표·공유 방법
+② 동료 피드백 프레임 — 학생이 서로 의미 있는 피드백을 줄 수 있는 질문 3가지
+③ 성찰 일지 질문 (4가지) — 탐구 과정을 되돌아보고 새로운 질문을 품게 하는 성찰 질문
+④ 다음 탐구로 연결될 새로운 질문 (2가지) — 이번 탐구에서 자연스럽게 이어지는 후속 질문`,
+  };
+
+  let logosGeneratedResults = {}; // 생성 결과 저장
+
+  function openLogosModal() {
+    document.getElementById('logosModalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLogosModal() {
+    document.getElementById('logosModalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function togglePhase(btn) {
+    btn.classList.toggle('active');
+    const ph = btn.dataset.phase;
+    const info = logosPhaseInfo[ph];
+    if (btn.classList.contains('active')) {
+      btn.style.background = info.color;
+      btn.style.color = 'white';
+      btn.style.borderColor = 'transparent';
+    } else {
+      btn.style.background = 'white';
+      btn.style.color = '#0a0a12';
+      btn.style.borderColor = '#e2e8f0';
+    }
+  }
+
+  function generateLogosPrompts() {
+    const grade   = document.getElementById('logosGrade').value;
+    const subject = document.getElementById('logosSubject').value;
+    const unit    = document.getElementById('logosUnit').value.trim();
+    const topic   = document.getElementById('logosTopic').value.trim();
+    const goal    = document.getElementById('logosGoal').value.trim();
+
+    if (!grade || !subject) { alert('학년과 교과를 선택해주세요.'); return; }
+    if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
+
+    const selectedPhases = [...document.querySelectorAll('.logos-phase-btn.active')].map(b => b.dataset.phase);
+    if (!selectedPhases.length) { alert('최소 1개 단계를 선택해주세요.'); return; }
+
+    // 즉시 각 단계별 프롬프트 생성 (폴백 템플릿 직접 사용)
+    logosGeneratedResults = {};
+    selectedPhases.forEach(p => {
+      logosGeneratedResults[p] = buildLogosPromptFallback(p, grade, subject, unit, topic, goal);
+    });
+
+    renderLogosResults(selectedPhases);
+  }
+
+  function buildLogosPromptFallback(phase, grade, subject, unit, topic, goal) {
+    const t  = topic   || '이 주제';
+    const s  = subject || '해당 교과';
+    const g  = grade   || '';
+    const u  = unit    ? ' ' + unit + ' 단원' : '';
+    const gl = goal    ? '\n  학습 목표: ' + goal : '';
+    const ctx = g + ' ' + s + u + ' · ' + t + gl;
+
+    const templates = {
+      launch: [
+        '📌 수업 정보',
+        ctx,
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '🎬 PHASE 1 · Launch — 질문을 깨우는 출발',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '',
+        '【① 도입 자극 자료 3가지】',
+        '  1) ' + t + '와 관련된 최근 뉴스 기사 또는 충격적 통계',
+        '     예) "' + t + '로 인해 우리 삶이 어떻게 달라졌는가" 관련 기사',
+        '  2) 학생 일상과 직결된 짧은 영상 클립 (2~3분)',
+        '     예) ' + t + '의 실제 현장을 담은 다큐멘터리 장면',
+        '  3) ' + t + '의 역설적이거나 놀라운 사례 사진 또는 그래프',
+        '     예) 예상과 전혀 다른 ' + t + ' 관련 데이터 시각화',
+        '',
+        '【② 교사 발문 스크립트 3가지】',
+        '  Q1) "이 자료를 보고 가장 먼저 떠오른 생각이나 감정은 무엇인가요?"',
+        '  Q2) "' + t + '이(가) 우리 학교나 일상과 어떻게 연결되어 있을까요?"',
+        '  Q3) "' + t + '에 대해 지금 가장 궁금한 것이 있다면 무엇인가요?"',
+        '',
+        '【③ 학생 첫 반응 유도 활동】',
+        '  → 포스트잇 1장에 "내가 이 주제에서 갖게 된 첫 번째 질문" 적기',
+        '  → 짝과 30초 공유 후 칠판 질문 게시판에 붙이기',
+        '',
+        '【④ 이 단계에서 기대하는 학생 질문 예시】',
+        '  · ' + t + '은(는) 왜 지금 이 시점에 중요한 문제가 됐을까?',
+        '  · ' + t + '이(가) 나의 미래에 어떤 영향을 줄까?',
+        '  · ' + t + '을(를) 해결하거나 변화시킬 수 있는 방법이 있을까?',
+      ].join('\n'),
+
+      observe: [
+        '📌 수업 정보',
+        ctx,
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '🔍 PHASE 2 · Observe — 자료를 보고 질문 찾기',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '',
+        '【① 탐구 자료 선정 가이드 3종】',
+        '  1) 텍스트 자료: ' + t + ' 관련 신문 기사 2종 (서로 다른 관점 또는 시기)',
+        '     → 같은 주제를 다르게 보도한 기사를 나란히 제시해 비교 유도',
+        '  2) 시각 자료: ' + t + ' 관련 통계 그래프, 지도, 사진 중 1가지',
+        '     → 숫자나 시각 정보에서 패턴을 발견하게 설계',
+        '  3) 멀티미디어: ' + t + '의 현장을 담은 인터뷰 영상 또는 다큐 클립',
+        '     → 실제 사람의 이야기로 공감과 질문을 동시에 유발',
+        '',
+        '【② 자료 읽기 질문 프레임 (교사용 발문)】',
+        '  · "이 자료에서 눈에 띄는 사실이나 숫자는 무엇인가요?"',
+        '  · "예상과 달라서 놀랍거나 이상하게 느껴지는 부분이 있나요?"',
+        '  · "이 자료가 보여주지 않는 것, 빠진 내용은 무엇일까요?"',
+        '  · "이 자료를 만든 사람은 어떤 의도를 가지고 있을까요?"',
+        '',
+        '【③ 관찰 기록 틀 (학생 활동지)】',
+        '  ┌───────────────┬───────────────┬───────────────┐',
+        '  │  발견한 사실   │    의문점     │  더 알고 싶은 것 │',
+        '  ├───────────────┼───────────────┼───────────────┤',
+        '  │               │               │               │',
+        '  └───────────────┴───────────────┴───────────────┘',
+        '',
+        '【④ 교사 관찰 포인트】',
+        '  · 학생이 ' + t + '의 핵심 쟁점을 파악했는지 확인',
+        '  · 단순 사실 나열을 넘어 "왜?"를 묻는 학생에게 추가 발문 제공',
+        '  · 자료 간 모순이나 차이를 발견한 학생을 모둠 토론으로 연결',
+      ].join('\n'),
+
+      generate: [
+        '📌 수업 정보',
+        ctx,
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '✍️ PHASE 3 · Generate — 질문 생성과 확장',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '',
+        '【① 수준별 질문 생성 (개인 → 모둠)】',
+        '',
+        '  1수준 — 사실 확인 질문 (누구나 조사로 답할 수 있는 질문)',
+        '  · ' + t + '은(는) 언제, 어디서, 어떻게 발생하는가?',
+        '  · ' + t + '의 주요 원인과 현재 상황은 어떠한가?',
+        '',
+        '  2수준 — 비교·분석 질문 (자료를 연결해야 답할 수 있는 질문)',
+        '  · ' + t + '이(가) 우리나라와 다른 나라에서 어떻게 다르게 나타나는가?',
+        '  · ' + t + '과(와) 관련하여 서로 다른 집단의 입장은 어떻게 다른가?',
+        '',
+        '  3수준 — 평가·창조 질문 (답이 하나가 아닌 열린 질문)',
+        '  · ' + t + '을(를) 해결하기 위한 가장 효과적인 방법은 무엇이고, 왜 그렇게 생각하는가?',
+        '  · ' + t + '에 관해 우리 학교나 지역에서 실제로 할 수 있는 일은 무엇인가?',
+        '',
+        '【② 모둠 질문 정교화 활동】',
+        '  → 개인 질문 5개 생성 (5분)',
+        '  → 모둠원과 공유 후 가장 탐구하고 싶은 질문 투표 (3분)',
+        '  → 대표 질문 1개 선정 후 "왜 이 질문이 중요한가?" 이유 발표',
+        '',
+        '【③ 질문 확장 씨앗어 5가지】',
+        '  · "만약 ' + t + '이(가) 없다면 어떻게 될까?"',
+        '  · "' + t + '을(를) 찬성하는 입장과 반대하는 입장은?"',
+        '  · "10년 후 ' + t + '은(는) 어떻게 달라져 있을까?"',
+        '  · "' + t + '와(과) 전혀 다른 분야를 연결하면?"',
+        '  · "내가 ' + t + '의 전문가라면 가장 먼저 무엇을 물을까?"',
+        '',
+        '【④ 이 수업의 핵심 탐구 질문 (최종 2가지)】',
+        '  ★ ' + t + '이(가) 우리 삶과 사회에 미치는 가장 큰 영향은 무엇인가?',
+        '  ★ ' + t + '에 관해 ' + g + ' 학생인 우리가 지금 할 수 있는 일은 무엇인가?',
+      ].join('\n'),
+
+      organize: [
+        '📌 수업 정보',
+        ctx,
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '🗂️ PHASE 4 · Organize — 사고 정리와 구조화',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '',
+        '【① 질문 분류 체계】',
+        '  ' + t + ' 탐구 질문을 4가지 범주로 분류하세요:',
+        '  [원인 범주]   → ' + t + '은(는) 왜 발생하는가?',
+        '  [현황 범주]   → ' + t + '의 현재 상황은 어떠한가?',
+        '  [영향 범주]   → ' + t + '이(가) 우리에게 어떤 영향을 미치는가?',
+        '  [해결책 범주] → ' + t + '을(를) 어떻게 해결할 수 있는가?',
+        '',
+        '【② KWL 차트 — ' + t + ' 맞춤 버전】',
+        '  K (Know · 이미 아는 것)',
+        '  → ' + t + '에 대해 수업 전 내가 알고 있던 것: ___________',
+        '',
+        '  W (Want · 알고 싶은 것)',
+        '  → ' + t + '에 대해 이번 탐구에서 반드시 알고 싶은 것: ___________',
+        '',
+        '  L (Learned · 배운 것)',
+        '  → 탐구 후 새롭게 알게 된 것: ___________',
+        '',
+        '【③ 탐구 계획서 틀】',
+        '  ┌─────────────────────────────────────────────┐',
+        '  │ 핵심 탐구 질문:                              │',
+        '  │ 조사 방법: □인터넷 □인터뷰 □도서 □실험 □기타│',
+        '  │ 필요한 자료:                                 │',
+        '  │ 발표 형식: □보고서 □발표 □영상 □포스터       │',
+        '  │ 탐구 기간:          ~ ',
+        '  └─────────────────────────────────────────────┘',
+        '',
+        '【④ 논증 구조도 — ' + t + ' 적용 예시】',
+        '  주장: "' + t + '에 대해 우리는 ○○해야 한다"',
+        '  ↓',
+        '  근거1: 통계/사실 자료에 의하면 ___________',
+        '  근거2: 전문가/사례에 따르면 ___________',
+        '  ↓',
+        '  예상 반론: "하지만 ___________라는 반론이 있을 수 있다"',
+        '  ↓',
+        '  재반론: "그럼에도 불구하고 ___________이기 때문에 주장을 유지한다"',
+      ].join('\n'),
+
+      solve: [
+        '📌 수업 정보',
+        ctx,
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '🎤 PHASE 5 · Solve — 답하기, 나누기, 성찰하기',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '',
+        '【① 탐구 결과 발표 형식 3가지】',
+        '  1) 미니 발표 (5분): ' + t + ' 탐구 결과를 슬라이드 3~5장으로 정리해 학급 발표',
+        '  2) 패들렛 공유: 탐구 과정과 결론을 카드로 올리고 댓글로 상호 피드백',
+        '  3) 1페이지 인포그래픽: 핵심 내용을 그림과 숫자로 시각화하여 교실 게시',
+        '',
+        '【② 동료 피드백 질문 프레임】',
+        '  발표를 듣고 짝 또는 모둠에게 다음 질문으로 피드백하세요:',
+        '  · "이 탐구에서 가장 설득력 있었던 근거나 사례는 무엇이었나요?"',
+        '  · "더 깊이 탐구했으면 좋겠다고 생각한 부분이 있다면 어디인가요?"',
+        '  · "이 탐구를 보고 내가 새롭게 갖게 된 질문이 있다면 무엇인가요?"',
+        '',
+        '【③ 성찰 일지 질문 4가지】',
+        '  1) ' + t + '을(를) 탐구하기 전과 후, 나의 생각은 어떻게 달라졌나요?',
+        '  2) 탐구 과정에서 가장 어려웠던 순간은 언제였고, 어떻게 해결했나요?',
+        '  3) 이번 탐구에서 내가 배운 것 중 가장 오래 기억에 남을 것은 무엇인가요?',
+        '  4) ' + t + ' 탐구를 마치고 새롭게 궁금해진 것은 무엇인가요? (다음 탐구 질문)',
+        '',
+        '【④ 다음 탐구로 이어질 새로운 질문 2가지】',
+        '  → 이번 탐구에서 미처 답하지 못한 질문: ___________',
+        '  → ' + t + '과(와) 연결해서 더 탐구하고 싶은 새로운 주제: ___________',
+        '',
+        '  💡 Q-LOGOS는 여기서 끝이 아닙니다.',
+        '     Solve에서 나온 새로운 질문이 다음 Launch의 시작입니다. 🔄',
+      ].join('\n'),
+    };
+    return templates[phase] || '해당 단계 프롬프트를 찾을 수 없습니다.';
+  }
+
+  function renderLogosResults(selectedPhases) {
+    const wrap = document.getElementById('logosResultWrap');
+    const tabsEl = document.getElementById('logosResultTabs');
+    const panelsEl = document.getElementById('logosResultPanels');
+
+    tabsEl.innerHTML = selectedPhases.map((phase, i) => {
+      const info = logosPhaseInfo[phase];
+      return '<button class="logos-result-tab ' + (i===0?'active':'') + '" data-phase="' + phase + '" onclick="switchLogosTab(this)" style="' + (i===0?'background:'+info.color+';color:white;border-color:transparent':'')+'">' + info.num + ' ' + info.name + '</button>';
+    }).join('');
+
+    panelsEl.innerHTML = selectedPhases.map((phase, i) => {
+      const info = logosPhaseInfo[phase];
+      const text = logosGeneratedResults[phase] || '';
+      return '<div class="logos-result-panel ' + (i===0?'active':'') + '" data-phase="' + phase + '">' +
+        '<div class="logos-result-card" style="border-left-color:' + info.textColor + '">' +
+          '<div class="rc-head" style="color:' + info.textColor + '"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:900;color:white;background:' + info.textColor + '">' + info.key + '</span>' + info.num + ' · ' + info.name + ' — ' + info.sub + '</div>' +
+          '<div class="rc-text">' + text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    wrap.classList.add('show');
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function switchLogosTab(btn) {
+    const phase = btn.dataset.phase;
+    const info = logosPhaseInfo[phase];
+    document.querySelectorAll('.logos-result-tab').forEach(t => {
+      t.classList.remove('active');
+      t.style.background = 'white';
+      t.style.color = '#5a5a7a';
+      t.style.borderColor = '#e2e8f0';
+    });
+    btn.classList.add('active');
+    btn.style.background = info.color;
+    btn.style.color = 'white';
+    btn.style.borderColor = 'transparent';
+    document.querySelectorAll('.logos-result-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.querySelector('.logos-result-panel[data-phase="' + phase + '"]');
+    if (panel) panel.classList.add('active');
+  }
+
+  function copyLogosPhase() {
+    const activePanel = document.querySelector('.logos-result-panel.active');
+    if (!activePanel) return;
+    const text = activePanel.querySelector('.rc-text').innerText;
+    const phase = activePanel.dataset.phase;
+    const info = logosPhaseInfo[phase];
+    navigator.clipboard.writeText('[' + info.num + ' ' + info.name + ']\n' + text)
+      .then(() => alert('📋 ' + info.name + ' 단계 프롬프트가 복사되었습니다!'));
+  }
+
+  function copyLogosAll() {
+    const grade   = document.getElementById('logosGrade').value;
+    const subject = document.getElementById('logosSubject').value;
+    const topic   = document.getElementById('logosTopic').value.trim();
+    let all = '【Q-LOGOS 탐구 프롬프트】\n' + grade + ' ' + subject + ' · ' + topic + '\n' + '='.repeat(40) + '\n\n';
+    Object.entries(logosGeneratedResults).forEach(([phase, text]) => {
+      const info = logosPhaseInfo[phase];
+      all += '▶ ' + info.num + ' ' + info.name + ' (' + info.sub + ')\n' + '-'.repeat(30) + '\n' + text + '\n\n';
+    });
+    navigator.clipboard.writeText(all)
+      .then(() => alert('📋 전체 프롬프트가 클립보드에 복사되었습니다!'));
+  }
+
+
+  // ══════════════════════════════════════════
+  // Q-BOT 학생 질문 꾸러미 생성기
+  // ══════════════════════════════════════════
+
+  let qbotSavedQuestions = {};   // 단계별 학생이 직접 작성한 질문
+
+  function openQBotModal() {
+    document.getElementById('qbotOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeQBotModal() {
+    document.getElementById('qbotOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ── 5단계 정의 ──
+  const qbotStepDefs = [
+    {
+      id: 'launch',
+      num: '1단계', name: 'Launch', sub: '질문을 깨워라',
+      color: 'linear-gradient(135deg,#0ea5e9,#06b6d4)',
+      emoji: '🚀',
+      desc: '주제를 처음 만나는 단계예요. 내가 이미 아는 것, 느낀 것, 궁금한 것을 자유롭게 꺼내보세요. 정답이 없는 열린 질문이 가장 좋아요.',
+      kwLabels: ['✨ 느낌·감정 키워드', '🔍 궁금증 키워드', '🌍 연결 키워드'],
+      qStarters: ['이것을 보고 가장 먼저 떠오르는 것은?', '○○이(가) 왜 지금 중요한가?', '우리 주변에서 이와 비슷한 사례는?'],
+    },
+    {
+      id: 'observe',
+      num: '2단계', name: 'Observe', sub: '자료를 읽고 질문 찾기',
+      color: 'linear-gradient(135deg,#10b981,#14b8a6)',
+      emoji: '🔍',
+      desc: '자료, 기사, 그래프, 사진을 꼼꼼히 살펴보는 단계예요. 눈에 띄는 사실, 이상한 점, 빠진 정보를 찾아보세요.',
+      kwLabels: ['📊 사실·데이터 키워드', '❓ 의심·의문 키워드', '🔗 원인·결과 키워드'],
+      qStarters: ['이 자료에서 가장 눈에 띄는 것은?', '예상과 달라서 놀라운 부분은?', '이 자료가 보여 주지 않는 것은?'],
+    },
+    {
+      id: 'generate',
+      num: '3단계', name: 'Generate', sub: '나만의 질문 만들기',
+      color: 'linear-gradient(135deg,#8b5cf6,#ec4899)',
+      emoji: '✍️',
+      desc: '이제 직접 질문을 만들 차례예요! 사실 → 분석 → 평가 순서로 점점 깊어지는 질문을 써 보세요.',
+      kwLabels: ['🧩 비교·분석 키워드', '⚖️ 평가·판단 키워드', '💡 창의·상상 키워드'],
+      qStarters: ['만약 ○○이(가) 없다면 어떻게 될까?', '○○과(와) ○○를 비교하면 어떤 차이가 있을까?', '가장 효과적인 해결책은 무엇일까?'],
+    },
+    {
+      id: 'organize',
+      num: '4단계', name: 'Organize', sub: '생각을 정리하고 구조화하기',
+      color: 'linear-gradient(135deg,#f59e0b,#f97316)',
+      emoji: '🗂️',
+      desc: '지금까지 만든 질문들을 정리하는 단계예요. 원인·현황·영향·해결책 중 어느 범주에 속하는지 생각해 보세요.',
+      kwLabels: ['🗂️ 분류·구조 키워드', '📋 계획·방법 키워드', '🔄 연결·흐름 키워드'],
+      qStarters: ['이 질문들의 공통점과 차이점은?', '어떤 순서로 탐구해야 할까?', '가장 먼저 알아야 할 것은 무엇일까?'],
+    },
+    {
+      id: 'solve',
+      num: '5단계', name: 'Solve', sub: '답하고 나누고 성찰하기',
+      color: 'linear-gradient(135deg,#f43f5e,#ec4899)',
+      emoji: '🎤',
+      desc: '탐구한 내용을 표현하고 친구들과 나누는 단계예요. 내 답을 되돌아보고, 새로운 질문도 찾아보세요.',
+      kwLabels: ['💬 표현·발표 키워드', '🪞 성찰·변화 키워드', '🔮 미래·새 질문 키워드'],
+      qStarters: ['내 탐구에서 가장 중요한 발견은?', '탐구를 마치고 달라진 내 생각은?', '다음에 더 탐구하고 싶은 것은?'],
+    },
+  ];
+
+  // ── 키워드 생성 (주제 반영) ──
+  function buildQBotKeywords(stepId, topic, subject, keyword) {
+    const t = topic || subject || '이 주제';
+    const kw = keyword ? keyword.split(/[,，、\s]+/).filter(Boolean) : [];
+
+    const bank = {
+      launch: [
+        // 느낌·감정 키워드 — 형용사로 통일, 자연스러운 구어체
+        ['궁금하다', '신기하다', '낯설다', '중요하다', '놀랍다', '어렵다', '익숙하다'],
+        // 궁금증 키워드 — 조사 오류 수정 (주제에 따라 '은/는' 결정되므로 고정 조사 제거)
+        [t + '이란?', t + '의 원인', t + '은(는) 왜?', t + '이(가) 우리에게 미치는 영향', '처음 알게 되었을 때', t + '의 역사'],
+        // 연결 키워드
+        ['우리 학교', '인천공항 주변', '일상생활', '나의 경험', '친구 관계', '우리 지역 사회', '사회 문제'],
+      ],
+      observe: [
+        // 사실·데이터 키워드
+        [t + '의 수치', '통계 자료', '변화 추이', '비율', '규모', '현황', t + '의 실제 사례'],
+        // 의심·의문 키워드 — '이상한 점'보다 탐구적 표현으로
+        ['왜 이럴까?', '예상 밖의 결과', '모순점', '차이점', '빠진 정보', '다른 관점', '숨겨진 사실'],
+        // 원인·결과 키워드
+        ['원인', '결과', '영향', '상호 관계', '역사적 배경', '사회적 맥락', '연쇄 반응'],
+      ],
+      generate: [
+        // 비교·분석 키워드
+        [t + '과(와) 다른 것의 차이', '공통점', '차이점', '장점과 단점', '두 가지 관점', '과거와 현재', '나라별 차이'],
+        // 평가·판단 키워드
+        ['가장 중요한 점', '최선의 방법', '문제점', '타당한가?', '누구에게 유리한가?', '공정한가?', '개선 방향'],
+        // 창의·상상 키워드
+        ['만약 ~라면?', '100년 후에는?', '반대로 한다면?', '새로운 방식', '다른 분야와 융합', t + '이(가) 없다면?', '내가 직접 설계한다면?'],
+      ],
+      organize: [
+        // 분류·구조 키워드
+        ['원인 범주', '현황 범주', '영향 범주', '해결책 범주', '우선순위', '핵심 질문', '세부 질문'],
+        // 계획·방법 키워드
+        ['조사 방법', '자료 출처', '인터뷰 대상', '탐구 설계', '발표 형식', '탐구 기간', '역할 분담'],
+        // 연결·흐름 키워드
+        ['질문 간 관계', '탐구 순서', '근거와 주장', '논증 구조', '마인드맵', 'KWL 차트', '개념도'],
+      ],
+      solve: [
+        // 표현·발표 키워드
+        ['구두 발표', '탐구 보고서', '인포그래픽', '영상 제작', '토론', '패들렛 공유', '전시 포스터'],
+        // 성찰·변화 키워드
+        ['탐구 전과 후의 변화', '달라진 생각', '어려웠던 점', '새롭게 배운 것', '내가 실천할 것', '가장 기억에 남는 것'],
+        // 미래·새 질문 키워드
+        ['다음 탐구 주제', '더 알고 싶은 것', '해결되지 않은 질문', '연결되는 새 문제', t + '의 미래'],
+      ],
+    };
+
+    let result = (bank[stepId] || [[], [], []]).map(arr => [...arr]);
+
+    // 입력 키워드를 각 그룹 앞에 추가
+    if (kw.length) {
+      kw.forEach((k, i) => { if (result[i % 3]) result[i % 3].unshift(k); });
+    }
+
+    return result;
+  }
+
+  function generateQBot() {
+    const grade   = document.getElementById('qbotGrade').value;
+    const subject = document.getElementById('qbotSubject').value;
+    const unit    = document.getElementById('qbotUnit').value.trim();
+    const topic   = document.getElementById('qbotTopic').value.trim();
+    const keyword = document.getElementById('qbotKeyword').value.trim();
+
+    if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
+    if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
+
+    qbotSavedQuestions = {};
+
+    // 정보 바
+    const infoEl = document.getElementById('qbotInfoText');
+    infoEl.textContent = grade + ' · ' + subject + (unit ? ' · ' + unit : '') + ' · ' + topic;
+    document.getElementById('qbotInfoBar').style.display = 'flex';
+
+    // 단계별 렌더링
+    const stepsEl = document.getElementById('qbotSteps');
+    stepsEl.innerHTML = qbotStepDefs.map((step, si) => {
+      const kwGroups = buildQBotKeywords(step.id, topic, subject, keyword);
+      const kwHtml = kwGroups.map((group, gi) => {
+        const colors = [
+          {bg:'#e0f2fe',color:'#0369a1',border:'#7dd3fc'},
+          {bg:'#f0fdf4',color:'#166534',border:'#86efac'},
+          {bg:'#fdf4ff',color:'#6b21a8',border:'#d8b4fe'},
+        ][gi] || {bg:'#f1f5f9',color:'#475569',border:'#cbd5e1'};
+        return '<div class="qbot-kw-section">' +
+          '<div class="qbot-kw-label">' + step.kwLabels[gi] + '</div>' +
+          '<div class="qbot-kw-chips">' +
+          group.slice(0,8).map(kw =>
+            '<span class="qbot-kw-chip" style="background:'+colors.bg+';color:'+colors.color+';border-color:'+colors.border+'" onclick="insertQBotKw(this,\''+step.id+'\')">' + kw + '</span>'
+          ).join('') +
+          '</div></div>';
+      }).join('');
+
+      const starterHtml = '<div class="qbot-kw-label" style="margin-bottom:8px;">💬 질문 시작 힌트</div>' +
+        step.qStarters.map(s =>
+          '<div style="font-size:12px;color:#64748b;padding:4px 0;cursor:pointer;transition:color .15s" onclick="insertQBotStarter(\''+step.id+'\',this)" onmouseover="this.style.color=\'#0ea5e9\'" onmouseout="this.style.color=\'#64748b\'">→ ' + s.replace('○○', topic) + '</div>'
+        ).join('');
+
+      return '<div class="qbot-step" id="qbotStep_'+step.id+'">' +
+        '<div class="qbot-step-head" style="background:'+step.color+'" onclick="toggleQBotStep(\''+step.id+'\')">' +
+          '<div class="qbot-step-badge">' + (si+1) + '</div>' +
+          '<div style="flex:1">' +
+            '<div class="qbot-step-title">' + step.emoji + ' ' + step.num + ' · ' + step.name + ' — ' + step.sub + '</div>' +
+          '</div>' +
+          '<div class="qbot-step-arrow" id="qbotArrow_'+step.id+'">▼</div>' +
+        '</div>' +
+        '<div class="qbot-step-body' + (si===0?' open':'') + '" id="qbotBody_'+step.id+'">' +
+          '<div class="qbot-step-desc">' + step.desc + '</div>' +
+          kwHtml +
+          '<div style="margin-top:4px;">' + starterHtml + '</div>' +
+          '<div style="margin-top:14px;">' +
+            '<div class="qbot-kw-label" style="margin-bottom:6px;">✏️ 내 질문 작성하기</div>' +
+            '<div class="qbot-q-box" id="qbotPreview_'+step.id+'"><span style="color:#94a3b8;font-size:13px;">키워드를 클릭하거나 직접 입력해보세요</span></div>' +
+            '<div class="qbot-compose-row" style="margin-top:8px;">' +
+              '<input class="qbot-compose-input" id="qbotInput_'+step.id+'" placeholder="질문을 직접 입력하거나 키워드를 조합해보세요..." oninput="previewQBot(\''+step.id+'\')" onkeydown="if(event.key===\'Enter\')saveQBotQ(\''+step.id+'\')"/>' +
+              '<button class="qbot-save-btn" onclick="saveQBotQ(\''+step.id+'\')">저장 ✓</button>' +
+            '</div>' +
+            '<div id="qbotSaved_'+step.id+'"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    document.getElementById('qbotResult').classList.add('show');
+    document.getElementById('qbotResult').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function toggleQBotStep(id) {
+    const body  = document.getElementById('qbotBody_'  + id);
+    const arrow = document.getElementById('qbotArrow_' + id);
+    const isOpen = body.classList.toggle('open');
+    arrow.style.transform = isOpen ? 'rotate(180deg)' : '';
+  }
+
+  function insertQBotKw(chip, stepId) {
+    const input = document.getElementById('qbotInput_' + stepId);
+    const kw = chip.textContent.trim();
+    input.value = input.value ? input.value + ' ' + kw : kw;
+    input.focus();
+    previewQBot(stepId);
+    // 선택 표시
+    chip.style.opacity = chip.style.opacity === '0.5' ? '1' : '0.5';
+    chip.style.textDecoration = chip.style.textDecoration === 'line-through' ? '' : 'line-through';
+  }
+
+  function insertQBotStarter(stepId, el) {
+    const input = document.getElementById('qbotInput_' + stepId);
+    const text = el.textContent.replace('→ ', '').trim();
+    input.value = text.endsWith('?') ? text : text;
+    input.focus();
+    previewQBot(stepId);
+  }
+
+  function previewQBot(stepId) {
+    const val = document.getElementById('qbotInput_' + stepId).value.trim();
+    const preview = document.getElementById('qbotPreview_' + stepId);
+    if (val) {
+      preview.innerHTML = val;
+    } else {
+      preview.innerHTML = '<span style="color:#94a3b8;font-size:13px;">키워드를 클릭하거나 직접 입력해보세요</span>';
+    }
+  }
+
+  function saveQBotQ(stepId) {
+    const input = document.getElementById('qbotInput_' + stepId);
+    const q = input.value.trim();
+    if (!q) { alert('질문을 입력해주세요!'); return; }
+    if (!qbotSavedQuestions[stepId]) qbotSavedQuestions[stepId] = [];
+    qbotSavedQuestions[stepId].push(q);
+    input.value = '';
+    previewQBot(stepId);
+
+    const savedEl = document.getElementById('qbotSaved_' + stepId);
+    savedEl.innerHTML = qbotSavedQuestions[stepId].map((sq, i) =>
+      '<div class="qbot-saved-badge" style="margin-right:6px;margin-top:6px;">✅ Q' + (i+1) + ': ' + sq + '</div>'
+    ).join('');
+  }
+
+  function copyQBotSaved() {
+    const lines = [];
+    qbotStepDefs.forEach(step => {
+      const qs = qbotSavedQuestions[step.id];
+      if (qs && qs.length) {
+        lines.push('[' + step.num + ' · ' + step.name + ']');
+        qs.forEach((q, i) => lines.push('  Q' + (i+1) + '. ' + q));
+        lines.push('');
+      }
+    });
+    if (!lines.length) { alert('저장된 질문이 없습니다. 질문을 작성하고 저장 버튼을 눌러주세요!'); return; }
+    navigator.clipboard.writeText(lines.join('\n'))
+      .then(() => alert('📋 내 질문이 복사되었습니다!'));
+  }
+
+  function copyQBotAll() {
+    const grade   = document.getElementById('qbotGrade').value;
+    const subject = document.getElementById('qbotSubject').value;
+    const topic   = document.getElementById('qbotTopic').value.trim();
+    let text = '【Q-BOT 질문 꾸러미】\n' + grade + ' ' + subject + ' · ' + topic + '\n' + '='.repeat(36) + '\n\n';
+    qbotStepDefs.forEach(step => {
+      text += step.emoji + ' ' + step.num + ' · ' + step.name + ' — ' + step.sub + '\n';
+      text += step.desc + '\n';
+      const qs = qbotSavedQuestions[step.id];
+      if (qs && qs.length) {
+        text += '\n  📝 내가 만든 질문:\n';
+        qs.forEach((q, i) => { text += '  Q' + (i+1) + '. ' + q + '\n'; });
+      }
+      text += '\n';
+    });
+    navigator.clipboard.writeText(text)
+      .then(() => alert('📋 전체 질문 꾸러미가 복사되었습니다!'));
+  }
+
+
+  // ══════════════════════════════════════════
+  // D-BOT 교사 수업 설계 도우미
+  // ══════════════════════════════════════════
+
+  let dbotData = null;   // 생성된 수업 설계 데이터
+
+  function openDbotModal() {
+    document.getElementById('dbotOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDbotModal() {
+    document.getElementById('dbotOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ── 단계 정의 ──
+  const dbotPhases = [
+    { id:'launch',   num:'PHASE 1', name:'Launch',   sub:'질문을 깨우는 출발',     color:'linear-gradient(135deg,#0ea5e9,#06b6d4)', tc:'#0ea5e9', emoji:'🚀' },
+    { id:'observe',  num:'PHASE 2', name:'Observe',  sub:'자료를 보고 질문 찾기',  color:'linear-gradient(135deg,#10b981,#14b8a6)', tc:'#10b981', emoji:'🔍' },
+    { id:'generate', num:'PHASE 3', name:'Generate', sub:'질문 생성과 확장',       color:'linear-gradient(135deg,#8b5cf6,#ec4899)', tc:'#8b5cf6', emoji:'✍️' },
+    { id:'organize', num:'PHASE 4', name:'Organize', sub:'사고 정리와 구조화',     color:'linear-gradient(135deg,#f59e0b,#f97316)', tc:'#f59e0b', emoji:'🗂️' },
+    { id:'solve',    num:'PHASE 5', name:'Solve',    sub:'답하기·나누기·성찰하기', color:'linear-gradient(135deg,#f43f5e,#ec4899)', tc:'#f43f5e', emoji:'🎤' },
+  ];
+
+  // ── 과목별 핵심질문 생성 ──
+  function buildDbotCoreQuestions(subject, topic, grade) {
+    const t = topic || subject || '이 주제';
+    const g = grade || '중학생';
+
+    // 과목 특성을 반영한 질문 유형 프레임
+    const frames = {
+      '국어':    [
+        t + '에서 작가가 선택한 표현 방식은 독자에게 어떤 효과를 만들어내며, 왜 그 방식을 선택했을까?',
+        t + '에 담긴 핵심 가치나 주제는 무엇이며, 오늘날 우리 삶과 어떻게 연결되는가?',
+        t + '을(를) 읽고 나서 내 생각이나 태도가 어떻게 달라져야 한다고 생각하는가?',
+      ],
+      '사회':    [
+        t + '은(는) 어떤 사회적 조건에서 발생했으며, 그 구조적 원인은 무엇인가?',
+        t + '을(를) 바라보는 서로 다른 집단의 관점은 어떻게 다르며, 그 차이는 왜 생기는가?',
+        t + '의 해결을 위해 개인과 사회 각각이 해야 할 역할은 무엇인가?',
+      ],
+      '과학':    [
+        t + '이(가) 일어나기 위해 반드시 필요한 조건은 무엇이며, 그 조건이 변하면 어떻게 달라지는가?',
+        t + '의 원리가 우리 일상에서 어떻게 작용하고 있으며, 그 사례는 무엇인가?',
+        '만약 ' + t + '이(가) 작동하지 않는다면 자연과 인간의 삶은 어떻게 달라질까?',
+      ],
+      '역사':    [
+        t + '이(가) 발생한 역사적 배경과 그것을 가능하게 한 결정적 요인은 무엇인가?',
+        t + '은(는) 당시 사람들의 삶을 어떻게 바꾸었으며, 오늘날 우리에게 어떤 의미를 지니는가?',
+        t + '에 대한 역사적 평가가 시대에 따라 달라진 이유는 무엇이며, 우리는 어떻게 바라보아야 하는가?',
+      ],
+      '수학':    [
+        t + '의 개념이 성립하기 위한 조건은 무엇이며, 그 조건이 하나라도 빠지면 어떻게 달라지는가?',
+        t + '은(는) 실생활의 어떤 문제를 해결하는 데 활용될 수 있으며, 그 이유는 무엇인가?',
+        t + '의 원리를 설명하는 더 효율적이거나 다른 방법이 있을까? 왜 지금의 방법이 쓰이는가?',
+      ],
+      '도덕':    [
+        t + '이(가) 도덕적으로 옳다고 판단하는 기준은 무엇이며, 그 기준은 항상 정당한가?',
+        t + '을(를) 둘러싼 갈등 상황에서 나는 어떤 원칙을 따라 행동해야 하는가?',
+        t + '에 대한 나의 생각이 다른 사람의 입장을 충분히 고려하고 있는가?',
+      ],
+      '진로':    [
+        t + '이(가) 나의 미래 직업 선택과 어떻게 연결되며, 그 연결 고리는 무엇인가?',
+        t + '에 대한 사회의 기대와 나 자신의 바람이 다를 때, 어떤 기준으로 선택해야 하는가?',
+        '지금 내가 ' + t + '을(를) 탐색하는 것이 왜 중요하며, 그 과정에서 무엇을 발견하고 싶은가?',
+      ],
+      '영어':    [
+        t + '을(를) 다루는 텍스트에서 핵심 주장은 무엇이며, 그것을 뒷받침하는 근거는 충분한가?',
+        t + '에 대해 영어권 문화와 우리 문화는 어떻게 다르게 접근하며, 그 차이는 왜 생기는가?',
+        t + '을(를) 나의 언어로 표현한다면 어떤 방식으로 전달하는 것이 가장 효과적인가?',
+      ],
+      '정보':    [
+        t + '의 원리나 알고리즘이 작동하는 방식은 무엇이며, 어떤 조건에서 오류가 생기는가?',
+        t + '이(가) 사회에 미치는 긍정적·부정적 영향을 어떻게 균형 있게 평가할 수 있는가?',
+        t + '의 개념을 활용해 우리 학교나 지역의 실제 문제를 해결한다면 어떤 방법이 가능한가?',
+      ],
+      '기술·가정': [
+        t + '의 핵심 원리나 방법을 이해하기 위해 가장 먼저 알아야 할 것은 무엇인가?',
+        t + '이(가) 우리 가정이나 사회에 미치는 영향은 무엇이며, 어떻게 바람직하게 활용할 수 있는가?',
+        t + '을(를) 개선하거나 새롭게 설계한다면 어떤 아이디어가 가능하며, 그 이유는 무엇인가?',
+      ],
+      '음악':    [
+        t + '의 핵심 요소(리듬·화음·구조 등)는 어떻게 연결되어 그 음악만의 느낌을 만들어내는가?',
+        t + '이(가) 만들어진 시대적·문화적 배경은 음악의 특성에 어떤 영향을 미쳤는가?',
+        t + '을(를) 직접 창작하거나 변형한다면 어떤 요소를 바꾸고 싶으며, 그 이유는 무엇인가?',
+      ],
+      '미술':    [
+        t + '에서 작가가 선택한 기법이나 재료는 어떤 의도와 감정을 표현하는 데 어떻게 기여하는가?',
+        t + '을(를) 보는 사람마다 다르게 해석하는 이유는 무엇이며, 그 다양성은 예술에서 어떤 의미를 지니는가?',
+        t + '의 표현 방식을 현대적으로 재해석한다면 어떤 새로운 작품이 탄생할 수 있을까?',
+      ],
+      '체육':    [
+        t + '의 핵심 규칙이나 기술은 왜 그렇게 설계되었으며, 그것이 공정성이나 안전과 어떻게 연결되는가?',
+        t + '에서 팀워크와 개인 역량은 각각 어떤 역할을 하며, 둘 사이의 균형은 어떻게 맞추는가?',
+        t + '을(를) 통해 내 몸과 마음에 대해 새롭게 발견한 것은 무엇이며, 생활에 어떻게 적용할 수 있는가?',
+      ],
+    };
+
+    const defaultQs = [
+      t + '의 핵심 개념과 원리를 이해하기 위해 가장 중요한 질문은 무엇인가?',
+      t + '이(가) 우리 삶과 사회에 미치는 영향을 여러 관점에서 어떻게 분석할 수 있는가?',
+      t + '을(를) 탐구하고 나서 내 생각이나 행동에서 달라져야 할 것은 무엇인가?',
+    ];
+
+    return (frames[subject] || defaultQs);
+  }
+
+  // ── 단계별 창의 활동 생성 ──
+  function buildDbotActivities(phaseId, subject, topic, grade) {
+    const t = topic || subject || '이 주제';
+
+    const activityBank = {
+      launch: [
+        {
+          emoji: '🎬', title: '3초 반응 카드',
+          desc: topic + ' 관련 충격적 통계나 사진을 3초간 보여준 뒤, 학생이 포스트잇에 첫 반응 단어 3개를 적습니다. 칠판에 모아 클러스터링하며 공통된 반응을 찾아냅니다.',
+          tip: '💡 팁: "정답이 없다"고 먼저 안내하면 학생이 더 솔직하게 반응해요.',
+        },
+        {
+          emoji: '🎭', title: '역할극 도입',
+          desc: topic + '과(와) 관련된 갈등 장면을 교사가 짧게 역할극으로 연출합니다. 학생은 "왜 이런 상황이 생겼을까?"를 적고, 이를 탐구 질문으로 발전시킵니다.',
+          tip: '💡 팁: 과장된 연기일수록 학생의 집중도와 반응이 높아져요.',
+        },
+        {
+          emoji: '🗺️', title: '마음 지도 그리기',
+          desc: topic + '이라는 단어를 중심에 쓰고, 떠오르는 단어·이미지·경험을 1분 동안 자유롭게 연결합니다. 짝과 비교하며 가장 다른 연결을 발표합니다.',
+          tip: '💡 팁: 그림을 그려도 된다고 허용하면 표현이 더 풍부해져요.',
+        },
+      ],
+      observe: [
+        {
+          emoji: '🔍', title: '대립 자료 비교 읽기',
+          desc: topic + '을(를) 서로 다른 관점으로 다룬 자료(기사·통계·사진) 2개를 나란히 제시합니다. 학생은 "같은 점·다른 점·이상한 점"을 각각 찾아 기록표에 씁니다.',
+          tip: '💡 팁: 의도적으로 서로 모순되는 자료를 선택하면 탐구 동기가 높아져요.',
+        },
+        {
+          emoji: '📸', title: '탐정 사진 분석',
+          desc: topic + '과(와) 관련된 현장 사진 1장을 주고 "이 사진에서 무엇을 알 수 있는가? 무엇을 알 수 없는가? 무엇이 더 궁금한가?"를 분석합니다. 모둠별로 발견한 것을 공유합니다.',
+          tip: '💡 팁: 멀리서 찍힌 사진 → 확대 사진 순으로 공개하면 더 흥미로워요.',
+        },
+        {
+          emoji: '📊', title: '데이터 스토리텔링',
+          desc: topic + ' 관련 그래프나 통계를 보여주고 "이 숫자가 말하는 이야기는?"을 3줄로 씁니다. 가장 흥미로운 해석을 모둠에서 투표로 선정해 발표합니다.',
+          tip: '💡 팁: 예상과 반대되는 데이터를 선택하면 인지적 충돌이 일어나 질문이 풍부해져요.',
+        },
+      ],
+      generate: [
+        {
+          emoji: '✍️', title: '질문 폭탄 & 분류',
+          desc: '개인이 ' + topic + '에 대한 질문을 5분 동안 최대한 많이 씁니다(최소 7개 목표). 모둠에서 "사실 확인 / 분석·비교 / 평가·상상"으로 분류하고, 가장 탐구하고 싶은 질문 1개를 투표로 선정합니다.',
+          tip: '💡 팁: "좋은 질문은 없다, 많이 쓸수록 좋다"고 강조하면 창의적인 질문이 나와요.',
+        },
+        {
+          emoji: '🎲', title: '질문 주사위 게임',
+          desc: '"만약에 / 왜 / 어떻게 / 비교하면 / 없다면 / 미래에는"이 적힌 종이 주사위를 던지고, 나온 면의 단어로 ' + topic + '에 대한 질문을 만듭니다. 재미있는 질문 베스트 3을 학급 공유합니다.',
+          tip: '💡 팁: 주사위 대신 앱이나 룰렛으로 대체해도 좋아요.',
+        },
+        {
+          emoji: '🌀', title: '질문 심화 릴레이',
+          desc: '한 학생이 ' + topic + '에 대한 질문을 쓰면, 옆 학생이 그 질문에 "왜?"를 덧붙여 더 깊은 질문으로 발전시킵니다. 4번 릴레이 후 처음 질문과 마지막 질문을 비교합니다.',
+          tip: '💡 팁: 릴레이가 끝난 후 "어느 단계 질문이 가장 탐구하기 좋은가?" 토론으로 연결하세요.',
+        },
+      ],
+      organize: [
+        {
+          emoji: '🗺️', title: '탐구 로드맵 제작',
+          desc: '생성된 질문들을 "원인·현황·영향·해결책" 4칸 카드에 분류합니다. 이후 탐구 순서를 정해 화살표로 연결하고 조사 방법·필요 자료를 함께 적습니다. 모둠별 로드맵을 교실에 게시합니다.',
+          tip: '💡 팁: 포스트잇을 이용하면 카드를 쉽게 옮기며 구조를 바꿀 수 있어요.',
+        },
+        {
+          emoji: '⚖️', title: '찬반 논증 도식화',
+          desc: topic + '에 관한 쟁점 질문을 하나 선정하고, "주장 → 근거1·근거2 → 예상 반론 → 재반론" 구조로 논증 도식을 완성합니다. 짝과 바꿔 읽으며 논리의 허점을 찾아봅니다.',
+          tip: '💡 팁: 처음엔 교사가 예시 논증 도식을 함께 완성하고, 이후 개인 또는 모둠 활동으로 전환하세요.',
+        },
+        {
+          emoji: '🎯', title: '핵심 질문 선정 토론',
+          desc: '모둠별로 생성한 질문 중에서 "가장 중요한 탐구 질문 1개"를 선정하는 짧은 토론(5분)을 진행합니다. 선정 이유를 발표하고, 학급 전체의 대표 핵심 질문을 교실에 붙여둡니다.',
+          tip: '💡 팁: 선정된 핵심 질문이 수업 내내 보이는 곳에 있으면 탐구 방향을 잃지 않아요.',
+        },
+      ],
+      solve: [
+        {
+          emoji: '🎤', title: '1분 탐구 피칭',
+          desc: topic + ' 탐구 결과를 "발견한 것 1가지 + 놀라운 점 1가지 + 새로운 질문 1가지"로 정리해 1분 안에 발표합니다. 청중은 듣고 나서 "질문 쪽지" 1장을 발표자에게 건넵니다.',
+          tip: '💡 팁: 발표보다 질문 주고받기를 강조하면 더 깊은 성찰이 일어나요.',
+        },
+        {
+          emoji: '🪞', title: '성찰 일지 & 다음 질문 생성',
+          desc: '"탐구 전 내 생각 / 탐구 후 달라진 것 / 아직 해결 안 된 것 / 다음에 탐구하고 싶은 것"을 4칸 성찰 카드에 씁니다. 다음 Launch로 이어질 새로운 질문을 한 문장으로 정리해 공유합니다.',
+          tip: '💡 팁: 성찰 카드를 포트폴리오에 모으면 학생의 질문 성장을 눈으로 볼 수 있어요.',
+        },
+        {
+          emoji: '🌐', title: '패들렛 갤러리 워크',
+          desc: '탐구 결과물(인포그래픽·보고서·카드뉴스 등)을 패들렛에 올리고, 15분 동안 자유롭게 돌아보며 댓글로 피드백을 남깁니다. "가장 새로운 시각" "가장 설득력 있는 근거"를 투표합니다.',
+          tip: '💡 팁: 익명 댓글보다 이름을 남기는 피드백이 더 진지한 성찰로 이어져요.',
+        },
+      ],
+    };
+
+    return activityBank[phaseId] || [];
+  }
+
+  function generateDbot() {
+    const grade   = document.getElementById('dbotGrade').value;
+    const subject = document.getElementById('dbotSubject').value;
+    const unit    = document.getElementById('dbotUnit').value.trim();
+    const topic   = document.getElementById('dbotTopic').value.trim();
+    const goal    = document.getElementById('dbotGoal').value.trim();
+
+    if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
+    if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
+
+    // 수업 정보 저장
+    dbotData = { grade, subject, unit, topic, goal };
+
+    // ── 수업 정보 바 ──
+    const infoBar = document.getElementById('dbotInfoBar');
+    infoBar.innerHTML =
+      '<span style="font-size:14px;font-weight:800;color:#4c1d95;">📌 수업 정보</span>' +
+      [grade, subject, unit, topic, goal ? '목표: ' + goal : ''].filter(Boolean).map(v =>
+        '<span class="dbot-info-tag">' + v + '</span>'
+      ).join('');
+
+    // ── 핵심질문 3가지 ──
+    const cqs = buildDbotCoreQuestions(subject, topic, grade);
+    document.getElementById('dbotCQGrid').innerHTML = cqs.map((q, i) => `
+      <div class="dbot-cq-card">
+        <div class="dbot-cq-num">${i + 1}</div>
+        <div class="dbot-cq-text">${q}</div>
+      </div>`).join('');
+
+    // ── 단계별 활동 ──
+    const colors = ['#0ea5e9','#10b981','#8b5cf6','#f59e0b','#f43f5e'];
+    document.getElementById('dbotPhaseWrap').innerHTML = dbotPhases.map((phase, pi) => {
+      const acts = buildDbotActivities(phase.id, subject, topic, grade);
+      const actHtml = acts.map((act, ai) => `
+        <div class="dbot-activity">
+          <div class="dbot-activity-num" style="background:${colors[pi]}">${ai + 1}</div>
+          <div class="dbot-activity-content">
+            <div class="dbot-activity-title">${act.emoji} ${act.title}</div>
+            <div class="dbot-activity-desc">${act.desc}</div>
+            <div class="dbot-activity-tip">${act.tip}</div>
+          </div>
+        </div>`).join('');
+
+      return `
+        <div class="dbot-phase-card">
+          <div class="dbot-phase-head" style="background:${phase.color}" onclick="toggleDbotPhase('${phase.id}')">
+            <div class="dbot-phase-icon">${phase.emoji}</div>
+            <div class="dbot-phase-title">
+              <strong>${phase.num} · ${phase.name}</strong>
+              <span>${phase.sub}</span>
+            </div>
+            <div class="dbot-phase-chevron" id="dbotChevron_${phase.id}">▼</div>
+          </div>
+          <div class="dbot-phase-body${pi === 0 ? ' open' : ''}" id="dbotBody_${phase.id}">
+            <div class="dbot-activity-list">${actHtml}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('dbotResult').classList.add('show');
+    setTimeout(() => {
+      document.getElementById('dbotResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+
+  function toggleDbotPhase(id) {
+    const body    = document.getElementById('dbotBody_'    + id);
+    const chevron = document.getElementById('dbotChevron_' + id);
+    const isOpen  = body.classList.toggle('open');
+    chevron.style.transform = isOpen ? 'rotate(180deg)' : '';
+  }
+
+  function copyDbotCQ() {
+    if (!dbotData) return;
+    const cqs = buildDbotCoreQuestions(dbotData.subject, dbotData.topic, dbotData.grade);
+    const text = '【Q-LOGOS 핵심질문】\n' +
+      dbotData.grade + ' ' + dbotData.subject + ' · ' + dbotData.topic + '\n\n' +
+      cqs.map((q, i) => (i + 1) + '. ' + q).join('\n');
+    navigator.clipboard.writeText(text)
+      .then(() => alert('📋 핵심질문 3가지가 복사되었습니다!'));
+  }
+
+  function copyDbotAll() {
+    if (!dbotData) return;
+    const { grade, subject, unit, topic, goal } = dbotData;
+    const cqs  = buildDbotCoreQuestions(subject, topic, grade);
+    let text = '【D-BOT 수업 설계】\n';
+    text += grade + ' ' + subject + (unit ? ' · ' + unit : '') + ' · ' + topic;
+    if (goal) text += '\n학습 목표: ' + goal;
+    text += '\n' + '='.repeat(40) + '\n\n';
+    text += '❓ 핵심질문 3가지\n';
+    cqs.forEach((q, i) => { text += (i + 1) + '. ' + q + '\n'; });
+    text += '\n';
+    dbotPhases.forEach(phase => {
+      const acts = buildDbotActivities(phase.id, subject, topic, grade);
+      text += phase.emoji + ' ' + phase.num + ' · ' + phase.name + ' — ' + phase.sub + '\n';
+      acts.forEach((act, i) => {
+        text += '  활동' + (i + 1) + ') ' + act.title + '\n';
+        text += '    ' + act.desc + '\n';
+        text += '    ' + act.tip + '\n';
+      });
+      text += '\n';
+    });
+    navigator.clipboard.writeText(text)
+      .then(() => alert('📋 전체 수업 설계가 복사되었습니다!'));
+  }
+
 </script>
+
+<!-- ── Q-LOGOS 단계별 질문생성 모달 ── -->
+<div class="logos-modal-overlay" id="logosModalOverlay" onclick="if(event.target===this)closeLogosModal()">
+  <div class="logos-modal-box">
+    <div class="logos-modal-head">
+      <h2>✨ Q-LOGOS 단계별 질문 프롬프트 생성</h2>
+      <p>학년 · 교과 · 주제를 입력하고 단계를 선택하면 AI가 각 단계에 맞는 탐구 프롬프트를 생성합니다</p>
+      <button class="logos-modal-close" onclick="closeLogosModal()">✕</button>
+    </div>
+    <div class="logos-modal-body">
+
+      <!-- 입력 폼 -->
+      <div class="logos-form-row">
+        <div class="logos-field">
+          <label>학년</label>
+          <select id="logosGrade">
+            <option value="">선택</option>
+            <option>1학년</option><option>2학년</option><option>3학년</option>
+          </select>
+        </div>
+        <div class="logos-field">
+          <label>교과</label>
+          <select id="logosSubject">
+            <option value="">선택</option>
+            <option>국어</option><option>수학</option><option>사회</option><option>과학</option>
+            <option>영어</option><option>역사</option><option>도덕</option><option>기술·가정</option>
+            <option>정보</option><option>음악</option><option>미술</option><option>체육</option><option>진로</option>
+          </select>
+        </div>
+        <div class="logos-field">
+          <label>단원</label>
+          <input type="text" id="logosUnit" placeholder="예: 3단원 · 생태계"/>
+        </div>
+      </div>
+      <div class="logos-form-row two">
+        <div class="logos-field">
+          <label>수업 주제</label>
+          <input type="text" id="logosTopic" placeholder="예: 음식물 쓰레기와 환경 문제"/>
+        </div>
+        <div class="logos-field">
+          <label>학습 목표 (선택)</label>
+          <input type="text" id="logosGoal" placeholder="예: 환경 문제의 원인과 해결책을 탐구한다"/>
+        </div>
+      </div>
+
+      <hr class="logos-divider"/>
+
+      <!-- 단계 선택 -->
+      <div style="font-size:13px;font-weight:700;color:#475569;margin-bottom:12px;">생성할 단계 선택 <span style="font-weight:400;color:#94a3b8">(복수 선택 가능)</span></div>
+      <div class="logos-phase-row" id="logosPhaseRow">
+        <button class="logos-phase-btn active" data-phase="launch" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4);" onclick="togglePhase(this)">
+          <div class="ph-key">L</div><div class="ph-num">PHASE 1</div>
+          <div class="ph-name">Launch</div><div class="ph-sub">질문 깨우기</div>
+        </button>
+        <button class="logos-phase-btn active" data-phase="observe" style="background:linear-gradient(135deg,#10b981,#14b8a6);" onclick="togglePhase(this)">
+          <div class="ph-key">O</div><div class="ph-num">PHASE 2</div>
+          <div class="ph-name">Observe</div><div class="ph-sub">자료 관찰</div>
+        </button>
+        <button class="logos-phase-btn active" data-phase="generate" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);" onclick="togglePhase(this)">
+          <div class="ph-key">G</div><div class="ph-num">PHASE 3</div>
+          <div class="ph-name">Generate</div><div class="ph-sub">질문 생성</div>
+        </button>
+        <button class="logos-phase-btn active" data-phase="organize" style="background:linear-gradient(135deg,#f59e0b,#f97316);" onclick="togglePhase(this)">
+          <div class="ph-key">O</div><div class="ph-num">PHASE 4</div>
+          <div class="ph-name">Organize</div><div class="ph-sub">사고 구조화</div>
+        </button>
+        <button class="logos-phase-btn active" data-phase="solve" style="background:linear-gradient(135deg,#f43f5e,#ec4899);" onclick="togglePhase(this)">
+          <div class="ph-key">S</div><div class="ph-num">PHASE 5</div>
+          <div class="ph-name">Solve</div><div class="ph-sub">답하고 나누기</div>
+        </button>
+      </div>
+
+      <!-- 생성 버튼 -->
+      <button class="logos-gen-btn" id="logosGenBtn" onclick="generateLogosPrompts()">
+        ✨ Q-LOGOS 탐구 프롬프트 생성하기
+      </button>
+
+      <!-- 결과 영역 -->
+      <div class="logos-result-wrap" id="logosResultWrap">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:15px;font-weight:800;color:#0a0a12;">✅ 생성된 탐구 프롬프트</div>
+          <div>
+            <button class="logos-copy-btn" onclick="copyLogosPhase()">📋 현재 단계 복사</button>
+            <button class="logos-copy-all-btn" onclick="copyLogosAll()">📋 전체 복사</button>
+          </div>
+        </div>
+        <div class="logos-result-phase-tabs" id="logosResultTabs"></div>
+        <div id="logosResultPanels"></div>
+      </div>
+
+    </div><!-- /body -->
+  </div>
+</div>
+
+
+<!-- ── Q-BOT 학생 질문 꾸러미 모달 ── -->
+<div class="qbot-overlay" id="qbotOverlay" onclick="if(event.target===this)closeQBotModal()">
+  <div class="qbot-box">
+    <div class="qbot-head">
+      <h2>🤖 Q-BOT · 학생 질문 꾸러미</h2>
+      <p>학년 · 과목 · 주제를 입력하면 Q-LOGOS 1→5단계로 점점 깊어지는 질문 키워드를 제공해요</p>
+      <button class="qbot-close" onclick="closeQBotModal()">✕</button>
+    </div>
+    <div class="qbot-body">
+
+      <!-- 입력 -->
+      <div class="qbot-form-row">
+        <div class="qbot-field">
+          <label>학년</label>
+          <select id="qbotGrade">
+            <option value="">선택</option>
+            <option>1학년</option><option>2학년</option><option>3학년</option>
+          </select>
+        </div>
+        <div class="qbot-field">
+          <label>과목</label>
+          <select id="qbotSubject">
+            <option value="">선택</option>
+            <option>국어</option><option>수학</option><option>사회</option><option>과학</option>
+            <option>영어</option><option>역사</option><option>도덕</option><option>기술·가정</option>
+            <option>정보</option><option>음악</option><option>미술</option><option>체육</option><option>진로</option>
+          </select>
+        </div>
+        <div class="qbot-field">
+          <label>단원 (선택)</label>
+          <input type="text" id="qbotUnit" placeholder="예: 2단원 · 생태계"/>
+        </div>
+      </div>
+      <div class="qbot-form-row two">
+        <div class="qbot-field">
+          <label>수업 주제</label>
+          <input type="text" id="qbotTopic" placeholder="예: 음식물 쓰레기와 환경 문제"/>
+        </div>
+        <div class="qbot-field">
+          <label>핵심 개념 / 키워드 (선택)</label>
+          <input type="text" id="qbotKeyword" placeholder="예: 분해자, 탄소순환, 재활용"/>
+        </div>
+      </div>
+
+      <button class="qbot-gen-btn" onclick="generateQBot()">🤖 질문 꾸러미 생성하기</button>
+
+      <!-- 결과 -->
+      <div class="qbot-result" id="qbotResult">
+        <div class="qbot-info-bar" id="qbotInfoBar">📚 <span id="qbotInfoText"></span></div>
+
+        <!-- 단계별 아코디언 -->
+        <div id="qbotSteps"></div>
+
+        <hr class="qbot-divider"/>
+        <div class="qbot-action-row">
+          <button class="qbot-copy-btn" onclick="copyQBotSaved()">📋 내 질문만 복사</button>
+          <button class="qbot-copy-all-btn" onclick="copyQBotAll()">📋 전체 꾸러미 복사</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ── D-BOT 교사 수업 설계 모달 ── -->
+<div class="dbot-overlay" id="dbotOverlay" onclick="if(event.target===this)closeDbotModal()">
+  <div class="dbot-box">
+    <div class="dbot-head">
+      <h2>💻 D-BOT · 교사 수업 설계 도우미</h2>
+      <p>학년 · 과목 · 단원 · 주제를 입력하면 Q-LOGOS 5단계별 핵심질문 3가지와<br>재미있고 창의적인 수업 활동 3가지를 추천해 드려요</p>
+      <button class="dbot-close" onclick="closeDbotModal()">✕</button>
+    </div>
+    <div class="dbot-body">
+
+      <!-- 입력 폼 -->
+      <div class="dbot-form-grid">
+        <div class="dbot-field">
+          <label>학년</label>
+          <select id="dbotGrade">
+            <option value="">선택</option>
+            <option>1학년</option><option>2학년</option><option>3학년</option>
+          </select>
+        </div>
+        <div class="dbot-field">
+          <label>과목</label>
+          <select id="dbotSubject">
+            <option value="">선택</option>
+            <option>국어</option><option>수학</option><option>사회</option><option>과학</option>
+            <option>영어</option><option>역사</option><option>도덕</option><option>기술·가정</option>
+            <option>정보</option><option>음악</option><option>미술</option><option>체육</option><option>진로</option>
+          </select>
+        </div>
+        <div class="dbot-field">
+          <label>단원</label>
+          <input type="text" id="dbotUnit" placeholder="예: 3단원 · 생태계의 균형"/>
+        </div>
+      </div>
+      <div class="dbot-form-grid two">
+        <div class="dbot-field">
+          <label>수업 주제</label>
+          <input type="text" id="dbotTopic" placeholder="예: 음식물 쓰레기와 탄소 순환"/>
+        </div>
+        <div class="dbot-field">
+          <label>학습 목표 (선택)</label>
+          <input type="text" id="dbotGoal" placeholder="예: 탄소 순환의 원리를 이해하고 환경 문제와 연결한다"/>
+        </div>
+      </div>
+
+      <button class="dbot-gen-btn" onclick="generateDbot()">💻 수업 설계 추천 받기</button>
+
+      <!-- 결과 -->
+      <div class="dbot-result" id="dbotResult">
+
+        <!-- 수업 정보 바 -->
+        <div class="dbot-info-bar" id="dbotInfoBar"></div>
+
+        <!-- 핵심질문 -->
+        <div class="dbot-section-title">
+          ❓ LOGOS 핵심질문 3가지 <span class="badge">수업 전체를 이끄는 질문</span>
+        </div>
+        <div class="dbot-cq-grid" id="dbotCQGrid"></div>
+
+        <!-- 단계별 활동 -->
+        <div class="dbot-section-title">
+          🎯 Q-LOGOS 단계별 창의 활동 추천
+          <span class="badge">단계마다 3가지</span>
+        </div>
+        <div class="dbot-phase-wrap" id="dbotPhaseWrap"></div>
+
+        <hr class="dbot-divider"/>
+        <div class="dbot-action-row">
+          <button class="dbot-copy-btn" onclick="copyDbotCQ()">📋 핵심질문만 복사</button>
+          <button class="dbot-copy-all-btn" onclick="copyDbotAll()">📋 전체 수업 설계 복사</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

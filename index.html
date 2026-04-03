@@ -1963,6 +1963,9 @@
       <span class="nav-user-name" id="navUserName"></span>
       <button class="nav-logout-btn" onclick="handleLogout()">로그아웃</button>
     </div>
+    <button id="managerBtn" onclick="openManagerPage()" style="display:none;align-items:center;gap:6px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;border-radius:100px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:8px;box-shadow:0 4px 14px rgba(124,58,237,.35);transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+      👑 매니저
+    </button>
   </div>
 </nav>
 
@@ -3211,6 +3214,16 @@
     navUser.style.display = 'flex';
     document.getElementById('navAvatar').style.display = 'none';
     document.getElementById('navUserName').textContent = user.displayName;
+    // 매니저 버튼: 조유진 계정만 표시
+    const managerBtn = document.getElementById('managerBtn');
+    if (managerBtn) {
+      const isManager = user.displayName && user.displayName.includes('조유진');
+      managerBtn.style.display = isManager ? 'inline-flex' : 'none';
+    }
+  }
+
+  function openManagerPage() {
+    window.open('manager.html', '_blank');
   }
 
   // 페이지 로드 시 세션 자동 복원
@@ -3234,6 +3247,7 @@
     document.querySelector('.custom-login-btn').style.display = 'inline-block';
     document.getElementById('navUser').style.display = 'none';
     document.getElementById('navAvatar').style.display = '';
+    const mb = document.getElementById('managerBtn'); if(mb) mb.style.display='none';
   }
   // ⚠️ 아래 YOUR_GOOGLE_CLIENT_ID 부분을 Google Cloud Console에서 발급받은 클라이언트 ID로 교체하세요.
   const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';

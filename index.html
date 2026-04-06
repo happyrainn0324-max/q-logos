@@ -2610,6 +2610,7 @@
           <input class="myq-input" id="sq-q3" type="text" placeholder="세 번째 질문을 적어보세요"/>
         </div>
         <button class="myq-submit-btn" onclick="saveMyQ('student', this)">✦ 오늘의 질문 저장하기</button>
+        <div id="myqSaveMsgStudent" style="display:none;margin-top:12px;padding:12px 18px;background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:12px;font-size:14px;font-weight:700;color:#059669;text-align:center;">✅ 저장되었습니다!</div>
       </div>
     </div>
   </div>
@@ -2660,6 +2661,7 @@
           <input class="myq-input" id="tq-q3" type="text" placeholder="성찰로 이어지는 세 번째 질문"/>
         </div>
         <button class="myq-submit-btn" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="saveMyQ('teacher', this)">✦ 오늘의 수업 질문 저장하기</button>
+        <div id="myqSaveMsgTeacher" style="display:none;margin-top:12px;padding:12px 18px;background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:12px;font-size:14px;font-weight:700;color:#059669;text-align:center;">✅ 저장되었습니다!</div>
       </div>
     </div>
   </div>
@@ -4121,9 +4123,14 @@
     renderMyQList();
     try { renderPortfolio(); } catch(e) {}
     try { loadQGallery(); } catch(e) {}
-    const orig = btn.textContent;
-    btn.textContent = '✅ 저장되었습니다!';
-    setTimeout(() => { btn.textContent = orig; }, 1800);
+
+    // 저장 성공 피드백 — 버튼 아래 메시지 표시
+    const msgId = role === 'student' ? 'myqSaveMsgStudent' : 'myqSaveMsgTeacher';
+    const msgEl = document.getElementById(msgId);
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      setTimeout(() => { msgEl.style.display = 'none'; }, 2500);
+    }
 
     // AI 질문 생성 섹션으로 스크롤 후 생성 시작
     setTimeout(() => {

@@ -5737,15 +5737,6 @@ JSON 형식으로만 반환:
     el.classList.add('active');
     loadQGallery();
   }
-      document.getElementById(groupMap[type]).querySelectorAll('.qgal-btn')
-        .forEach(b => b.classList.remove('active'));
-    } else {
-      el.closest('.qgal-btn-row').querySelectorAll('.qgal-btn')
-        .forEach(b => b.classList.remove('active'));
-    }
-    el.classList.add('active');
-    loadQGallery();
-  }
 
   async function loadQGallery() {
     const loading = document.getElementById('qgalLoading');

@@ -563,6 +563,18 @@
   @media(max-width:1024px){ .pf-new-grid{grid-template-columns:repeat(2,1fr);} }
   @media(max-width:640px) { .pf-new-grid{grid-template-columns:1fr;} }
 
+  /* ── 포트폴리오 페이지네이션 ── */
+  .pf-page-btn {
+    min-width: 38px; height: 38px; padding: 0 12px;
+    border-radius: 10px; border: 1.5px solid var(--line);
+    background: white; color: var(--muted); font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: all .2s;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .pf-page-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+  .pf-page-btn.active { background: var(--indigo); color: white; border-color: var(--indigo); box-shadow: 0 4px 12px rgba(79,70,229,.3); }
+  .pf-page-btn:disabled { opacity: .4; cursor: default; }
+
   .pf-new-card {
     background:white; border:1px solid var(--line); border-radius:20px;
     padding:0; overflow:hidden;
@@ -3575,6 +3587,9 @@
 
   <!-- 포트폴리오 카드 그리드 -->
   <div id="pfGrid" class="pf-new-grid"></div>
+
+  <!-- 페이지네이션 -->
+  <div id="pfPagination" style="display:none;margin-top:32px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;"></div>
 </section>
 
 <!-- ROADMAP / 대시보드 -->
@@ -4117,8 +4132,12 @@
     return entries.reverse();
   }
 
+  let pfCurrentPage = 1;
+  const PF_PAGE_SIZE = 20;
+
   function setPfSource(src, el) {
     pfSourceFilter = src;
+    pfCurrentPage = 1; // 필터 바꾸면 1페이지로
     document.querySelectorAll('.pf-source-tab').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
     renderPortfolio();
@@ -4138,19 +4157,27 @@
     document.getElementById('pfDreamCount').textContent   = counts.dream;
     document.getElementById('pfBookCount').textContent    = counts.book;
 
-    const emptyEl = document.getElementById('pfEmpty');
-    const gridEl  = document.getElementById('pfGrid');
+    const emptyEl  = document.getElementById('pfEmpty');
+    const gridEl   = document.getElementById('pfGrid');
+    const pageEl   = document.getElementById('pfPagination');
 
     if (!filtered.length) {
       emptyEl.style.display = 'block';
       gridEl.innerHTML = '';
+      pageEl.style.display = 'none';
       return;
     }
     emptyEl.style.display = 'none';
 
-    gridEl.innerHTML = filtered.map((e, idx) => {
+    // 페이지네이션 계산
+    const totalPages = Math.ceil(filtered.length / PF_PAGE_SIZE);
+    if (pfCurrentPage > totalPages) pfCurrentPage = 1;
+    const start = (pfCurrentPage - 1) * PF_PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PF_PAGE_SIZE);
+
+    const isMgr = isManagerUser();
+    gridEl.innerHTML = pageItems.map((e) => {
       const meta = pfSourceMeta[e.source] || { label:'기록', icon:'📝', color:'#6366f1' };
-      const isMgr = isManagerUser();
       return `
         <div class="pf-new-card" style="--pf-color:${meta.color}">
           <div class="pf-card-ribbon"></div>
@@ -4172,6 +4199,38 @@
           </div>
         </div>`;
     }).join('');
+
+    // 페이지네이션 버튼
+    if (totalPages <= 1) {
+      pageEl.style.display = 'none';
+    } else {
+      pageEl.style.display = 'flex';
+      let btns = '';
+
+      // 이전 버튼
+      btns += `<button class="pf-page-btn" onclick="goPfPage(${pfCurrentPage-1})" ${pfCurrentPage===1?'disabled':''}>‹</button>`;
+
+      // 페이지 번호 (최대 7개 표시)
+      const range = 3;
+      let startP = Math.max(1, pfCurrentPage - range);
+      let endP   = Math.min(totalPages, pfCurrentPage + range);
+      if (startP > 1) btns += `<button class="pf-page-btn" onclick="goPfPage(1)">1</button>${startP > 2 ? '<span style="padding:0 4px;color:var(--muted)">…</span>' : ''}`;
+      for (let p = startP; p <= endP; p++) {
+        btns += `<button class="pf-page-btn ${p===pfCurrentPage?'active':''}" onclick="goPfPage(${p})">${p}</button>`;
+      }
+      if (endP < totalPages) btns += `${endP < totalPages-1 ? '<span style="padding:0 4px;color:var(--muted)">…</span>' : ''}<button class="pf-page-btn" onclick="goPfPage(${totalPages})">${totalPages}</button>`;
+
+      // 다음 버튼
+      btns += `<button class="pf-page-btn" onclick="goPfPage(${pfCurrentPage+1})" ${pfCurrentPage===totalPages?'disabled':''}>›</button>`;
+
+      pageEl.innerHTML = btns;
+    }
+  }
+
+  function goPfPage(page) {
+    pfCurrentPage = page;
+    renderPortfolio();
+    document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function filterPF() {}   // 하위 호환용 빈 함수

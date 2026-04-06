@@ -214,7 +214,7 @@
     <button class="tab active" onclick="switchTab('overview', this)">📊 전체 현황</button>
     <button class="tab" onclick="switchTab('members', this)">👤 회원 분석</button>
     <button class="tab" onclick="switchTab('questions', this)">❓ 질문 모아보기</button>
-    <button class="tab" onclick="switchTab('attendance', this)">📅 출석 분석</button>
+    <button class="tab" onclick="switchTab('qbot', this)">🤖 Q-BOT 활용 현황</button>
     <button class="tab" onclick="switchTab('mission', this)">🎮 미션 분석</button>
   </div>
 
@@ -299,23 +299,56 @@
       <div id="questionList"></div>
     </div>
 
-    <!-- ── 출석 분석 ── -->
-    <div class="panel" id="panel-attendance">
-      <div class="filter-row">
-        <select id="attendFilter" onchange="renderAttendance()">
-          <option value="all">전체 회원</option>
-          <option value="student">학생만</option>
-          <option value="staff">교직원만</option>
-        </select>
-        <select id="attendSort" onchange="renderAttendance()">
-          <option value="days">출석일수 많은순</option>
-          <option value="total">총 질문수 많은순</option>
-          <option value="recent">최근 활동순</option>
-        </select>
-        <button class="export-btn" onclick="exportAttendance()">⬇ CSV 내보내기</button>
+    <!-- ── Q-BOT 활용 현황 ── -->
+    <div class="panel" id="panel-qbot">
+      <div class="stat-grid" id="qbotStats" style="grid-template-columns:repeat(4,1fr);margin-bottom:28px;"></div>
+
+      <div class="two-col">
+        <div class="card-box">
+          <div class="sec-title">📚 과목별 Q-BOT 활용 현황</div>
+          <div class="bar-chart" id="qbotSubjectChart"></div>
+        </div>
+        <div class="card-box">
+          <div class="sec-title">🎓 학년별 Q-BOT 활용 현황</div>
+          <div class="bar-chart" id="qbotGradeChart"></div>
+        </div>
       </div>
-      <div class="stat-grid" id="attendStats" style="margin-bottom:20px;"></div>
-      <div id="attendList"></div>
+
+      <div class="two-col">
+        <div class="card-box">
+          <div class="sec-title">👤 역할별 활용 현황</div>
+          <div class="bar-chart" id="qbotRoleChart"></div>
+        </div>
+        <div class="card-box">
+          <div class="sec-title">📅 월별 활용 추이</div>
+          <div class="bar-chart" id="qbotMonthChart"></div>
+        </div>
+      </div>
+
+      <div class="card-box" style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div class="sec-title" style="margin-bottom:0;">🤖 Q-BOT 활용 질문 목록 <span class="badge" id="qbotListBadge">0건</span></div>
+          <div style="display:flex;gap:8px;">
+            <select id="qbotGradeFilter" onchange="renderQBot()" style="padding:7px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;font-family:inherit;color:var(--ink);background:white;outline:none;">
+              <option value="all">전체 학년</option>
+              <option>1학년</option><option>2학년</option><option>3학년</option>
+            </select>
+            <select id="qbotSubjectFilter" onchange="renderQBot()" style="padding:7px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;font-family:inherit;color:var(--ink);background:white;outline:none;">
+              <option value="all">전체 과목</option>
+              <option>국어</option><option>수학</option><option>사회</option><option>과학</option>
+              <option>영어</option><option>역사</option><option>도덕</option><option>기술·가정</option>
+              <option>정보</option><option>음악</option><option>미술</option><option>체육</option><option>진로</option>
+            </select>
+            <select id="qbotRoleFilter" onchange="renderQBot()" style="padding:7px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;font-family:inherit;color:var(--ink);background:white;outline:none;">
+              <option value="all">전체 역할</option>
+              <option value="student">🎒 학생</option>
+              <option value="teacher">👩‍🏫 선생님</option>
+            </select>
+            <button class="export-btn" onclick="exportQBot()">⬇ CSV 내보내기</button>
+          </div>
+        </div>
+        <div id="qbotList"></div>
+      </div>
     </div>
 
     <!-- ── 미션 분석 ── -->
@@ -371,46 +404,42 @@
     document.getElementById('panel-' + id).classList.add('active');
   }
 
+  // ── JSONBin 설정 (index.html과 동일) ──
+  const JSONBIN_KEY  = '$2a$10$ts/sXMPOsQfADA7Fbb4dwOJyIhuDCLjsNgPhpYrMTjJEsTicH.sia';
+  const USERS_BIN_ID = '69d2f784aaba882197c9fb56';
+  const MYQ_BIN_ID   = '69d2f799aaba882197c9fcde';
+  const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
+  const JSONBIN_HDR  = { 'Content-Type':'application/json', 'X-Master-Key': JSONBIN_KEY };
+
   // ── 데이터 로드 ──
-  let allEntries = [];   // myq_list
-  let allMembers = [];   // 회원 목록 (shared storage에서)
+  let allEntries = [];
+  let allMembers = [];
 
   async function loadAll() {
     document.getElementById('lastUpdate').textContent = '로딩 중...';
 
-    // 1. 질문 데이터 (localStorage myq_list는 이 브라우저 것, shared에서도 수집)
-    allEntries = JSON.parse(localStorage.getItem('myq_list') || '[]');
-
-    // shared storage에서 전체 질문 수집
-    if (typeof window.storage !== 'undefined') {
-      try {
-        const keyResult = await window.storage.list('qentry:', true);
-        const keys = keyResult?.keys || [];
-        const sharedEntries = [];
-        for (const k of keys) {
-          try {
-            const r = await window.storage.get(k, true);
-            if (r) sharedEntries.push(JSON.parse(r.value));
-          } catch(e) {}
-        }
-        // 중복 제거 (id 기준)
-        const localIds = new Set(allEntries.map(e => e.id));
-        sharedEntries.forEach(e => { if (!localIds.has(e.id)) allEntries.push(e); });
-      } catch(e) {}
-
-      // 2. 회원 데이터 수집
-      try {
-        const userKeys = await window.storage.list('qschool_user:', true);
-        const ukeys = userKeys?.keys || [];
-        allMembers = [];
-        for (const k of ukeys) {
-          try {
-            const r = await window.storage.get(k, true);
-            if (r) allMembers.push(JSON.parse(r.value));
-          } catch(e) {}
-        }
-      } catch(e) {}
+    // 1. JSONBin에서 질문 데이터 로드
+    try {
+      const r = await fetch(`${JSONBIN_BASE}/${MYQ_BIN_ID}/latest`, { headers: JSONBIN_HDR });
+      if (r.ok) {
+        const d = await r.json();
+        const data = d.record !== undefined ? d.record : d;
+        allEntries = Array.isArray(data) ? data : (Array.isArray(data.list) ? data.list : []);
+      }
+    } catch(e) {
+      allEntries = JSON.parse(localStorage.getItem('myq_list') || '[]');
     }
+
+    // 2. JSONBin에서 회원 데이터 로드
+    try {
+      const r2 = await fetch(`${JSONBIN_BASE}/${USERS_BIN_ID}/latest`, { headers: JSONBIN_HDR });
+      if (r2.ok) {
+        const d2 = await r2.json();
+        const data2 = d2.record !== undefined ? d2.record : d2;
+        const usersObj = data2.users !== undefined ? data2.users : data2;
+        allMembers = Object.values(usersObj || {});
+      }
+    } catch(e) { allMembers = []; }
 
     // 최신순 정렬
     allEntries.sort((a, b) => b.id - a.id);
@@ -418,7 +447,7 @@
     renderOverview();
     renderMembers();
     renderAllQuestions();
-    renderAttendance();
+    renderQBot();
     renderMission();
 
     document.getElementById('lastUpdate').textContent =
@@ -648,79 +677,93 @@
   }
 
   // ────────────────────────────────
-  // ④ 출석 분석
+  // ④ Q-BOT 활용 현황
   // ────────────────────────────────
-  function renderAttendance() {
-    const typeFilter = document.getElementById('attendFilter').value;
-    const sortFilter = document.getElementById('attendSort').value;
+  function renderQBot() {
+    let list = [...allEntries];
+    const grade   = document.getElementById('qbotGradeFilter').value;
+    const subject = document.getElementById('qbotSubjectFilter').value;
+    const role    = document.getElementById('qbotRoleFilter').value;
 
-    const authorMap = {};
-    allEntries.forEach(e => {
-      const k = e.authorKey || '(비회원)';
-      if (typeFilter !== 'all') {
-        if (typeFilter === 'student' && !k.startsWith('student')) return;
-        if (typeFilter === 'staff'   && !k.startsWith('staff'))   return;
-      }
-      if (!authorMap[k]) authorMap[k] = { key: k, entries: [] };
-      authorMap[k].entries.push(e);
-    });
+    if (grade   !== 'all') list = list.filter(e => e.grade   === grade);
+    if (subject !== 'all') list = list.filter(e => e.subject === subject);
+    if (role    !== 'all') list = list.filter(e => e.role    === role);
 
-    let list = Object.values(authorMap);
-    if (sortFilter === 'days')   list.sort((a,b) => getDays(b.entries) - getDays(a.entries));
-    if (sortFilter === 'total')  list.sort((a,b) => b.entries.length - a.entries.length);
-    if (sortFilter === 'recent') list.sort((a,b) => {
-      const la = a.entries.reduce((m,e) => e.date>m?e.date:m, '');
-      const lb = b.entries.reduce((m,e) => e.date>m?e.date:m, '');
-      return lb > la ? 1 : -1;
-    });
+    const total    = allEntries.length;
+    const students = allEntries.filter(e => e.role === 'student').length;
+    const teachers = allEntries.filter(e => e.role === 'teacher').length;
+    const subjects = new Set(allEntries.map(e => e.subject).filter(Boolean)).size;
 
-    const totalDays = list.reduce((s,a)=>s+getDays(a.entries),0);
-    const avgDays = list.length ? (totalDays/list.length).toFixed(1) : 0;
-    const maxDays = list.length ? getDays(list[0].entries) : 0;
-
-    document.getElementById('attendStats').innerHTML = [
-      { label:'출석 집계 회원', value: list.length, color:'#4f46e5' },
-      { label:'총 활동일 합계', value: totalDays, color:'#0ea5e9' },
-      { label:'인당 평균 출석일', value: avgDays, color:'#10b981' },
-      { label:'최다 출석일', value: maxDays, color:'#f59e0b' },
-      { label:'총 질문 기록', value: allEntries.length, color:'#f43f5e' },
+    // 통계 카드
+    document.getElementById('qbotStats').innerHTML = [
+      { label:'총 Q-BOT 활용', value: total,    sub:'누적 전체', color:'#4f46e5' },
+      { label:'학생 활용',     value: students,  sub:'학생 질문 설계', color:'#0ea5e9' },
+      { label:'선생님 활용',   value: teachers,  sub:'수업 설계 활용', color:'#f59e0b' },
+      { label:'활용 과목 수',  value: subjects,  sub:'다양성 지표', color:'#10b981' },
     ].map(s => `
       <div class="stat-card" style="border-left-color:${s.color}">
         <div class="stat-label">${s.label}</div>
         <div class="stat-value" style="color:${s.color}">${s.value}</div>
+        <div class="stat-sub">${s.sub}</div>
       </div>`).join('');
 
-    document.getElementById('attendList').innerHTML = list.length ? list.map(a => {
-      const days = getDays(a.entries);
-      const allDates = [...new Set(a.entries.map(e=>e.date?e.date.split(' ')[0]:'').filter(Boolean))];
-      const dateSet = new Set(allDates);
-      const lastDate = allDates.sort().reverse()[0] || '-';
+    // 과목별 차트
+    const subMap = {};
+    allEntries.forEach(e => { if(e.subject) subMap[e.subject] = (subMap[e.subject]||0)+1; });
+    renderBarChart('qbotSubjectChart', subMap, '#4f46e5');
 
-      // 최근 30일 달력
-      const calCells = [];
-      for (let i=29; i>=0; i--) {
-        const d = new Date(); d.setDate(d.getDate()-i);
-        const key = d.toLocaleDateString('ko').replace(/\. /g,'.').replace(/\.$/,'');
-        const count = a.entries.filter(e=>e.date&&e.date.startsWith(key)).length;
-        const dayNum = d.getDate();
-        calCells.push(`<div class="attend-day ${count>0?'has-entry':''}" data-tip="${key} ${count}개">${dayNum}</div>`);
+    // 학년별 차트
+    const gradeMap = {};
+    allEntries.forEach(e => { if(e.grade) gradeMap[e.grade] = (gradeMap[e.grade]||0)+1; });
+    renderBarChart('qbotGradeChart', gradeMap, '#0ea5e9');
+
+    // 역할별 차트
+    renderBarChart('qbotRoleChart', { '🎒 학생': students, '👩‍🏫 선생님': teachers }, '#10b981');
+
+    // 월별 추이
+    const monthMap = {};
+    allEntries.forEach(e => {
+      if (!e.date) return;
+      const m = e.date.match(/^(\d{4})\.(\d{2})/);
+      if (m) {
+        const key = `${m[1]}년 ${m[2]}월`;
+        monthMap[key] = (monthMap[key]||0) + 1;
       }
+    });
+    // 월 순서 정렬
+    const sortedMonthMap = Object.fromEntries(Object.entries(monthMap).sort((a,b) => a[0].localeCompare(b[0])));
+    renderBarChart('qbotMonthChart', sortedMonthMap, '#f59e0b');
 
-      return `
-        <div class="member-card" style="flex-direction:column;align-items:stretch;gap:12px;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div class="member-avatar" style="background:#4f46e5;font-size:14px">${getAuthorLabel(a.key).charAt(0)}</div>
-            <div class="member-info">
-              <div class="member-name">${getAuthorLabel(a.key)}</div>
-              <div class="member-meta">출석일: <strong style="color:#4f46e5">${days}일</strong> · 총 질문: <strong>${a.entries.length}개</strong> · 마지막: ${lastDate}</div>
-            </div>
-          </div>
-          <div>
-            <div class="month-label">최근 30일 활동 캘린더</div>
-            <div class="attend-grid">${calCells.join('')}</div>
-          </div>
-        </div>`;
-    }).join('') : '<div class="empty"><div class="icon">📅</div><p>출석 데이터가 없습니다</p></div>';
+    // 목록
+    document.getElementById('qbotListBadge').textContent = list.length + '건';
+    document.getElementById('qbotList').innerHTML = list.length ? list.map(e => `
+      <div class="q-card" style="border-left-color:${e.role==='teacher'?'#f59e0b':'#4f46e5'}">
+        <div class="q-card-meta">
+          <span>${e.role==='teacher'?'👩‍🏫 선생님':'🎒 학생'}</span>
+          <span>${e.grade||''}</span>
+          <span>${e.subject||''}</span>
+          ${e.unit  ? `<span>${e.unit}</span>` : ''}
+          ${e.topic ? `<span style="font-weight:800;color:var(--ink)">${e.topic}</span>` : ''}
+          ${e.authorKey ? `<span style="color:#94a3b8">${getAuthorLabel(e.authorKey)}</span>` : ''}
+          <span style="margin-left:auto;color:#94a3b8">${e.date||''}</span>
+        </div>
+        <div class="q-card-qs">
+          ${[e.q1,e.q2,e.q3].filter(Boolean).map((q,i)=>`
+            <div class="q-card-q">
+              <span class="q-card-num" style="background:${['#0ea5e9','#8b5cf6','#10b981'][i]}">Q${i+1}</span>
+              <span>${q}</span>
+            </div>`).join('')}
+        </div>
+      </div>`).join('')
+    : '<div class="empty"><div class="icon">🤖</div><p>Q-BOT 활용 기록이 없습니다</p></div>';
+  }
+
+  function exportQBot() {
+    const csv = toCSV(
+      ['날짜','역할','학년','과목','단원','주제','Q1','Q2','Q3','작성자'],
+      allEntries.map(e => [e.date,e.role==='teacher'?'선생님':'학생',e.grade,e.subject,e.unit,e.topic,e.q1,e.q2,e.q3,getAuthorLabel(e.authorKey)])
+    );
+    downloadCSV(csv, 'QBOT활용현황_' + new Date().toLocaleDateString('ko') + '.csv');
   }
 
   // ────────────────────────────────
@@ -807,22 +850,7 @@
     );
     downloadCSV(csv, '회원분석_' + new Date().toLocaleDateString('ko') + '.csv');
   }
-  function exportAttendance() {
-    const authorMap = {};
-    allEntries.forEach(e => {
-      const k = e.authorKey||'(비회원)';
-      if (!authorMap[k]) authorMap[k] = { entries: [] };
-      authorMap[k].entries.push(e);
-    });
-    const csv = toCSV(
-      ['회원명','출석일수','총질문수','활동일목록'],
-      Object.entries(authorMap).map(([k,a]) => [
-        getAuthorLabel(k), getDays(a.entries), a.entries.length,
-        [...new Set(a.entries.map(e=>e.date?e.date.split(' ')[0]:'').filter(Boolean))].sort().join(' | ')
-      ])
-    );
-    downloadCSV(csv, '출석분석_' + new Date().toLocaleDateString('ko') + '.csv');
-  }
+
 </script>
 </body>
 </html>

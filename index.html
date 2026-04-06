@@ -621,6 +621,27 @@
   }
   .myq-role-btn:hover:not(.active) { border-color: var(--indigo); color: var(--indigo); }
 
+  /* ── AI 도구 버튼 ── */
+  .myq-tool-btns {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .myq-tool-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 20px; border-radius: 100px; border: none;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    transition: all .2s; color: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  }
+  .myq-tool-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.22); }
+  .myq-tool-btn-qbot  { background: linear-gradient(135deg, #0ea5e9, #06b6d4); }
+  .myq-tool-btn-dbot  { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+  .myq-tool-btn-logos { background: linear-gradient(135deg, #14b8a6, #10b981); }
+  .myq-tool-btn .tool-icon { font-size: 16px; }
+  .myq-tool-btn .tool-text { display: flex; flex-direction: column; line-height: 1.2; }
+  .myq-tool-btn .tool-name { font-size: 13px; font-weight: 800; }
+  .myq-tool-btn .tool-sub  { font-size: 10px; opacity: .85; font-weight: 500; }
+
   .myq-form-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
   }
@@ -2554,14 +2575,39 @@
   <h2 class="section-title">오늘의 나의 질문</h2>
   <p class="section-desc">오늘 수업에서 떠오른 나만의 질문을 기록해 보세요. 좋은 질문이 깊은 배움을 만듭니다.</p>
 
-  <!-- 학생 / 선생님 탭 -->
-  <div style="display:flex;gap:12px;margin-bottom:36px;">
-    <button class="myq-role-btn active" id="roleStudent" onclick="switchRole('student')">
-      🎒 학생
-    </button>
-    <button class="myq-role-btn" id="roleTeacher" onclick="switchRole('teacher')">
-      👩‍🏫 선생님
-    </button>
+  <!-- 학생 / 선생님 탭 + AI 도구 버튼 -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:36px;">
+    <div style="display:flex;gap:12px;">
+      <button class="myq-role-btn active" id="roleStudent" onclick="switchRole('student')">
+        🎒 학생
+      </button>
+      <button class="myq-role-btn" id="roleTeacher" onclick="switchRole('teacher')">
+        👩‍🏫 선생님
+      </button>
+    </div>
+    <div class="myq-tool-btns">
+      <button class="myq-tool-btn myq-tool-btn-qbot" onclick="openQBotModal()">
+        <span class="tool-icon">🤖</span>
+        <span class="tool-text">
+          <span class="tool-name">Q-BOT</span>
+          <span class="tool-sub">학생 질문 설계</span>
+        </span>
+      </button>
+      <button class="myq-tool-btn myq-tool-btn-dbot" onclick="openDbotModal()">
+        <span class="tool-icon">💻</span>
+        <span class="tool-text">
+          <span class="tool-name">D-BOT</span>
+          <span class="tool-sub">교사 수업 설계</span>
+        </span>
+      </button>
+      <button class="myq-tool-btn myq-tool-btn-logos" onclick="openLogosModal()">
+        <span class="tool-icon">✨</span>
+        <span class="tool-text">
+          <span class="tool-name">Q-LOGOS</span>
+          <span class="tool-sub">단계별 질문생성</span>
+        </span>
+      </button>
+    </div>
   </div>
 
   <!-- 학생 폼 -->
@@ -2587,8 +2633,8 @@
           </div>
         </div>
         <div class="myq-field">
-          <label class="myq-label">단원</label>
-          <input class="myq-input" id="sq-unit" type="text" placeholder="예: 3단원 · 기체의 성질"/>
+          <label class="myq-label">학습 내용 키워드</label>
+          <input class="myq-input" id="sq-unit" type="text" placeholder="예: 기체"/>
         </div>
         <div class="myq-field">
           <label class="myq-label">주제</label>
@@ -2638,8 +2684,8 @@
           </div>
         </div>
         <div class="myq-field">
-          <label class="myq-label">단원 / 차시</label>
-          <input class="myq-input" id="tq-unit" type="text" placeholder="예: 2단원 3차시 · 민주주의의 원리"/>
+          <label class="myq-label">학습 내용 키워드</label>
+          <input class="myq-input" id="tq-unit" type="text" placeholder="예: 기체"/>
         </div>
         <div class="myq-field">
           <label class="myq-label">수업 주제</label>
@@ -7146,7 +7192,6 @@ ${phaseContent[p]}
   async function generateQBot() {
     const grade   = document.getElementById('qbotGrade').value;
     const subject = document.getElementById('qbotSubject').value;
-    const unit    = document.getElementById('qbotUnit').value.trim();
     const topic   = document.getElementById('qbotTopic').value.trim();
     const keyword = document.getElementById('qbotKeyword').value.trim();
 
@@ -7154,7 +7199,7 @@ ${phaseContent[p]}
     if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
 
     qbotSavedQuestions = {};
-    document.getElementById('qbotInfoText').textContent = grade + ' · ' + subject + (unit ? ' · ' + unit : '') + ' · ' + topic;
+    document.getElementById('qbotInfoText').textContent = grade + ' · ' + subject + ' · ' + topic;
     document.getElementById('qbotInfoBar').style.display = 'flex';
     const genBtn = document.querySelector('.qbot-gen-btn');
     if (genBtn) genBtn.disabled = true;
@@ -7871,10 +7916,6 @@ ${phaseContent[p]}
             <option>영어</option><option>역사</option><option>도덕</option><option>기술·가정</option>
             <option>정보</option><option>음악</option><option>미술</option><option>체육</option><option>진로</option>
           </select>
-        </div>
-        <div class="qbot-field">
-          <label>단원 (선택)</label>
-          <input type="text" id="qbotUnit" placeholder="예: 2단원 · 생태계"/>
         </div>
       </div>
       <div class="qbot-form-row two">

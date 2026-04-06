@@ -2670,7 +2670,7 @@
   <div id="myqList" style="margin-top:40px;display:none;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
       <div style="font-size:15px;font-weight:800;color:var(--ink);">📋 저장된 질문 기록</div>
-      <button onclick="clearMyQ()" style="font-size:12px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">전체 삭제</button>
+      <button id="myqClearBtn" onclick="clearMyQ()" style="display:none;font-size:12px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">전체 삭제</button>
     </div>
     <div id="myqCards"></div>
   </div>
@@ -3412,11 +3412,11 @@
   </div>
 </section>
 
-<!-- 나의 질문 포트폴리오 -->
+<!-- 우리학교 질문 포트폴리오 -->
 <section id="portfolio" class="fade-in">
-  <span class="section-eyebrow">MY QUESTION PORTFOLIO</span>
-  <h2 class="section-title">나의 질문 포트폴리오</h2>
-  <p class="section-desc">오늘의 나의 질문과 질문 미션 놀이터의 모든 활동이 자동으로 누적되어 나만의 성장 포트폴리오가 됩니다.</p>
+  <span class="section-eyebrow">OUR SCHOOL QUESTION PORTFOLIO</span>
+  <h2 class="section-title">우리학교 질문 포트폴리오</h2>
+  <p class="section-desc">오늘의 나의 질문과 질문 미션 놀이터의 모든 활동이 자동으로 누적되어 우리학교의 질문 성장 포트폴리오가 됩니다.</p>
 
   <!-- 통합 통계 대시보드 -->
   <div class="pf-dashboard">
@@ -3758,6 +3758,18 @@
     window.open('manager.html', '_blank');
   }
 
+  // 매니저 여부 확인 헬퍼
+  function isManagerUser() {
+    try {
+      const session = localStorage.getItem('qschool_session');
+      if (session) {
+        const user = JSON.parse(session);
+        return user.displayName && user.displayName.includes('조유진');
+      }
+    } catch(e) {}
+    return false;
+  }
+
   // 페이지 로드 시 세션 자동 복원 (localStorage 세션 → 클라우드 유저 재확인)
   async function restoreSession() {
     try {
@@ -4038,6 +4050,7 @@
 
     gridEl.innerHTML = filtered.map((e, idx) => {
       const meta = pfSourceMeta[e.source] || { label:'기록', icon:'📝', color:'#6366f1' };
+      const isMgr = isManagerUser();
       return `
         <div class="pf-new-card" style="--pf-color:${meta.color}">
           <div class="pf-card-ribbon"></div>
@@ -4055,7 +4068,7 @@
                   <span>${q}</span>
                 </div>`).join('')}
             </div>
-            ${e.source === 'myq' ? `<button class="pf-card-del-new" onclick="deletePFEntry(${e.rawId})">삭제 ✕</button>` : ''}
+            ${e.source === 'myq' && isMgr ? `<button class="pf-card-del-new" onclick="deletePFEntry(${e.rawId})">삭제 ✕</button>` : ''}
           </div>
         </div>`;
     }).join('');
@@ -5902,6 +5915,9 @@ JSON 형식으로만 반환:
 
     const colors = { q1s: '#0ea5e9', q2s: '#8b5cf6', q3s: '#10b981', q1t: '#f59e0b', q2t: '#f43f5e', q3t: '#8b5cf6' };
 
+    const isMgr = isManagerUser();
+    const clearBtn = document.getElementById('myqClearBtn');
+    if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
     // 월별 그룹핑
     const monthGroups = groupByMonth(saved);
 
@@ -5932,7 +5948,7 @@ JSON 형식으로만 반환:
                 </div>`).join('')}
             </div>
             <div class="myq-card-date">${e.date}</div>
-            <button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>
+            ${isMgr ? `<button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>` : ''}
           </div>`;
       }).join('');
 

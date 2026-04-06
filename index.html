@@ -687,6 +687,40 @@
   }
   .myq-card-del:hover { color: #f43f5e; }
 
+  /* ── 월별 아코디언 ── */
+  .myq-month-group { margin-bottom: 12px; border-radius: 20px; overflow: hidden; border: 1.5px solid var(--line); background: white; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+  .myq-month-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 22px; cursor: pointer; user-select: none;
+    transition: background .15s;
+  }
+  .myq-month-header:hover { background: #f8fafc; }
+  .myq-month-left { display: flex; align-items: center; gap: 12px; }
+  .myq-month-label { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .myq-month-count {
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 100px; background: rgba(79,70,229,.1); color: var(--indigo);
+  }
+  .myq-month-arrow { font-size: 12px; color: var(--muted); transition: transform .25s; }
+  .myq-month-arrow.open { transform: rotate(180deg); }
+  .myq-month-body { display: none; padding: 0 16px 16px; }
+  .myq-month-body.open { display: block; }
+  .myq-month-card {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 16px;
+    padding: 18px 20px; margin-top: 10px; position: relative;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start;
+  }
+  .myq-toggle-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: var(--indigo);
+    background: rgba(79,70,229,.08); border: none; border-radius: 100px;
+    padding: 5px 14px; cursor: pointer; font-family: inherit;
+    transition: background .2s; margin-top: 10px;
+  }
+  .myq-toggle-btn:hover { background: rgba(79,70,229,.16); }
+  .myq-qs-wrap { display: none; margin-top: 10px; }
+  .myq-qs-wrap.open { display: flex; flex-direction: column; gap: 8px; }
+
   @media (max-width: 768px) {
     .myq-form-grid { grid-template-columns: 1fr; }
     .myq-card { grid-template-columns: 1fr; }
@@ -5738,6 +5772,65 @@ JSON 형식으로만 반환:
     loadQGallery();
   }
 
+  // ── 월별 그룹핑 헬퍼 ──
+  function groupByMonth(entries) {
+    const groups = {};
+    entries.forEach(e => {
+      let label = '날짜 미상';
+      if (e.date) {
+        const m = e.date.match(/^(\d{4})\.(\d{2})/);
+        if (m) label = `${m[1]}년 ${m[2]}월`;
+      }
+      if (!groups[label]) groups[label] = [];
+      groups[label].push(e);
+    });
+    return Object.keys(groups).sort((a, b) => b.localeCompare(a)).map(month => ({ month, entries: groups[month] }));
+  }
+
+  function renderQGalMonthly(entries, color) {
+    if (!entries.length) return `<div class="qgal-empty-col">등록된 질문이 없습니다</div>`;
+    const qColors = ['#0ea5e9','#8b5cf6','#10b981','#f59e0b'];
+    const monthGroups = groupByMonth(entries);
+
+    return monthGroups.map((g, gi) => {
+      const isFirst = gi === 0;
+      const cardsHtml = g.entries.map(e => {
+        const qs = [e.q1, e.q2, e.q3].filter(Boolean);
+        return `
+          <div class="qgal-item" style="--qgal-color:${color}">
+            <div class="qgal-item-meta">
+              <span class="qgal-item-tag">${e.grade}</span>
+              <span class="qgal-item-tag">${e.subject}</span>
+              ${e.unit ? `<span class="qgal-item-tag">${e.unit}</span>` : ''}
+            </div>
+            ${e.topic ? `<div class="qgal-item-topic">${e.topic}</div>` : ''}
+            <div class="qgal-item-qs" style="margin-top:8px;">
+              ${qs.map((q,i) => `
+                <div class="myq-card-q">
+                  <span class="myq-card-qnum" style="background:${qColors[i]||color}">Q${i+1}</span>
+                  <span>${q}</span>
+                </div>`).join('')}
+            </div>
+            <div class="qgal-item-date">${e.date}</div>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="myq-month-group" style="margin-bottom:10px;">
+          <div class="myq-month-header" onclick="toggleMyQMonth(this)">
+            <div class="myq-month-left">
+              <span class="myq-month-label">📅 ${g.month}</span>
+              <span class="myq-month-count" style="background:${color}22;color:${color};">${g.entries.length}개</span>
+            </div>
+            <span class="myq-month-arrow ${isFirst?'open':''}">▼</span>
+          </div>
+          <div class="myq-month-body ${isFirst?'open':''}" style="padding:0 12px 12px;">
+            <div class="qgal-list-full">${cardsHtml}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
   async function loadQGallery() {
     const loading = document.getElementById('qgalLoading');
     const empty   = document.getElementById('qgalEmpty');
@@ -5752,43 +5845,35 @@ JSON 형식으로만 반환:
     try {
       const all = await cloudGetMyQList();
 
-      // 학년·과목 필터 적용
       let filtered = [...all];
       if (qgalFilter.grade   !== 'all') filtered = filtered.filter(e => e.grade   === qgalFilter.grade);
       if (qgalFilter.subject !== 'all') filtered = filtered.filter(e => e.subject === qgalFilter.subject);
+      if (qgalFilter.role    !== 'all') filtered = filtered.filter(e => e.role    === qgalFilter.role);
 
-      // 역할 필터 적용
-      if (qgalFilter.role !== 'all') filtered = filtered.filter(e => e.role === qgalFilter.role);
-
-      // 최신순 정렬
       filtered.sort((a, b) => b.id - a.id);
 
       loading.style.display = 'none';
-
       if (!filtered.length) { empty.style.display = 'block'; return; }
-
       board.style.display = 'block';
 
-      // 학생 / 선생님 분리
-      const students = filtered.filter(e => e.role === 'student');
-      const teachers = filtered.filter(e => e.role === 'teacher');
-
       // 학생 섹션
+      const students = filtered.filter(e => e.role === 'student');
       const stuSec = document.getElementById('qgalStudentSection');
       if (students.length) {
         stuSec.style.display = 'block';
         document.getElementById('qgalStudentCount').textContent = `🎒 학생 질문 ${students.length}개`;
-        document.getElementById('qgalStudentList').innerHTML = renderQGalItems(students, '#0ea5e9');
+        document.getElementById('qgalStudentList').innerHTML = renderQGalMonthly(students, '#0ea5e9');
       } else {
         stuSec.style.display = 'none';
       }
 
       // 선생님 섹션
+      const teachers = filtered.filter(e => e.role === 'teacher');
       const teaSec = document.getElementById('qgalTeacherSection');
       if (teachers.length) {
         teaSec.style.display = 'block';
         document.getElementById('qgalTeacherCount').textContent = `👩‍🏫 선생님 질문 ${teachers.length}개`;
-        document.getElementById('qgalTeacherList').innerHTML = renderQGalItems(teachers, '#f59e0b');
+        document.getElementById('qgalTeacherList').innerHTML = renderQGalMonthly(teachers, '#f59e0b');
       } else {
         teaSec.style.display = 'none';
       }
@@ -5797,31 +5882,6 @@ JSON 형식으로만 반환:
       loading.style.display = 'none';
       empty.style.display   = 'block';
     }
-  }
-
-  function renderQGalItems(entries, color) {
-    if (!entries.length) return `<div class="qgal-empty-col">등록된 질문이 없습니다</div>`;
-    const qColors = ['#0ea5e9','#8b5cf6','#10b981'];
-    return entries.map(e => {
-      const qs = [e.q1, e.q2, e.q3].filter(Boolean);
-      return `
-        <div class="qgal-item" style="--qgal-color:${color}">
-          <div class="qgal-item-meta">
-            <span class="qgal-item-tag">${e.grade}</span>
-            <span class="qgal-item-tag">${e.subject}</span>
-            ${e.unit ? `<span class="qgal-item-tag">${e.unit}</span>` : ''}
-          </div>
-          ${e.topic ? `<div class="qgal-item-topic">${e.topic}</div>` : ''}
-          <div class="qgal-item-qs">
-            ${qs.map((q,i) => `
-              <div class="qgal-item-q">
-                <span class="qgal-item-qnum" style="background:${qColors[i]}">Q${i+1}</span>
-                <span>${q}</span>
-              </div>`).join('')}
-          </div>
-          <div class="qgal-item-date">${e.date}</div>
-        </div>`;
-    }).join('');
   }
 
   // 페이지 로드 시 갤러리 초기 로드 (메인 init에서 통합 관리)
@@ -5835,34 +5895,67 @@ JSON 형식으로만 반환:
 
     const colors = { q1s: '#0ea5e9', q2s: '#8b5cf6', q3s: '#10b981', q1t: '#f59e0b', q2t: '#f43f5e', q3t: '#8b5cf6' };
 
-    cardsEl.innerHTML = saved.map(e => {
-      const isT = e.role === 'teacher';
-      const c1 = isT ? colors.q1t : colors.q1s;
-      const c2 = isT ? colors.q2t : colors.q2s;
-      const c3 = isT ? colors.q3t : colors.q3s;
-      const qs = [e.q1, e.q2, e.q3].filter(Boolean);
-      return `
-        <div class="myq-card">
-          <div>
-            <div class="myq-card-meta">
-              <span class="myq-card-tag ${isT ? 'teacher' : ''}">${isT ? '👩‍🏫 선생님' : '🎒 학생'}</span>
-              <span class="myq-card-tag">${e.grade}</span>
-              <span class="myq-card-tag">${e.subject}</span>
+    // 월별 그룹핑
+    const monthGroups = groupByMonth(saved);
+
+    cardsEl.innerHTML = monthGroups.map((g, gi) => {
+      const isFirst = gi === 0;
+      const cardsHtml = g.entries.map(e => {
+        const isT = e.role === 'teacher';
+        const c1 = isT ? colors.q1t : colors.q1s;
+        const c2 = isT ? colors.q2t : colors.q2s;
+        const c3 = isT ? colors.q3t : colors.q3s;
+        const qs = [e.q1, e.q2, e.q3].filter(Boolean);
+        return `
+          <div class="myq-card">
+            <div>
+              <div class="myq-card-meta">
+                <span class="myq-card-tag ${isT ? 'teacher' : ''}">${isT ? '👩‍🏫 선생님' : '🎒 학생'}</span>
+                <span class="myq-card-tag">${e.grade}</span>
+                <span class="myq-card-tag">${e.subject}</span>
+              </div>
+              <div class="myq-card-topic">${e.topic || '(주제 미입력)'}</div>
+              <div class="myq-card-unit">${e.unit || ''}</div>
             </div>
-            <div class="myq-card-topic">${e.topic || '(주제 미입력)'}</div>
-            <div class="myq-card-unit">${e.unit || ''}</div>
+            <div class="myq-card-qs">
+              ${qs.map((q, i) => `
+                <div class="myq-card-q">
+                  <span class="myq-card-qnum" style="background:${[c1,c2,c3][i]}">Q${i+1}</span>
+                  <span>${q}</span>
+                </div>`).join('')}
+            </div>
+            <div class="myq-card-date">${e.date}</div>
+            <button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="myq-month-group">
+          <div class="myq-month-header" onclick="toggleMyQMonth(this)">
+            <div class="myq-month-left">
+              <span class="myq-month-label">📅 ${g.month}</span>
+              <span class="myq-month-count">${g.entries.length}개</span>
+            </div>
+            <span class="myq-month-arrow ${isFirst ? 'open' : ''}">▼</span>
           </div>
-          <div class="myq-card-qs">
-            ${qs.map((q, i) => `
-              <div class="myq-card-q">
-                <span class="myq-card-qnum" style="background:${[c1,c2,c3][i]}">Q${i+1}</span>
-                <span>${q}</span>
-              </div>`).join('')}
+          <div class="myq-month-body ${isFirst ? 'open' : ''}" style="padding:0 12px 12px;">
+            ${cardsHtml}
           </div>
-          <div class="myq-card-date">${e.date}</div>
-          <button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>
         </div>`;
     }).join('');
+  }
+
+  function toggleMyQMonth(header) {
+    const body  = header.nextElementSibling;
+    const arrow = header.querySelector('.myq-month-arrow');
+    const isOpen = body.classList.toggle('open');
+    arrow.classList.toggle('open', isOpen);
+  }
+
+  function toggleMyQCard(btn) {
+    const wrap = btn.nextElementSibling;
+    const isOpen = wrap.classList.toggle('open');
+    btn.textContent = isOpen ? '▴ 질문 접기' : '▾ 질문 보기';
   }
 
   async function deleteMyQ(id) {

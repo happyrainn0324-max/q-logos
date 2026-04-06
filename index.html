@@ -391,6 +391,372 @@
   .qlogos-card .sub { font-size: 12px; color: var(--indigo); font-weight: 600; margin-bottom: 10px; text-align: center; }
   .qlogos-card p { font-size: 13px; color: var(--muted); line-height: 1.7; text-align: left; }
 
+  /* ── 오늘의 Q-Class & Q-King ── */
+  .qclass-wrap {
+    background: linear-gradient(135deg, #1a2150 0%, #2d1570 40%, #1a2a5e 100%);
+    border-radius: 28px;
+    padding: 36px 40px;
+    margin-top: 20px;
+    border: 1px solid rgba(139,92,246,.2);
+    box-shadow: 0 16px 48px rgba(10,10,18,.18);
+  }
+  .qclass-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+  }
+  .qclass-eyebrow {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .18em;
+    color: #9ca3af; margin-bottom: 4px;
+  }
+  .qclass-title {
+    font-size: 22px; font-weight: 800; color: white;
+  }
+  .qclass-date {
+    font-size: 13px; font-weight: 600; color: #a5b4fc;
+    background: rgba(139,92,246,.15);
+    border: 1px solid rgba(139,92,246,.3);
+    border-radius: 100px; padding: 6px 16px;
+  }
+  .qclass-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  .qclass-card {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 18px; padding: 22px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative; overflow: hidden;
+    transition: all .2s;
+  }
+  .qclass-card:hover { background: rgba(255,255,255,.1); transform: translateY(-2px); }
+  .qclass-card.rank-1 { border-color: rgba(251,191,36,.4); background: rgba(251,191,36,.06); }
+  .qclass-card.rank-2 { border-color: rgba(148,163,184,.35); background: rgba(148,163,184,.05); }
+  .qclass-card.rank-3 { border-color: rgba(251,146,60,.35); background: rgba(251,146,60,.05); }
+  .qclass-rank-badge {
+    position: absolute; top: 14px; right: 16px;
+    font-size: 22px; line-height: 1;
+  }
+  .qclass-class-name {
+    font-size: 20px; font-weight: 900; color: white; letter-spacing: -0.01em;
+  }
+  .qclass-card.rank-1 .qclass-class-name { color: #fde68a; }
+  .qclass-card.rank-2 .qclass-class-name { color: #e2e8f0; }
+  .qclass-card.rank-3 .qclass-class-name { color: #fdba74; }
+  .qclass-stats {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .qclass-stat {
+    display: flex; flex-direction: column;
+    background: rgba(255,255,255,.07); border-radius: 12px;
+    padding: 10px 14px; flex: 1; min-width: 80px;
+  }
+  .qclass-stat-num {
+    font-size: 24px; font-weight: 900; color: white; line-height: 1;
+    font-family: 'Bebas Neue', sans-serif;
+  }
+  .qclass-stat-label {
+    font-size: 11px; color: #94a3b8; margin-top: 2px;
+  }
+  .qclass-bar-wrap {
+    height: 5px; background: rgba(255,255,255,.1); border-radius: 100px; overflow: hidden;
+  }
+  .qclass-bar {
+    height: 100%; border-radius: 100px;
+    background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    transition: width .6s ease;
+  }
+  .qclass-card.rank-1 .qclass-bar { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+  .qclass-card.rank-2 .qclass-bar { background: linear-gradient(90deg, #94a3b8, #cbd5e1); }
+  .qclass-card.rank-3 .qclass-bar { background: linear-gradient(90deg, #fb923c, #f97316); }
+  .qclass-phase-pills {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .qclass-phase-pill {
+    font-size: 10px; font-weight: 700; border-radius: 100px;
+    padding: 3px 9px; color: white;
+  }
+
+  /* Q-King */
+  .qking-wrap {
+    background: white;
+    border: 2px solid #1e3a6e;
+    border-radius: 28px;
+    padding: 36px 40px;
+    margin-top: 20px;
+  }
+  .qking-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+  }
+  .qking-eyebrow {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .18em;
+    color: var(--indigo); margin-bottom: 4px; font-weight: 700;
+  }
+  .qking-title {
+    font-size: 22px; font-weight: 800; color: var(--ink);
+  }
+  .qking-subtitle {
+    font-size: 13px; color: var(--muted); margin-top: 2px;
+  }
+  .qking-podium {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 1fr;
+    gap: 14px;
+    align-items: end;
+  }
+  .qking-card {
+    border-radius: 20px; padding: 24px 18px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; text-align: center;
+    border: 2px solid transparent;
+    transition: all .2s;
+  }
+  .qking-card:hover { transform: translateY(-3px); }
+  .qking-card.gold {
+    background: linear-gradient(160deg, #fef3c7, #fde68a);
+    border-color: #fbbf24;
+    box-shadow: 0 8px 28px rgba(251,191,36,.25);
+  }
+  .qking-card.silver {
+    background: linear-gradient(160deg, #f8fafc, #e2e8f0);
+    border-color: #94a3b8;
+    box-shadow: 0 4px 14px rgba(148,163,184,.15);
+  }
+  .qking-card.bronze {
+    background: linear-gradient(160deg, #fff7ed, #fed7aa);
+    border-color: #fb923c;
+    box-shadow: 0 4px 14px rgba(251,146,60,.15);
+  }
+  .qking-crown { font-size: 36px; line-height: 1; margin-bottom: 2px; }
+  .qking-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 900;
+    background: rgba(79,70,229,.12); color: var(--indigo);
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .qking-card.gold .qking-avatar { background: rgba(251,191,36,.2); color: #92400e; border-color: #fbbf24; }
+  .qking-card.silver .qking-avatar { background: rgba(148,163,184,.2); color: #334155; border-color: #94a3b8; }
+  .qking-card.bronze .qking-avatar { background: rgba(251,146,60,.2); color: #9a3412; border-color: #fb923c; }
+  .qking-student-id {
+    font-size: 11px; font-weight: 600; color: #64748b; letter-spacing: .04em;
+  }
+  .qking-name {
+    font-size: 18px; font-weight: 900; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .qking-card.gold .qking-name { color: #78350f; }
+  .qking-score-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 2px; margin-top: 4px;
+  }
+  .qking-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px; line-height: 1; color: var(--indigo);
+  }
+  .qking-card.gold .qking-score { color: #b45309; }
+  .qking-card.silver .qking-score { color: #475569; }
+  .qking-card.bronze .qking-score { color: #c2410c; }
+  .qking-score-label { font-size: 11px; color: #94a3b8; font-weight: 600; }
+  .qking-class-tag {
+    font-size: 11px; font-weight: 700; border-radius: 100px;
+    padding: 3px 10px; background: rgba(79,70,229,.1); color: var(--indigo);
+  }
+  .qking-card.gold .qking-class-tag { background: rgba(251,191,36,.2); color: #92400e; }
+  .qking-runners {
+    margin-top: 20px;
+    border-top: 1.5px solid var(--line);
+    padding-top: 18px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .qking-runner-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 14px; border-radius: 14px;
+    background: #f8f9fc; border: 1px solid var(--line);
+    transition: all .2s;
+  }
+  .qking-runner-item:hover { background: #f1f5f9; border-color: #c7d2fe; }
+  .qking-runner-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; color: var(--muted); width: 24px; text-align: center;
+  }
+  .qking-runner-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(79,70,229,.1); color: var(--indigo);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; flex-shrink: 0;
+  }
+  .qking-runner-info { flex: 1; }
+  .qking-runner-name { font-size: 14px; font-weight: 800; color: var(--ink); }
+  .qking-runner-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .qking-runner-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; color: var(--indigo);
+  }
+  .qking-runner-bar-wrap {
+    flex: 1; height: 4px; background: #e2e8ec; border-radius: 100px; overflow: hidden;
+    max-width: 80px;
+  }
+  .qking-runner-bar {
+    height: 100%; border-radius: 100px;
+    background: linear-gradient(90deg, var(--indigo), var(--sky));
+    transition: width .6s ease;
+  }
+
+  .qking-grade-tabs {
+    display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .qking-grade-tab {
+    flex: 1; min-width: 100px;
+    padding: 12px 20px; border-radius: 14px;
+    border: 2px solid var(--line); background: white;
+    font-size: 14px; font-weight: 800; color: var(--muted);
+    cursor: pointer; transition: all .2s;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  }
+  .qking-grade-tab:hover { border-color: var(--indigo); color: var(--indigo); }
+  .qking-grade-tab.active {
+    background: var(--ink); color: white; border-color: var(--ink);
+    box-shadow: 0 4px 14px rgba(10,10,18,.15);
+  }
+  .qking-grade-empty {
+    text-align: center; padding: 40px 20px;
+    color: #94a3b8; font-size: 14px;
+  }
+
+  /* ── 학년별 3칸 그리드 (Q-King / Q-Class 공용) ── */
+  .ranking-grade-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media(max-width:700px) { .ranking-grade-grid { grid-template-columns: 1fr; } }
+
+  .ranking-grade-cell {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 22px;
+    padding: 28px 18px 22px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 5px; text-align: center;
+    transition: background .2s, transform .2s, box-shadow .2s;
+    position: relative; overflow: hidden;
+  }
+  .ranking-grade-cell::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(160deg, rgba(139,92,246,.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .ranking-grade-cell:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,.3); background: rgba(255,255,255,.1); }
+
+  /* Q-King은 흰 배경 셀 */
+  .ranking-grade-cell--light {
+    background: white;
+    border: 1.5px solid var(--line);
+  }
+  .ranking-grade-cell--light::before { background: linear-gradient(160deg, rgba(79,70,229,.05) 0%, transparent 60%); }
+  .ranking-grade-cell--light:hover { box-shadow: 0 12px 32px rgba(79,70,229,.12); background: #fafbff; }
+
+  .rgc-grade-tag {
+    font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+    color: #a5b4fc; background: rgba(139,92,246,.18);
+    border-radius: 100px; padding: 3px 12px; margin-bottom: 6px;
+  }
+  .ranking-grade-cell--light .rgc-grade-tag {
+    color: var(--indigo); background: rgba(79,70,229,.08);
+  }
+
+  /* 트로피 / 왕관 이미지 영역 */
+  .rgc-trophy {
+    font-size: 52px; line-height: 1; margin: 4px 0 8px;
+    filter: drop-shadow(0 4px 12px rgba(251,191,36,.4));
+  }
+  .ranking-grade-cell--light .rgc-trophy {
+    filter: drop-shadow(0 4px 12px rgba(251,191,36,.3));
+  }
+
+  /* Q-King 아바타 */
+  .rgc-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    color: white; font-size: 28px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    margin: 2px 0 6px;
+    box-shadow: 0 6px 20px rgba(139,92,246,.4);
+    border: 3px solid rgba(255,255,255,.2);
+  }
+  .ranking-grade-cell--light .rgc-avatar {
+    background: linear-gradient(135deg, var(--indigo), var(--sky));
+    box-shadow: 0 6px 20px rgba(79,70,229,.25);
+    border-color: rgba(79,70,229,.15);
+  }
+
+  .rgc-id {
+    font-size: 11px; color: #6b7280; letter-spacing: .08em; font-weight: 600;
+  }
+  .ranking-grade-cell--light .rgc-id { color: var(--muted); }
+
+  .rgc-name {
+    font-size: 20px; font-weight: 900; color: white; letter-spacing: -0.01em; line-height: 1.2;
+    margin: 2px 0;
+  }
+  .ranking-grade-cell--light .rgc-name { color: var(--ink); }
+
+  .rgc-class-tag {
+    font-size: 11px; font-weight: 700; color: #a5b4fc;
+    background: rgba(139,92,246,.18); border-radius: 100px; padding: 3px 12px; margin: 2px 0 4px;
+  }
+  .ranking-grade-cell--light .rgc-class-tag { color: var(--indigo); background: rgba(79,70,229,.08); }
+
+  /* 반 표시 (Q-Class 1위) */
+  .rgc-class-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 27px; line-height: 1; color: #e0d7ff;
+    letter-spacing: 0.02em; margin: 4px 0 2px;
+    text-shadow: 0 2px 16px rgba(139,92,246,.5);
+  }
+  .ranking-grade-cell--light .rgc-class-big {
+    color: var(--indigo);
+    text-shadow: 0 2px 16px rgba(79,70,229,.15);
+  }
+
+  /* 점수 */
+  .rgc-score-wrap { margin-top: 6px; }
+  .rgc-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px; line-height: 1; color: #c4b5fd;
+  }
+  .ranking-grade-cell--light .rgc-score { color: var(--indigo); }
+  .rgc-score-label { font-size: 10px; color: #6b7280; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+  .ranking-grade-cell--light .rgc-score-label { color: var(--muted); }
+
+  /* 하위 리스트 */
+  .rgc-runner-list {
+    width: 100%; margin-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.1);
+    padding-top: 10px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .ranking-grade-cell--light .rgc-runner-list { border-color: var(--line); }
+  .rgc-runner {
+    display: flex; align-items: center; gap: 8px; padding: 4px 2px; border-radius: 8px;
+    transition: background .15s;
+  }
+  .rgc-runner:hover { background: rgba(255,255,255,.06); }
+  .ranking-grade-cell--light .rgc-runner:hover { background: rgba(79,70,229,.05); }
+  .rgc-runner-rank {
+    font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: #6b7280;
+    width: 18px; text-align: center; flex-shrink: 0;
+  }
+  .rgc-runner-name { font-size: 13px; font-weight: 700; color: #cbd5e1; flex: 1; text-align: left; }
+  .ranking-grade-cell--light .rgc-runner-name { color: var(--ink); }
+  .rgc-runner-sub { font-size: 10px; color: #6b7280; }
+  .rgc-runner-score {
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: #a5b4fc; flex-shrink: 0;
+  }
+  .ranking-grade-cell--light .rgc-runner-score { color: var(--indigo); }
+
+  .rgc-empty { font-size: 12px; color: #6b7280; padding: 24px 0; line-height: 1.8; }
+
   /* ── CONTEST ── */
   .contest-tabs { display: flex; gap: 10px; margin-bottom: 28px; }
   .contest-tab {
@@ -893,6 +1259,8 @@
     display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 36px;
   }
   @media(max-width:900px){ .qplay-tabs { grid-template-columns: repeat(2,1fr); } }
+  @media(max-width:900px) { .qclass-grid { grid-template-columns: 1fr; } }
+  @media(max-width:700px) { .qking-podium { grid-template-columns: 1fr; align-items: start; } }
   .qplay-tab {
     background: white; border: 2px solid var(--line); border-radius: 20px;
     padding: 22px 16px; cursor: pointer; font-family: inherit;
@@ -3039,6 +3407,7 @@
       <strong>LOGOS</strong>란 고대 그리스어에서 유래한 말로 <em>'말'</em>, <em>'이성'</em>, <em>'논리'</em>, <em>'원리'</em>를 뜻하며, 플라톤의 문답법과 같이 <strong>질문과 응답을 통해 진리를 발견</strong>하는 학문적 탐구 과정을 의미합니다.
     </div>
   </div>
+
 </div>
 
 <!-- CONTEST MODAL -->
@@ -3524,7 +3893,62 @@
   </div>
 </section>
 
-<!-- 우리학교 질문 포트폴리오 -->
+<!-- ══ 오늘의 Q-Class & Q-King ══ -->
+<div style="max-width:1280px;margin:0 auto;padding:0 32px 64px;" id="rankingSection">
+
+  <!-- 이 달의 Q-King -->
+  <div class="qking-wrap" id="qkingSection">
+    <div class="qking-header">
+      <div>
+        <div class="qking-eyebrow">QUESTION CHAMPION · 이 달의 질문왕</div>
+        <div class="qking-title">👑 이 달의 Q-King</div>
+        <div class="qking-subtitle">학번과 이름으로 집계한 학년별 이 달 누적 질문 최다 학생</div>
+      </div>
+    </div>
+    <div id="qkingLoading" style="text-align:center;padding:40px;color:#94a3b8;font-size:14px;">⏳ 랭킹 불러오는 중...</div>
+    <div id="qkingGradeWrap" style="display:none;">
+      <div class="ranking-grade-grid">
+        <div class="ranking-grade-cell ranking-grade-cell--light" id="qkingCell1"></div>
+        <div class="ranking-grade-cell ranking-grade-cell--light" id="qkingCell2"></div>
+        <div class="ranking-grade-cell ranking-grade-cell--light" id="qkingCell3"></div>
+      </div>
+    </div>
+    <div id="qkingEmpty" style="display:none;text-align:center;padding:40px 20px;">
+      <div style="font-size:40px;margin-bottom:12px;">👑</div>
+      <div style="font-size:15px;font-weight:700;color:#475569;">이 달 등록된 학생이 없어요</div>
+      <div style="font-size:13px;color:#94a3b8;margin-top:6px;">질문을 저장한 학생이 자동으로 랭킹에 반영됩니다.</div>
+    </div>
+  </div>
+
+  <!-- 이 달의 Q-Class -->
+  <div class="qclass-wrap" id="qclassSection">
+    <div class="qclass-header">
+      <div>
+        <div class="qclass-eyebrow">THIS MONTH'S RANKING · 이 달 가장 활발한 학급</div>
+        <div class="qclass-title">🏫 이 달의 Q-Class</div>
+        <div class="qking-subtitle">학년별 이 달 누적 질문 최다 학급</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div class="qclass-date" id="qclassDate"></div>
+        <button onclick="loadRankings()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;border-radius:100px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">🔄 새로고침</button>
+      </div>
+    </div>
+    <div id="qclassLoading" style="text-align:center;padding:40px;color:#94a3b8;font-size:14px;">⏳ 랭킹 불러오는 중...</div>
+    <div id="qclassGradeWrap" style="display:none;">
+      <div class="ranking-grade-grid">
+        <div class="ranking-grade-cell" id="qclassCell1"></div>
+        <div class="ranking-grade-cell" id="qclassCell2"></div>
+        <div class="ranking-grade-cell" id="qclassCell3"></div>
+      </div>
+    </div>
+    <div id="qclassEmpty" style="display:none;text-align:center;padding:40px 20px;">
+      <div style="font-size:40px;margin-bottom:12px;">📭</div>
+      <div style="font-size:15px;font-weight:700;color:#e2e8f0;">이 달 아직 질문이 없어요</div>
+      <div style="font-size:13px;color:#94a3b8;margin-top:6px;">학생들이 질문을 저장하면 실시간으로 반영됩니다.</div>
+    </div>
+  </div>
+
+</div>
 <section id="portfolio" class="fade-in">
   <span class="section-eyebrow">OUR SCHOOL QUESTION PORTFOLIO</span>
   <h2 class="section-title">우리학교 질문 포트폴리오</h2>
@@ -4296,6 +4720,7 @@
     try { renderPortfolio(); } catch(e) {}
     try { loadQGallery(); } catch(e) {}
     try { renderMyQGallery(); } catch(e) {}
+    try { loadRankings(); } catch(e) {}
 
     // 저장 성공 피드백 — 버튼 아래 메시지 표시
     const msgId = role === 'student' ? 'myqSaveMsgStudent' : 'myqSaveMsgTeacher';
@@ -6816,6 +7241,209 @@ JSON 형식으로만 반환:
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeModal(); closeContestModal(); closeAuthModal(); closeSubjectModal(); closeIntegratedModal(); closeDreamModal(); closeBookModal(); }
   });
+
+  // ══════════════════════════════════════════
+  // 이달의 Q-Class & Q-King — 실제 데이터 집계
+  // ══════════════════════════════════════════
+
+  // 이달 접두사 (YYYY.MM 형태와 비교)
+  function getTodayPrefix() {
+    const now = new Date();
+    return `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}`;
+  }
+
+  // ── authorKey: "student_학번_이름" 파싱 ──
+  // 학번 형식: 학번 첫 자리=학년, 두 번째 자리=반 (예: 10101 → 1학년 1반 1번, 20305 → 2학년 3반 5번)
+  // grade 필드: "1학년", "2학년", "3학년"
+  function parseEntryMeta(e) {
+    let studentId   = '';
+    let studentName = '';
+
+    // authorKey에서 학번·이름 추출: student_학번_이름
+    if (e.authorKey && e.authorKey.startsWith('student_')) {
+      const parts = e.authorKey.split('_');
+      studentId   = parts[1] || '';
+      studentName = parts.slice(2).join('_') || '';
+    }
+
+    // 학년: e.grade 우선, 없으면 학번 첫 자리로 유추
+    let gradeStr = e.grade || '';
+    if (!gradeStr && studentId) {
+      const g = parseInt(studentId.charAt(0), 10);
+      if (g >= 1 && g <= 3) gradeStr = g + '학년';
+    }
+
+    // 반: 학번 2~3번째 자리 (두 자리, 예: 10301 → '03' → 3반)
+    let className = gradeStr;
+    if (studentId.length >= 3) {
+      const classNum = parseInt(studentId.slice(1, 3), 10); // 2~3번째 두 자리
+      if (!isNaN(classNum) && classNum > 0) {
+        className = gradeStr + ' ' + classNum + '반';
+      }
+    } else if (studentId.length >= 2) {
+      const classNum = parseInt(studentId.charAt(1), 10);
+      if (!isNaN(classNum) && classNum > 0) {
+        className = gradeStr + ' ' + classNum + '반';
+      }
+    }
+
+    return { studentId, studentName, gradeStr, className };
+  }
+
+  async function loadRankings() {
+    // 로딩 표시
+    ['qclassLoading','qkingLoading'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'block';
+    });
+    ['qclassGradeWrap','qclassEmpty','qkingGradeWrap','qkingEmpty'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // 날짜 표시
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' });
+    const dateEl = document.getElementById('qclassDate');
+    if (dateEl) dateEl.textContent = '📅 ' + dateStr + ' 기준';
+
+
+    // 데이터 가져오기
+    const allEntries = await cloudGetMyQList();
+
+    // ── Q-Class 집계: 이달(YYYY.MM) + 학생 역할 항목만 ──
+    const monthPrefix = getTodayPrefix(); // YYYY.MM
+    const todayStudentEntries = allEntries.filter(e =>
+      e.role === 'student' && e.date && e.date.startsWith(monthPrefix)
+    );
+
+    // ── Q-Class 집계: 학년별 → 반별 누적 질문 수 ──
+    const gradeClassMap = { '1학년': {}, '2학년': {}, '3학년': {} };
+    todayStudentEntries.forEach(e => {
+      const { className, gradeStr } = parseEntryMeta(e);
+      const gKey = gradeStr || e.grade || '';
+      if (!gradeClassMap[gKey]) return;
+      const cKey = className || gKey || '미확인';
+      if (!gradeClassMap[gKey][cKey]) gradeClassMap[gKey][cKey] = { className: cKey, questions: 0 };
+      gradeClassMap[gKey][cKey].questions += [e.q1, e.q2, e.q3].filter(Boolean).length;
+    });
+
+    // Q-Class 렌더: 3개 셀, 각 학년별 1위 학급 + 나머지 리스트
+    document.getElementById('qclassLoading').style.display = 'none';
+    const hasAnyClass = Object.values(gradeClassMap).some(m => Object.keys(m).length);
+    if (!hasAnyClass) {
+      document.getElementById('qclassEmpty').style.display = 'block';
+    } else {
+      document.getElementById('qclassGradeWrap').style.display = 'block';
+      ['1학년','2학년','3학년'].forEach((gKey, gi) => {
+        const gradeNum = gi + 1;
+        const cell = document.getElementById('qclassCell' + gradeNum);
+        const list = Object.values(gradeClassMap[gKey])
+          .sort((a, b) => b.questions - a.questions);
+
+        // "1학년 3반" or "1학년 03반" → "1-3반", "1학년"만이면 그대로
+        function fmtClass(cn) {
+          if (!cn) return '미확인';
+          const m = cn.match(/(\d)학년\s*0?(\d+)반/);
+          if (m) return m[1] + '-' + m[2] + '반';
+          return cn; // 반 정보 없으면 학년만 표시
+        }
+
+        if (!list.length) {
+          cell.innerHTML = `
+            <div class="rgc-grade-tag">${gKey}</div>
+            <div class="rgc-empty">📭<br>이 달 기록 없음</div>`;
+          return;
+        }
+
+        const top = list[0];
+        const runners = list.slice(1, 6);
+        const runnerHtml = runners.length
+          ? `<div class="rgc-runner-list">${runners.map((c, i) => `
+              <div class="rgc-runner">
+                <div class="rgc-runner-rank">${i+2}</div>
+                <div class="rgc-runner-name">${fmtClass(c.className)}</div>
+                <div class="rgc-runner-score">${c.questions}</div>
+              </div>`).join('')}</div>` : '';
+
+        cell.innerHTML = `
+          <div class="rgc-grade-tag">${gKey}</div>
+          <div class="rgc-trophy">🏆</div>
+          <div class="rgc-class-big">${fmtClass(top.className)}</div>
+          <div class="rgc-score-wrap">
+            <div class="rgc-score">${top.questions}</div>
+            <div class="rgc-score-label">이 달 누적 질문</div>
+          </div>
+          ${runnerHtml}`;
+      });
+    }
+
+    // ── Q-King 집계: 이달 누적, 학생 역할만, 학년별 분리 ──
+    const studentEntries = allEntries.filter(e =>
+      e.role === 'student' && e.authorKey && e.authorKey.startsWith('student_') &&
+      e.date && e.date.startsWith(monthPrefix)
+    );
+    const gradeKingMap = { '1학년': {}, '2학년': {}, '3학년': {} };
+    studentEntries.forEach(e => {
+      const { studentId, studentName, className, gradeStr } = parseEntryMeta(e);
+      if (!studentId) return;
+      const gKey = gradeStr || e.grade || '';
+      if (!gradeKingMap[gKey]) return;
+      if (!gradeKingMap[gKey][studentId]) gradeKingMap[gKey][studentId] = { studentId, name: studentName, className, total: 0 };
+      gradeKingMap[gKey][studentId].total += [e.q1, e.q2, e.q3].filter(Boolean).length;
+      if (studentName) gradeKingMap[gKey][studentId].name = studentName;
+      if (className)   gradeKingMap[gKey][studentId].className = className;
+    });
+
+    // Q-King 렌더: 3개 셀, 각 학년 1위 학생 크게 + 나머지 리스트
+    document.getElementById('qkingLoading').style.display = 'none';
+    const hasAnyKing = Object.values(gradeKingMap).some(m => Object.keys(m).length);
+    if (!hasAnyKing) {
+      document.getElementById('qkingEmpty').style.display = 'block';
+    } else {
+      document.getElementById('qkingGradeWrap').style.display = 'block';
+      ['1학년','2학년','3학년'].forEach((gKey, gi) => {
+        const gradeNum = gi + 1;
+        const cell = document.getElementById('qkingCell' + gradeNum);
+        const list = Object.values(gradeKingMap[gKey])
+          .sort((a, b) => b.total - a.total);
+
+        if (!list.length) {
+          cell.innerHTML = `
+            <div class="rgc-grade-tag">${gKey}</div>
+            <div class="rgc-empty">📭<br>이 달 기록 없음</div>`;
+          return;
+        }
+
+        const top = list[0];
+        const runners = list.slice(1, 6);
+        const runnerHtml = runners.length
+          ? `<div class="rgc-runner-list">${runners.map((s, i) => `
+              <div class="rgc-runner">
+                <div class="rgc-runner-rank">${i+2}</div>
+                <div class="rgc-runner-name">${s.name || '이름없음'}</div>
+                <div class="rgc-runner-sub">${s.studentId}</div>
+                <div class="rgc-runner-score">${s.total}</div>
+              </div>`).join('')}</div>` : '';
+
+        cell.innerHTML = `
+          <div class="rgc-grade-tag">${gKey}</div>
+          <div class="rgc-trophy">👑</div>
+          <div class="rgc-avatar">${(top.name||'?').charAt(0)}</div>
+          <div class="rgc-id">${top.studentId}</div>
+          <div class="rgc-name">${top.name || '이름 미입력'}</div>
+          <div class="rgc-class-tag">${top.className}</div>
+          <div class="rgc-score-wrap">
+            <div class="rgc-score">${top.total}</div>
+            <div class="rgc-score-label">이 달 누적 질문</div>
+          </div>
+          ${runnerHtml}`;
+      });
+    }
+  }
+
+  // 페이지 로드 시 랭킹 자동 로드
+  window.addEventListener('load', () => { loadRankings(); });
 
   // Intersection Observer for fade-in
   const observer = new IntersectionObserver((entries) => {

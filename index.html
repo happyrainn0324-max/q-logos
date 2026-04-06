@@ -2712,15 +2712,6 @@
     </div>
   </div>
 
-  <!-- 저장된 질문 목록 -->
-  <div id="myqList" style="margin-top:40px;display:none;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <div style="font-size:15px;font-weight:800;color:var(--ink);">📋 저장된 질문 기록</div>
-      <button id="myqClearBtn" onclick="clearMyQ()" style="display:none;font-size:12px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">전체 삭제</button>
-    </div>
-    <div id="myqCards"></div>
-  </div>
-
   <!-- ✨ 질문 배우기 섹션 (항상 표시) -->
   <div id="qSuggestSection" style="margin-top:56px;scroll-margin-top:80px;">
     <div style="margin-bottom:36px;">
@@ -2783,12 +2774,75 @@
       </div>
     </div>
   </div>
+
+  <!-- 저장된 질문 목록 -->
+  <div id="myqList" style="margin-top:40px;display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:15px;font-weight:800;color:var(--ink);">📋 저장된 질문 기록</div>
+      <button id="myqClearBtn" onclick="clearMyQ()" style="display:none;font-size:12px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">전체 삭제</button>
+    </div>
+    <div id="myqCards"></div>
+  </div>
+
+  <!-- 내 질문 모아보기 -->
+  <div id="myQGallerySection" style="margin-top:48px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <div style="font-size:15px;font-weight:800;color:var(--ink);">🙋 내 질문 모아보기</div>
+      <span id="myQGalleryCount" style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:100px;background:rgba(79,70,229,.1);color:var(--indigo);"></span>
+    </div>
+
+    <!-- 비로그인 안내 -->
+    <div id="myQGalleryLogin" style="display:none;text-align:center;padding:40px 0;background:white;border:1.5px dashed var(--line);border-radius:20px;">
+      <div style="font-size:40px;margin-bottom:12px;">🔐</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px;">로그인 후 내 질문을 확인할 수 있어요</div>
+      <div style="font-size:13px;color:var(--muted);">로그인하면 내가 저장한 질문만 모아서 볼 수 있습니다.</div>
+    </div>
+
+    <!-- 필터 (로그인 시 표시) -->
+    <div id="myQGalleryFilters" style="display:none;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-size:12px;font-weight:700;color:var(--muted);">학년</span>
+          <div id="myQGalGradeBtns" style="display:flex;gap:6px;">
+            <button class="qgal-btn active" onclick="setMyQGalFilter('grade','all',this)">전체</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('grade','1학년',this)">1학년</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('grade','2학년',this)">2학년</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('grade','3학년',this)">3학년</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;">
+          <span style="font-size:12px;font-weight:700;color:var(--muted);">과목</span>
+          <div id="myQGalSubjectBtns" style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="qgal-btn active" onclick="setMyQGalFilter('subject','all',this)">전체</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','국어',this)">국어</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','수학',this)">수학</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','사회',this)">사회</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','과학',this)">과학</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','영어',this)">영어</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','역사',this)">역사</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','도덕',this)">도덕</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','기술·가정',this)">기술·가정</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','정보',this)">정보</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','음악',this)">음악</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','미술',this)">미술</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','체육',this)">체육</button>
+            <button class="qgal-btn" onclick="setMyQGalFilter('subject','진로',this)">진로</button>
+          </div>
+        </div>
+      </div>
+      <div id="myQGalleryEmpty" style="display:none;text-align:center;padding:40px 0;color:#94a3b8;">
+        <div style="font-size:40px;margin-bottom:12px;">🙋</div>
+        <div style="font-size:15px;font-weight:700;">조건에 맞는 내 질문이 없습니다</div>
+      </div>
+      <div id="myQGalleryBoard" class="qgal-list-full"></div>
+    </div>
+  </div>
 </section>
 
-<!-- 질문 모아보기 -->
+<!-- 우리학교 질문 모아보기 -->
 <section id="qgallery" class="fade-in" style="max-width:1280px;margin:0 auto;padding:80px 32px;">
-  <span class="section-eyebrow">QUESTION GALLERY</span>
-  <h2 class="section-title">질문 모아보기</h2>
+  <span class="section-eyebrow">OUR SCHOOL QUESTION GALLERY</span>
+  <h2 class="section-title">우리학교 질문 모아보기</h2>
   <p class="section-desc">학년과 과목을 선택하면 모든 회원이 입력한 질문을 한눈에 볼 수 있습니다.</p>
 
   <!-- 필터 -->
@@ -4182,6 +4236,7 @@
     renderMyQList();
     try { renderPortfolio(); } catch(e) {}
     try { loadQGallery(); } catch(e) {}
+    try { renderMyQGallery(); } catch(e) {}
 
     // 저장 성공 피드백 — 버튼 아래 메시지 표시
     const msgId = role === 'student' ? 'myqSaveMsgStudent' : 'myqSaveMsgTeacher';
@@ -6027,11 +6082,87 @@ JSON 형식으로만 반환:
     btn.textContent = isOpen ? '▴ 질문 접기' : '▾ 질문 보기';
   }
 
+  // ── 내 질문 모아보기 ──
+  let myQGalFilter = { grade: 'all', subject: 'all' };
+
+  function setMyQGalFilter(type, value, el) {
+    myQGalFilter[type] = value;
+    const groupMap = { grade: 'myQGalGradeBtns', subject: 'myQGalSubjectBtns' };
+    document.getElementById(groupMap[type]).querySelectorAll('.qgal-btn')
+      .forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    renderMyQGallery();
+  }
+
+  async function renderMyQGallery() {
+    const loginEl  = document.getElementById('myQGalleryLogin');
+    const filterEl = document.getElementById('myQGalleryFilters');
+    const emptyEl  = document.getElementById('myQGalleryEmpty');
+    const board    = document.getElementById('myQGalleryBoard');
+    const countEl  = document.getElementById('myQGalleryCount');
+
+    const user = getCurrentUser();
+
+    // 비로그인: 안내 문구 표시
+    if (!user) {
+      loginEl.style.display  = 'block';
+      filterEl.style.display = 'none';
+      countEl.textContent    = '';
+      return;
+    }
+
+    // 로그인: 필터 및 질문 표시
+    loginEl.style.display  = 'none';
+    filterEl.style.display = 'block';
+
+    const myKey = user.key || user.email || user.name || '';
+    const all   = await cloudGetMyQList();
+
+    let mine = all.filter(e => e.authorKey && e.authorKey === myKey);
+    if (myQGalFilter.grade   !== 'all') mine = mine.filter(e => e.grade   === myQGalFilter.grade);
+    if (myQGalFilter.subject !== 'all') mine = mine.filter(e => e.subject === myQGalFilter.subject);
+    mine.sort((a, b) => b.id - a.id);
+
+    countEl.textContent = mine.length + '개';
+
+    if (!mine.length) {
+      emptyEl.style.display = 'block';
+      board.innerHTML = '';
+      return;
+    }
+    emptyEl.style.display = 'none';
+
+    const qColors = ['#0ea5e9','#8b5cf6','#10b981'];
+    board.innerHTML = mine.map(e => {
+      const qs    = [e.q1, e.q2, e.q3].filter(Boolean);
+      const color = e.role === 'teacher' ? '#f59e0b' : '#0ea5e9';
+      return `
+        <div class="qgal-item" style="--qgal-color:${color}">
+          <div class="qgal-item-meta">
+            <span class="qgal-item-tag">${e.role === 'teacher' ? '👩‍🏫 선생님' : '🎒 학생'}</span>
+            <span class="qgal-item-tag">${e.grade}</span>
+            <span class="qgal-item-tag">${e.subject}</span>
+            ${e.unit ? `<span class="qgal-item-tag">${e.unit}</span>` : ''}
+          </div>
+          ${e.topic ? `<div class="qgal-item-topic">${e.topic}</div>` : ''}
+          <div class="qgal-item-qs" style="margin-top:8px;">
+            ${qs.map((q,i) => `
+              <div class="myq-card-q">
+                <span class="myq-card-qnum" style="background:${qColors[i]||color}">Q${i+1}</span>
+                <span>${q}</span>
+              </div>`).join('')}
+          </div>
+          <div class="qgal-item-date">${e.date}</div>
+        </div>`;
+    }).join('');
+  }
+
   async function deleteMyQ(id) {
     await cloudDeleteMyQ(id);
     renderMyQList();
     renderPortfolio();
     loadQGallery();
+    renderMyQGallery();
   }
 
   async function clearMyQ() {
@@ -6040,6 +6171,7 @@ JSON 형식으로만 반환:
     renderMyQList();
     renderPortfolio();
     loadQGallery();
+    renderMyQGallery();
   }
 
   // 페이지 로드 시 질문 목록 + 포트폴리오 + 갤러리 순서대로 복원 (클라우드에서 한 번만 읽기)
@@ -6049,6 +6181,7 @@ JSON 형식으로만 반환:
     await renderMyQList();
     await renderPortfolio();
     await loadQGallery();
+    await renderMyQGallery();
   });
 
   // ── 교과 수업 모달 ──

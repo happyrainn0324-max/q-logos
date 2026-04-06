@@ -2712,6 +2712,14 @@
   <!-- 필터 -->
   <div class="qgal-filters">
     <div class="qgal-filter-group">
+      <label class="qgal-filter-label">역할</label>
+      <div class="qgal-btn-row" id="qgalRoleBtns">
+        <button class="qgal-btn active" onclick="setQGalFilter('role','all',this)">전체</button>
+        <button class="qgal-btn" onclick="setQGalFilter('role','student',this)">🎒 학생</button>
+        <button class="qgal-btn" onclick="setQGalFilter('role','teacher',this)">👩‍🏫 선생님</button>
+      </div>
+    </div>
+    <div class="qgal-filter-group">
       <label class="qgal-filter-label">학년</label>
       <div class="qgal-btn-row" id="qgalGradeBtns">
         <button class="qgal-btn active" onclick="setQGalFilter('grade','all',this)">전체</button>
@@ -2753,11 +2761,17 @@
   </div>
   <div id="qgalStats" style="display:none;"></div>
 
-  <!-- 학생 질문 모아보기 -->
+  <!-- 질문 목록 -->
   <div id="qgalBoard" style="display:none;">
-    <div id="qgalStudentCount" style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;"></div>
-    <div id="qgalStudentList" class="qgal-list-full"></div>
-    <div id="qgalTeacherList" style="display:none;"></div>
+    <div id="qgalCountLabel" style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;"></div>
+    <div id="qgalStudentSection">
+      <div id="qgalStudentCount" style="font-size:13px;font-weight:800;color:#0ea5e9;margin-bottom:10px;margin-top:8px;"></div>
+      <div id="qgalStudentList" class="qgal-list-full"></div>
+    </div>
+    <div id="qgalTeacherSection" style="margin-top:28px;">
+      <div id="qgalTeacherCount" style="font-size:13px;font-weight:800;color:#f59e0b;margin-bottom:10px;"></div>
+      <div id="qgalTeacherList" class="qgal-list-full"></div>
+    </div>
   </div>
 </section>
 
@@ -5712,8 +5726,17 @@ JSON 형식으로만 반환:
   function setQGalFilter(type, value, el) {
     qgalFilter[type] = value;
     // 같은 그룹 버튼 active 초기화
-    const groupMap = { grade: 'qgalGradeBtns', subject: 'qgalSubjectBtns' };
+    const groupMap = { grade: 'qgalGradeBtns', subject: 'qgalSubjectBtns', role: 'qgalRoleBtns' };
     if (groupMap[type]) {
+      document.getElementById(groupMap[type]).querySelectorAll('.qgal-btn')
+        .forEach(b => b.classList.remove('active'));
+    } else {
+      el.closest('.qgal-btn-row').querySelectorAll('.qgal-btn')
+        .forEach(b => b.classList.remove('active'));
+    }
+    el.classList.add('active');
+    loadQGallery();
+  }
       document.getElementById(groupMap[type]).querySelectorAll('.qgal-btn')
         .forEach(b => b.classList.remove('active'));
     } else {
@@ -5736,13 +5759,15 @@ JSON 형식으로만 반환:
     board.style.display   = 'none';
 
     try {
-      // 필터 버튼 클릭 시에는 클라우드 재요청, 초기 로드 시에는 캐시 사용
       const all = await cloudGetMyQList();
 
-      // 필터 적용 (학생만 표시)
-      let filtered = all.filter(e => e.role === 'student');
+      // 학년·과목 필터 적용
+      let filtered = [...all];
       if (qgalFilter.grade   !== 'all') filtered = filtered.filter(e => e.grade   === qgalFilter.grade);
       if (qgalFilter.subject !== 'all') filtered = filtered.filter(e => e.subject === qgalFilter.subject);
+
+      // 역할 필터 적용
+      if (qgalFilter.role !== 'all') filtered = filtered.filter(e => e.role === qgalFilter.role);
 
       // 최신순 정렬
       filtered.sort((a, b) => b.id - a.id);
@@ -5752,8 +5777,30 @@ JSON 형식으로만 반환:
       if (!filtered.length) { empty.style.display = 'block'; return; }
 
       board.style.display = 'block';
-      document.getElementById('qgalStudentCount').textContent = `🎒 학생 질문 ${filtered.length}개`;
-      document.getElementById('qgalStudentList').innerHTML = renderQGalItems(filtered, '#0ea5e9');
+
+      // 학생 / 선생님 분리
+      const students = filtered.filter(e => e.role === 'student');
+      const teachers = filtered.filter(e => e.role === 'teacher');
+
+      // 학생 섹션
+      const stuSec = document.getElementById('qgalStudentSection');
+      if (students.length) {
+        stuSec.style.display = 'block';
+        document.getElementById('qgalStudentCount').textContent = `🎒 학생 질문 ${students.length}개`;
+        document.getElementById('qgalStudentList').innerHTML = renderQGalItems(students, '#0ea5e9');
+      } else {
+        stuSec.style.display = 'none';
+      }
+
+      // 선생님 섹션
+      const teaSec = document.getElementById('qgalTeacherSection');
+      if (teachers.length) {
+        teaSec.style.display = 'block';
+        document.getElementById('qgalTeacherCount').textContent = `👩‍🏫 선생님 질문 ${teachers.length}개`;
+        document.getElementById('qgalTeacherList').innerHTML = renderQGalItems(teachers, '#f59e0b');
+      } else {
+        teaSec.style.display = 'none';
+      }
 
     } catch(err) {
       loading.style.display = 'none';

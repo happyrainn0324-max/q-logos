@@ -972,6 +972,19 @@
 
   /* ─ 성과 나눔 갤러리 ─ */
   .share-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  /* 카테고리 선택 탭 (업로드 폼 내부) */
+  .share-cat-tabs {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;
+  }
+  .share-cat-tab {
+    padding: 8px 16px; border-radius: 100px;
+    border: 1.5px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.05); color: #94a3b8;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all .18s; font-family: inherit;
+  }
+  .share-cat-tab:hover { border-color: #6366f1; color: #a5b4fc; background: rgba(99,102,241,.08); }
+  .share-cat-tab.active { background: #4f46e5; border-color: #4f46e5; color: white; box-shadow: 0 2px 10px rgba(79,70,229,.35); }
   .share-gallery { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
   @media(max-width:600px){ .share-gallery { grid-template-columns: repeat(2,1fr); } }
   .share-photo-card {
@@ -4720,14 +4733,17 @@
               <div class="arc-form-label">활동 제목</div>
               <input type="text" class="sys-input" id="shareTitle" placeholder="예: 3학년 과학 질문 탐구 발표회">
             </div>
-            <div>
-              <div class="arc-form-label">카테고리</div>
-              <select class="sys-input" id="shareCategory">
-                <option value="">카테고리 선택</option>
-                <option>수업 활동</option><option>발표·전시</option><option>공개수업</option>
-                <option>공모전</option><option>전학공</option><option>기타</option>
-              </select>
+          </div>
+          <div>
+            <div class="arc-form-label">카테고리</div>
+            <div class="share-cat-tabs" id="shareCatTabs">
+              <button class="share-cat-tab" data-val="수업 활동" onclick="selectShareCat(this)">✏️ 수업활동</button>
+              <button class="share-cat-tab" data-val="발표·전시" onclick="selectShareCat(this)">🎤 발표·전시</button>
+              <button class="share-cat-tab" data-val="공개수업" onclick="selectShareCat(this)">🏫 공개수업</button>
+              <button class="share-cat-tab" data-val="공모전" onclick="selectShareCat(this)">🏆 공모전</button>
+              <button class="share-cat-tab" data-val="전학공" onclick="selectShareCat(this)">🤝 전학공</button>
             </div>
+            <input type="hidden" id="shareCategory">
           </div>
           <div>
             <div class="arc-form-label">사진 업로드 (여러 장 가능)</div>
@@ -4755,10 +4771,10 @@
         </div>
       </div>
 
-      <!-- 필터 -->
+      <!-- 분류 필터 -->
       <div class="share-filter-row" id="shareFilterRow">
         <button class="arc-filter-btn active" onclick="filterShare('전체',this)">전체</button>
-        <button class="arc-filter-btn" onclick="filterShare('수업 활동',this)">수업 활동</button>
+        <button class="arc-filter-btn" onclick="filterShare('수업 활동',this)">수업활동</button>
         <button class="arc-filter-btn" onclick="filterShare('발표·전시',this)">발표·전시</button>
         <button class="arc-filter-btn" onclick="filterShare('공개수업',this)">공개수업</button>
         <button class="arc-filter-btn" onclick="filterShare('공모전',this)">공모전</button>
@@ -8300,11 +8316,18 @@ JSON 형식으로만 반환:
     saveShareData(data);
     document.getElementById('shareTitle').value = '';
     document.getElementById('shareCategory').value = '';
+    document.querySelectorAll('#shareCatTabs .share-cat-tab').forEach(b => b.classList.remove('active'));
     document.getElementById('shareDesc').value = '';
     document.getElementById('shareAuthor').value = '';
     sharePendingFiles = [];
     renderSharePreviews();
     renderShareGallery();
+  }
+
+  function selectShareCat(btn) {
+    document.querySelectorAll('#shareCatTabs .share-cat-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('shareCategory').value = btn.dataset.val;
   }
 
   function filterShare(cat, btn) {
@@ -8323,8 +8346,8 @@ JSON 형식으로만 반환:
   function renderShareGallery() {
     const user = getCurrentUser();
     const isMgr = isManagerUser();
-    let data = getShareData();
-    if (shareFilter !== '전체') data = data.filter(d => d.category === shareFilter);
+    const allData = getShareData();
+    let data = shareFilter !== '전체' ? allData.filter(d => d.category === shareFilter) : allData;
     if (!data.length) {
       document.getElementById('shareGallery').innerHTML = '<div class="cal-empty" style="grid-column:1/-1;">등록된 사진이 없습니다.</div>';
       return;

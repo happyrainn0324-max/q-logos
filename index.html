@@ -4407,7 +4407,7 @@
       <div>
         <div class="qking-eyebrow">QUESTION CHAMPION · 이 달의 질문왕</div>
         <div class="qking-title">👑 이 달의 Q-King</div>
-        <div class="qking-subtitle">학번과 이름으로 집계한 학년별 이 달 누적 질문 최다 학생</div>
+        <div class="qking-subtitle">학번과 이름으로 집계한 학년별 이 달 누적 질문 + 미션 참여 최다 학생</div>
       </div>
     </div>
     <div id="qkingLoading" style="text-align:center;padding:40px;color:#94a3b8;font-size:14px;">⏳ 랭킹 불러오는 중...</div>
@@ -4431,7 +4431,7 @@
       <div>
         <div class="qclass-eyebrow">THIS MONTH'S RANKING · 이 달 가장 활발한 학급</div>
         <div class="qclass-title">🏫 이 달의 Q-Class</div>
-        <div class="qking-subtitle">학년별 이 달 누적 질문 최다 학급</div>
+        <div class="qking-subtitle">학년별 이 달 누적 질문 + 미션 참여 최다 학급</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         <div class="qclass-date" id="qclassDate"></div>
@@ -4565,14 +4565,14 @@
       <button class="sys-close" onclick="closeNoticeModal()">✕</button>
       <div class="sys-head-eye" style="color:#818cf8;">NOTICE & CONTEST</div>
       <h2>📋 공지 · 공모 일정</h2>
-      <p>주요 일정을 달력에서 확인하세요. 매니저는 일정을 추가·삭제할 수 있습니다.</p>
+      <p>주요 일정을 달력에서 확인하고 직접 추가하세요. 본인이 등록한 일정은 삭제할 수 있습니다.</p>
     </div>
     <div class="sys-body">
 
-      <!-- 매니저 전용 입력 -->
-      <div class="sys-mgr-only" id="noticeMgrPanel">
-        <div class="sys-mgr-title">🔐 매니저 전용 — 일정 추가</div>
-        <div style="display:grid;grid-template-columns:140px 1fr auto auto;gap:10px;align-items:end;flex-wrap:wrap;">
+      <!-- 누구나 입력 가능 -->
+      <div class="sys-mgr-only visible" id="noticeMgrPanel">
+        <div class="sys-mgr-title">📋 일정 추가 <span style="font-weight:400;color:#475569;font-size:12px;">— 누구나 일정을 등록할 수 있습니다</span></div>
+        <div style="display:grid;grid-template-columns:140px 1fr 130px auto auto;gap:10px;align-items:end;flex-wrap:wrap;">
           <div>
             <div class="arc-form-label">날짜</div>
             <input type="date" class="sys-input" id="noticeDate">
@@ -4580,6 +4580,10 @@
           <div>
             <div class="arc-form-label">일정 제목</div>
             <input type="text" class="sys-input" id="noticeTitle" placeholder="예: LOGOS 공모전 접수 마감">
+          </div>
+          <div>
+            <div class="arc-form-label">작성자 (선택)</div>
+            <input type="text" class="sys-input" id="noticeAuthor" placeholder="이름">
           </div>
           <div>
             <div class="arc-form-label">유형</div>
@@ -4625,9 +4629,9 @@
     </div>
     <div class="sys-body">
 
-      <!-- 업로드 폼 (로그인 필요) -->
-      <div class="sys-mgr-only" id="archiveUploadPanel">
-        <div class="sys-mgr-title">📤 수업 자료 업로드 <span style="font-weight:400;color:#475569;font-size:12px;">— 로그인한 교사·학생 누구나 공유 가능</span></div>
+      <!-- 업로드 폼 (누구나 가능) -->
+      <div class="sys-mgr-only visible" id="archiveUploadPanel">
+        <div class="sys-mgr-title">📤 수업 자료 업로드 <span style="font-weight:400;color:#475569;font-size:12px;">— 누구나 자료를 공유할 수 있습니다</span></div>
         <div class="arc-upload-form">
           <div class="arc-form-row">
             <div>
@@ -4658,6 +4662,10 @@
           <div>
             <div class="arc-form-label">첨부 파일 (선택 · 파일명만 기록됩니다)</div>
             <input type="file" class="sys-input" id="arcFile" accept=".pdf,.pptx,.docx,.hwp,.jpg,.png" style="padding:8px;">
+          </div>
+          <div>
+            <div class="arc-form-label">작성자 이름 (선택)</div>
+            <input type="text" class="sys-input" id="arcAuthor" placeholder="이름을 입력하지 않으면 자동으로 표시됩니다">
           </div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
             <button class="sys-btn sys-btn-primary" onclick="submitArchive()">📤 자료 등록</button>
@@ -4703,9 +4711,9 @@
     </div>
     <div class="sys-body">
 
-      <!-- 업로드 폼 (로그인 필요) -->
-      <div class="sys-mgr-only" id="shareUploadPanel">
-        <div class="sys-mgr-title">📷 활동 사진 업로드 <span style="font-weight:400;color:#475569;font-size:12px;">— 로그인한 누구나 공유 가능</span></div>
+      <!-- 업로드 폼 (누구나 가능) -->
+      <div class="sys-mgr-only visible" id="shareUploadPanel">
+        <div class="sys-mgr-title">📷 활동 사진 업로드 <span style="font-weight:400;color:#475569;font-size:12px;">— 누구나 사진을 공유할 수 있습니다</span></div>
         <div class="share-upload-form">
           <div class="arc-form-row">
             <div>
@@ -4736,6 +4744,10 @@
           <div>
             <div class="arc-form-label">한 줄 설명 (선택)</div>
             <input type="text" class="sys-input" id="shareDesc" placeholder="활동에 대한 짧은 설명을 입력하세요">
+          </div>
+          <div>
+            <div class="arc-form-label">작성자 이름 (선택)</div>
+            <input type="text" class="sys-input" id="shareAuthor" placeholder="이름을 입력하지 않으면 자동으로 표시됩니다">
           </div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
             <button class="sys-btn sys-btn-primary" onclick="submitShare()">📤 사진 등록</button>
@@ -5405,6 +5417,37 @@
     return null;
   }
 
+  // ── 미션 참여 시 클라우드에 기록 저장 (Q-King/Q-Class 집계용) ──
+  async function saveMissionEntry({ missionType, topic, q }) {
+    const currentUser = getCurrentUser();
+    if (!currentUser) return; // 로그인 안 된 경우 저장 생략
+    const authorKey = currentUser.key || currentUser.email || currentUser.name || '';
+    if (!authorKey.startsWith('student_')) return; // 학생만 집계
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    // 학년 추출 (authorKey: student_학번_이름)
+    const parts = authorKey.split('_');
+    const studentId = parts[1] || '';
+    const gradeNum = parseInt(studentId.charAt(0), 10);
+    const grade = (gradeNum >= 1 && gradeNum <= 3) ? gradeNum + '학년' : '';
+    const entry = {
+      role: 'student',
+      grade,
+      subject: missionType,
+      unit: '',
+      topic: topic || missionType,
+      q1: q || '',
+      q2: '', q3: '',
+      date: dateStr,
+      id: Date.now(),
+      authorKey,
+      isMission: true,
+    };
+    const saved = await cloudGetMyQList();
+    saved.unshift(entry);
+    await cloudSetMyQList(saved);
+  }
+
   async function saveMyQ(role, btn) {
     const prefix = role === 'student' ? 'sq' : 'tq';
     const grade = document.getElementById(prefix + '-grade').value;
@@ -5994,6 +6037,10 @@ JSON 형식으로만 반환:
       if (kwGameState.hall.length > 5) kwGameState.hall.pop();
       renderKwHall();
       renderPortfolio();
+      // 미션 참여 클라우드 기록 (Q-King/Q-Class 집계용)
+      saveMissionEntry({ missionType: '키워드미션', topic: kwCurrentSet.join(' · '), q: ans })
+        .then(() => { try { loadRankings(); } catch(e) {} })
+        .catch(() => {});
     } else {
       kwGameState.streak = 0;
       updateHUD();
@@ -6232,6 +6279,10 @@ JSON 형식으로만 반환:
     updateChampHUD();
     renderChampHall();
     renderPortfolio();
+    // 미션 참여 클라우드 기록 (Q-King/Q-Class 집계용)
+    saveMissionEntry({ missionType: '챔피언미션', topic: champState.currentCard ? champState.currentCard.scene.slice(0,20) : '챔피언', q: ans })
+      .then(() => { try { loadRankings(); } catch(e) {} })
+      .catch(() => {});
 
     // 다음 미완료 유형으로 자동 이동
     if (!allDone) {
@@ -7047,6 +7098,10 @@ JSON 형식으로만 반환:
     renderBookAllRecords();
     renderBookGrid();
     renderPortfolio();
+    // 미션 참여 클라우드 기록 (Q-King/Q-Class 집계용)
+    saveMissionEntry({ missionType: '북콘서트미션', topic: currentBook.title, q: ans })
+      .then(() => { try { loadRankings(); } catch(e) {} })
+      .catch(() => {});
     setTimeout(()=>{ switchBookTab('record'); },1200);
   }
 
@@ -7973,9 +8028,8 @@ JSON 형식으로만 반환:
     calYear = now.getFullYear(); calMonth = now.getMonth();
     document.getElementById('noticeOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
-    const isMgr = isManagerUser();
-    const isLogged = !!getCurrentUser();
-    document.getElementById('noticeMgrPanel').classList.toggle('visible', isMgr);
+    // 누구나 입력 가능 — 항상 표시
+    document.getElementById('noticeMgrPanel').classList.add('visible');
     renderCal(); renderEventList();
   }
   function closeNoticeModal() {
@@ -7992,12 +8046,16 @@ JSON 형식으로만 반환:
     const title = document.getElementById('noticeTitle').value.trim();
     const type  = document.getElementById('noticeType').value;
     if (!date || !title) { alert('날짜와 제목을 입력하세요.'); return; }
+    const user = getCurrentUser();
+    const inputAuthor = document.getElementById('noticeAuthor') ? document.getElementById('noticeAuthor').value.trim() : '';
+    const author = inputAuthor || (user ? (user.displayName || user.name || '익명') : '익명');
     const events = getNoticeEvents();
-    events.push({ id: Date.now(), date, title, type });
+    events.push({ id: Date.now(), date, title, type, author });
     events.sort((a,b) => a.date.localeCompare(b.date));
     saveNoticeEvents(events);
     document.getElementById('noticeDate').value = '';
     document.getElementById('noticeTitle').value = '';
+    if (document.getElementById('noticeAuthor')) document.getElementById('noticeAuthor').value = '';
     renderCal(); renderEventList();
   }
 
@@ -8052,17 +8110,22 @@ JSON 형식으로만 반환:
       return true;
     });
     const isMgr = isManagerUser();
+    const user = getCurrentUser();
     if (!events.length) {
       document.getElementById('calEventList').innerHTML = '<div class="cal-empty">이달의 일정이 없습니다.</div>';
       return;
     }
-    document.getElementById('calEventList').innerHTML = `<div class="cal-event-list">${events.map(e => `
+    document.getElementById('calEventList').innerHTML = `<div class="cal-event-list">${events.map(e => {
+      const canDel = isMgr || (user && (user.displayName || user.name) === e.author);
+      return `
       <div class="cal-event-item">
         <span class="cal-event-date">${e.date}</span>
         <span class="cal-event-title">${e.title}</span>
         <span class="cal-event-type" style="background:${typeColors[e.type]||'#475569'}22;color:${typeColors[e.type]||'#94a3b8'};">${e.type}</span>
-        ${isMgr ? `<button class="sys-btn sys-btn-danger" style="padding:5px 10px;font-size:11px;" onclick="deleteNoticeEvent(${e.id})">삭제</button>` : ''}
-      </div>`).join('')}</div>`;
+        ${e.author ? `<span style="font-size:11px;color:#94a3b8;">✏️ ${e.author}</span>` : ''}
+        ${canDel ? `<button class="sys-btn sys-btn-danger" style="padding:5px 10px;font-size:11px;" onclick="deleteNoticeEvent(${e.id})">삭제</button>` : ''}
+      </div>`;
+    }).join('')}</div>`;
   }
 
   function deleteNoticeEvent(id) {
@@ -8084,8 +8147,8 @@ JSON 형식으로만 반환:
   function openArchiveModal() {
     document.getElementById('archiveOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
-    const isLogged = !!getCurrentUser();
-    document.getElementById('archiveUploadPanel').classList.toggle('visible', isLogged);
+    // 누구나 자료 등록 가능
+    document.getElementById('archiveUploadPanel').classList.add('visible');
     renderArchive();
   }
   function closeArchiveModal() {
@@ -8106,10 +8169,12 @@ JSON 형식으로만 반환:
     const fileName = fileInput.files[0] ? fileInput.files[0].name : '';
     if (!subj || !grade || !title) { alert('교과, 학년, 제목을 입력하세요.'); return; }
     const user = getCurrentUser();
+    const inputAuthor = document.getElementById('arcAuthor').value.trim();
+    const author = inputAuthor || (user ? (user.displayName || user.name || '익명') : '익명');
     const data = getArchiveData();
     data.unshift({
       id: Date.now(), subject: subj, grade, title, desc,
-      file: fileName, author: user ? (user.displayName || user.name || '익명') : '익명',
+      file: fileName, author,
       date: new Date().toLocaleDateString('ko-KR')
     });
     saveArchiveData(data);
@@ -8117,6 +8182,7 @@ JSON 형식으로만 반환:
     document.getElementById('arcGrade').value = '';
     document.getElementById('arcTitle').value = '';
     document.getElementById('arcDesc').value = '';
+    document.getElementById('arcAuthor').value = '';
     fileInput.value = '';
     renderArchive();
   }
@@ -8174,8 +8240,8 @@ JSON 형식으로만 반환:
   function openShareModal() {
     document.getElementById('shareOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
-    const isLogged = !!getCurrentUser();
-    document.getElementById('shareUploadPanel').classList.toggle('visible', isLogged);
+    // 누구나 사진 등록 가능
+    document.getElementById('shareUploadPanel').classList.add('visible');
     renderShareGallery();
   }
   function closeShareModal() {
@@ -8222,17 +8288,20 @@ JSON 형식으로만 반환:
     if (!title || !category) { alert('제목과 카테고리를 입력하세요.'); return; }
     if (!sharePendingFiles.length) { alert('사진을 1장 이상 업로드하세요.'); return; }
     const user = getCurrentUser();
+    const inputAuthor = document.getElementById('shareAuthor').value.trim();
+    const author = inputAuthor || (user ? (user.displayName || user.name || '익명') : '익명');
     const data = getShareData();
     data.unshift({
       id: Date.now(), title, category, desc,
       photos: sharePendingFiles.map(f => f.dataUrl),
-      author: user ? (user.displayName || user.name || '익명') : '익명',
+      author,
       date: new Date().toLocaleDateString('ko-KR')
     });
     saveShareData(data);
     document.getElementById('shareTitle').value = '';
     document.getElementById('shareCategory').value = '';
     document.getElementById('shareDesc').value = '';
+    document.getElementById('shareAuthor').value = '';
     sharePendingFiles = [];
     renderSharePreviews();
     renderShareGallery();
@@ -8378,15 +8447,19 @@ JSON 형식으로만 반환:
       e.role === 'student' && e.date && e.date.startsWith(monthPrefix)
     );
 
-    // ── Q-Class 집계: 학년별 → 반별 누적 질문 수 ──
+    // ── Q-Class 집계: 학년별 → 반별 누적 질문 수 + 미션 횟수 ──
     const gradeClassMap = { '1학년': {}, '2학년': {}, '3학년': {} };
     todayStudentEntries.forEach(e => {
       const { className, gradeStr } = parseEntryMeta(e);
       const gKey = gradeStr || e.grade || '';
       if (!gradeClassMap[gKey]) return;
       const cKey = className || gKey || '미확인';
-      if (!gradeClassMap[gKey][cKey]) gradeClassMap[gKey][cKey] = { className: cKey, questions: 0 };
-      gradeClassMap[gKey][cKey].questions += [e.q1, e.q2, e.q3].filter(Boolean).length;
+      if (!gradeClassMap[gKey][cKey]) gradeClassMap[gKey][cKey] = { className: cKey, questions: 0, missions: 0 };
+      if (e.isMission) {
+        gradeClassMap[gKey][cKey].missions += 1;
+      } else {
+        gradeClassMap[gKey][cKey].questions += [e.q1, e.q2, e.q3].filter(Boolean).length;
+      }
     });
 
     // Q-Class 렌더: 3개 셀, 각 학년별 1위 학급 + 나머지 리스트
@@ -8400,7 +8473,7 @@ JSON 형식으로만 반환:
         const gradeNum = gi + 1;
         const cell = document.getElementById('qclassCell' + gradeNum);
         const list = Object.values(gradeClassMap[gKey])
-          .sort((a, b) => b.questions - a.questions);
+          .sort((a, b) => (b.questions + b.missions) - (a.questions + a.missions));
 
         // "1학년 3반" or "1학년 03반" → "1-3반", "1학년"만이면 그대로
         function fmtClass(cn) {
@@ -8418,13 +8491,14 @@ JSON 형식으로만 반환:
         }
 
         const top = list[0];
+        const topTotal = top.questions + top.missions;
         const runners = list.slice(1, 3);
         const runnerHtml = runners.length
           ? `<div class="rgc-runner-list">${runners.map((c, i) => `
               <div class="rgc-runner">
                 <div class="rgc-runner-rank">${i+2}</div>
                 <div class="rgc-runner-name">${fmtClass(c.className)}</div>
-                <div class="rgc-runner-score">${c.questions}</div>
+                <div class="rgc-runner-score">${c.questions + c.missions}<span style="font-size:10px;opacity:.7;margin-left:2px">점</span></div>
               </div>`).join('')}</div>` : '';
 
         cell.innerHTML = `
@@ -8432,8 +8506,12 @@ JSON 형식으로만 반환:
           <div class="rgc-trophy">🏆</div>
           <div class="rgc-class-big">${fmtClass(top.className)}</div>
           <div class="rgc-score-wrap">
-            <div class="rgc-score">${top.questions}</div>
-            <div class="rgc-score-label">이 달 누적 질문</div>
+            <div class="rgc-score">${topTotal}</div>
+            <div class="rgc-score-label">이 달 누적 점수</div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:6px;flex-wrap:wrap;">
+            <div style="font-size:11px;color:#a5b4fc;background:rgba(139,92,246,.15);border-radius:100px;padding:3px 10px;">✏️ 질문 ${top.questions}개</div>
+            <div style="font-size:11px;color:#6ee7b7;background:rgba(16,185,129,.15);border-radius:100px;padding:3px 10px;">🎯 미션 ${top.missions}회</div>
           </div>
           ${runnerHtml}`;
       });
@@ -8450,8 +8528,12 @@ JSON 형식으로만 반환:
       if (!studentId) return;
       const gKey = gradeStr || e.grade || '';
       if (!gradeKingMap[gKey]) return;
-      if (!gradeKingMap[gKey][studentId]) gradeKingMap[gKey][studentId] = { studentId, name: studentName, className, total: 0 };
-      gradeKingMap[gKey][studentId].total += [e.q1, e.q2, e.q3].filter(Boolean).length;
+      if (!gradeKingMap[gKey][studentId]) gradeKingMap[gKey][studentId] = { studentId, name: studentName, className, questions: 0, missions: 0 };
+      if (e.isMission) {
+        gradeKingMap[gKey][studentId].missions += 1;
+      } else {
+        gradeKingMap[gKey][studentId].questions += [e.q1, e.q2, e.q3].filter(Boolean).length;
+      }
       if (studentName) gradeKingMap[gKey][studentId].name = studentName;
       if (className)   gradeKingMap[gKey][studentId].className = className;
     });
@@ -8467,7 +8549,7 @@ JSON 형식으로만 반환:
         const gradeNum = gi + 1;
         const cell = document.getElementById('qkingCell' + gradeNum);
         const list = Object.values(gradeKingMap[gKey])
-          .sort((a, b) => b.total - a.total);
+          .sort((a, b) => (b.questions + b.missions) - (a.questions + a.missions));
 
         if (!list.length) {
           cell.innerHTML = `
@@ -8477,6 +8559,7 @@ JSON 형식으로만 반환:
         }
 
         const top = list[0];
+        const topTotal = top.questions + top.missions;
         const runners = list.slice(1, 3);
         const runnerHtml = runners.length
           ? `<div class="rgc-runner-list">${runners.map((s, i) => `
@@ -8484,7 +8567,7 @@ JSON 형식으로만 반환:
                 <div class="rgc-runner-rank">${i+2}</div>
                 <div class="rgc-runner-name">${s.name || '이름없음'}</div>
                 <div class="rgc-runner-sub">${s.studentId}</div>
-                <div class="rgc-runner-score">${s.total}</div>
+                <div class="rgc-runner-score">${s.questions + s.missions}<span style="font-size:10px;opacity:.7;margin-left:2px">점</span></div>
               </div>`).join('')}</div>` : '';
 
         cell.innerHTML = `
@@ -8495,8 +8578,12 @@ JSON 형식으로만 반환:
           <div class="rgc-name">${top.name || '이름 미입력'}</div>
           <div class="rgc-class-tag">${top.className}</div>
           <div class="rgc-score-wrap">
-            <div class="rgc-score">${top.total}</div>
-            <div class="rgc-score-label">이 달 누적 질문</div>
+            <div class="rgc-score">${topTotal}</div>
+            <div class="rgc-score-label">이 달 누적 점수</div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:6px;flex-wrap:wrap;">
+            <div style="font-size:11px;color:#818cf8;background:rgba(79,70,229,.1);border-radius:100px;padding:3px 10px;">✏️ 질문 ${top.questions}개</div>
+            <div style="font-size:11px;color:#34d399;background:rgba(16,185,129,.1);border-radius:100px;padding:3px 10px;">🎯 미션 ${top.missions}회</div>
           </div>
           ${runnerHtml}`;
       });

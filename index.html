@@ -3068,9 +3068,57 @@
   .dbot-copy-all-btn:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(124,58,237,.4); }
   .dbot-divider { border:none; border-top:1px solid #e2e2ec; margin:20px 0; }
 
+  /* ── 내 질문 기록 페이지네이션 ── */
+  .myq-page-btn {
+    min-width: 36px; height: 36px; padding: 0 10px;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    background: white; color: var(--muted); font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all .18s; font-family: 'Pretendard', sans-serif;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .myq-page-btn:hover:not(:disabled) { border-color: var(--indigo); color: var(--indigo); background: rgba(79,70,229,.06); }
+  .myq-page-btn.active { background: var(--indigo); color: white; border-color: var(--indigo); }
+  .myq-page-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ── API KEY BANNER ── */
+  #apiKeyBanner {
+    position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+    background: #1e1e2e; color: white; border-radius: 16px;
+    padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    max-width: 340px; width: calc(100vw - 40px);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  #apiKeyBanner .apib-title { font-size: 13px; font-weight: 800; color: #e2e8f0; display: flex; align-items: center; gap: 6px; }
+  #apiKeyBanner .apib-sub { font-size: 11px; color: #94a3b8; line-height: 1.5; }
+  #apiKeyBanner .apib-row { display: flex; gap: 8px; }
+  #apiKeyBanner input {
+    flex: 1; background: #2d2d44; border: 1.5px solid #3d3d5c; border-radius: 8px;
+    padding: 9px 12px; font-size: 12px; color: white; outline: none;
+    font-family: 'Pretendard', sans-serif;
+  }
+  #apiKeyBanner input:focus { border-color: #4f46e5; }
+  #apiKeyBanner button.apib-save {
+    background: #4f46e5; color: white; border: none; border-radius: 8px;
+    padding: 9px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+    font-family: 'Pretendard', sans-serif; white-space: nowrap;
+  }
+  #apiKeyBanner button.apib-save:hover { background: #4338ca; }
+  #apiKeyBanner .apib-ok { color: #10b981; font-size: 12px; font-weight: 700; display: none; }
+
 </style>
 </head>
 <body>
+
+<!-- API KEY BANNER -->
+<div id="apiKeyBanner">
+  <div class="apib-title">🔑 Anthropic API 키 설정</div>
+  <div class="apib-sub">AI 기능(Q-BOT, D-BOT 등)을 사용하려면 Anthropic API 키가 필요합니다.<br><a href="https://console.anthropic.com" target="_blank" style="color:#818cf8;">console.anthropic.com</a>에서 발급받으세요.</div>
+  <div class="apib-row">
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+    <button class="apib-save" onclick="saveApiKey()">저장</button>
+  </div>
+  <div class="apib-ok" id="apibOk">✅ API 키가 저장되었습니다</div>
+</div>
 
 <div class="hero-bg"></div>
 
@@ -3489,10 +3537,14 @@
   <!-- 저장된 질문 목록 -->
   <div id="myqList" style="margin-top:40px;display:none;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <div style="font-size:15px;font-weight:800;color:var(--ink);">📋 저장된 질문 기록</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:15px;font-weight:800;color:var(--ink);">📋 저장된 질문 기록</div>
+        <span id="myqPageInfo" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:rgba(79,70,229,.1);color:var(--indigo);"></span>
+      </div>
       <button id="myqClearBtn" onclick="clearMyQ()" style="display:none;font-size:12px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">전체 삭제</button>
     </div>
     <div id="myqCards"></div>
+    <div id="myqPagination" style="display:none;justify-content:center;align-items:center;gap:6px;margin-top:20px;flex-wrap:wrap;"></div>
   </div>
 
   <!-- 내 질문 모아보기 -->
@@ -4800,6 +4852,39 @@
 </footer>
 
 <script>
+  // ── API KEY MANAGEMENT ──
+  function getApiKey() {
+    return sessionStorage.getItem('anthropic_api_key') || localStorage.getItem('anthropic_api_key') || '';
+  }
+  function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) { alert('API 키를 입력해주세요.'); return; }
+    localStorage.setItem('anthropic_api_key', key);
+    sessionStorage.setItem('anthropic_api_key', key);
+    document.getElementById('apibOk').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('apiKeyBanner').style.opacity = '0';
+      document.getElementById('apiKeyBanner').style.transition = 'opacity 0.5s';
+      setTimeout(() => document.getElementById('apiKeyBanner').style.display = 'none', 500);
+    }, 1200);
+  }
+  function getApiHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'x-api-key': getApiKey(),
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    };
+  }
+  // 페이지 로드 시 저장된 키 있으면 배너 숨김
+  window.addEventListener('DOMContentLoaded', function() {
+    if (getApiKey()) {
+      document.getElementById('apiKeyBanner').style.display = 'none';
+    } else {
+      document.getElementById('apiKeyInput').focus();
+    }
+  });
+
   // ══════════════════════════════════════════
   // ☁️ 실제 크로스브라우저 저장소 (JSONBin.io 기반)
   //
@@ -5301,7 +5386,7 @@
   }
 
   let pfCurrentPage = 1;
-  const PF_PAGE_SIZE = 20;
+  const PF_PAGE_SIZE = 15;
 
   function setPfSource(src, el) {
     pfSourceFilter = src;
@@ -5475,6 +5560,7 @@
     const q3 = document.getElementById(prefix + '-q3').value.trim();
 
     if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
+    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!q1 && !q2 && !q3) { alert('질문을 최소 1개 이상 입력해주세요.'); return; }
 
     const now = new Date();
@@ -5778,7 +5864,7 @@ JSON 형식으로만 반환:
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1500,
@@ -7185,7 +7271,6 @@ JSON 형식으로만 반환:
     const monthGroups = groupByMonth(entries);
 
     return monthGroups.map((g, gi) => {
-      const isFirst = gi === 0;
       const cardsHtml = g.entries.map(e => {
         const qs = [e.q1, e.q2, e.q3].filter(Boolean);
         return `
@@ -7214,9 +7299,9 @@ JSON 형식으로만 반환:
               <span class="myq-month-label">📅 ${g.month}</span>
               <span class="myq-month-count" style="background:${color}22;color:${color};">${g.entries.length}개</span>
             </div>
-            <span class="myq-month-arrow ${isFirst?'open':''}">▼</span>
+            <span class="myq-month-arrow">▼</span>
           </div>
-          <div class="myq-month-body ${isFirst?'open':''}" style="padding:0 12px 12px;">
+          <div class="myq-month-body" style="padding:0 12px 12px;">
             <div class="qgal-list-full">${cardsHtml}</div>
           </div>
         </div>`;
@@ -7278,69 +7363,94 @@ JSON 형식으로만 반환:
 
   // 페이지 로드 시 갤러리 초기 로드 (메인 init에서 통합 관리)
 
+  // ── 저장된 질문 기록: 페이지 상태 ──
+  let myqCurrentPage = 1;
+  const MYQ_PAGE_SIZE = 5;
+  let _myqAllSaved = [];
+
   async function renderMyQList() {
     const saved = await cloudGetMyQList();
+    _myqAllSaved = saved;
+    myqCurrentPage = 1;
+    _renderMyQPage();
+  }
+
+  function _renderMyQPage() {
+    const saved = _myqAllSaved;
     const listEl = document.getElementById('myqList');
     const cardsEl = document.getElementById('myqCards');
+    const pageEl  = document.getElementById('myqPagination');
+    const infoEl  = document.getElementById('myqPageInfo');
+
     if (!saved.length) { listEl.style.display = 'none'; return; }
     listEl.style.display = 'block';
 
     const colors = { q1s: '#0ea5e9', q2s: '#8b5cf6', q3s: '#10b981', q1t: '#f59e0b', q2t: '#f43f5e', q3t: '#8b5cf6' };
-
     const isMgr = isManagerUser();
     const clearBtn = document.getElementById('myqClearBtn');
     if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
-    // 월별 그룹핑
-    const monthGroups = groupByMonth(saved);
 
-    cardsEl.innerHTML = monthGroups.map((g, gi) => {
-      const isFirst = gi === 0;
-      const cardsHtml = g.entries.map(e => {
-        const isT = e.role === 'teacher';
-        const c1 = isT ? colors.q1t : colors.q1s;
-        const c2 = isT ? colors.q2t : colors.q2s;
-        const c3 = isT ? colors.q3t : colors.q3s;
-        const qs = [e.q1, e.q2, e.q3].filter(Boolean);
-        return `
-          <div class="myq-card">
-            <div>
-              <div class="myq-card-meta">
-                <span class="myq-card-tag ${isT ? 'teacher' : ''}">${isT ? '👩‍🏫 선생님' : '🎒 학생'}</span>
-                <span class="myq-card-tag">${e.grade}</span>
-                <span class="myq-card-tag">${e.subject}</span>
-              </div>
-              <div class="myq-card-topic">${e.topic || '(주제 미입력)'}</div>
-              <div class="myq-card-unit">${e.unit || ''}</div>
-            </div>
-            <div class="myq-card-qs">
-              ${qs.map((q, i) => `
-                <div class="myq-card-q">
-                  <span class="myq-card-qnum" style="background:${[c1,c2,c3][i]}">Q${i+1}</span>
-                  <span>${q}</span>
-                </div>`).join('')}
-            </div>
-            <div class="myq-card-date">${e.date}</div>
-            ${isMgr ? `<button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>` : ''}
-          </div>`;
-      }).join('');
+    // 최신순 정렬 후 페이지 슬라이스
+    const sorted = [...saved].sort((a, b) => b.id - a.id);
+    const total = sorted.length;
+    const totalPages = Math.ceil(total / MYQ_PAGE_SIZE);
+    if (myqCurrentPage > totalPages) myqCurrentPage = totalPages;
+    const start = (myqCurrentPage - 1) * MYQ_PAGE_SIZE;
+    const pageItems = sorted.slice(start, start + MYQ_PAGE_SIZE);
 
+    if (infoEl) infoEl.textContent = `${start+1}–${Math.min(start+MYQ_PAGE_SIZE, total)} / 전체 ${total}개`;
+
+    cardsEl.innerHTML = pageItems.map(e => {
+      const isT = e.role === 'teacher';
+      const c1 = isT ? colors.q1t : colors.q1s;
+      const c2 = isT ? colors.q2t : colors.q2s;
+      const c3 = isT ? colors.q3t : colors.q3s;
+      const qs = [e.q1, e.q2, e.q3].filter(Boolean);
       return `
-        <div class="myq-month-group">
-          <div class="myq-month-header" onclick="toggleMyQMonth(this)">
-            <div class="myq-month-left">
-              <span class="myq-month-label">📅 ${g.month}</span>
-              <span class="myq-month-count">${g.entries.length}개</span>
+        <div class="myq-card" style="margin-bottom:12px;">
+          <div>
+            <div class="myq-card-meta">
+              <span class="myq-card-tag ${isT ? 'teacher' : ''}">${isT ? '👩‍🏫 선생님' : '🎒 학생'}</span>
+              <span class="myq-card-tag">${e.grade}</span>
+              <span class="myq-card-tag">${e.subject}</span>
             </div>
-            <span class="myq-month-arrow ${isFirst ? 'open' : ''}">▼</span>
+            <div class="myq-card-topic">${e.topic || '(주제 미입력)'}</div>
+            <div class="myq-card-unit">${e.unit || ''}</div>
           </div>
-          <div class="myq-month-body ${isFirst ? 'open' : ''}" style="padding:0 12px 12px;">
-            ${cardsHtml}
+          <div class="myq-card-qs">
+            ${qs.map((q, i) => `
+              <div class="myq-card-q">
+                <span class="myq-card-qnum" style="background:${[c1,c2,c3][i]}">Q${i+1}</span>
+                <span>${q}</span>
+              </div>`).join('')}
           </div>
+          <div class="myq-card-date">${e.date}</div>
+          ${isMgr ? `<button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>` : ''}
         </div>`;
     }).join('');
+
+    // 페이지네이션 버튼
+    if (totalPages <= 1) {
+      pageEl.style.display = 'none';
+    } else {
+      pageEl.style.display = 'flex';
+      let btns = '';
+      btns += `<button class="myq-page-btn" onclick="goMyQPage(${myqCurrentPage-1})" ${myqCurrentPage===1?'disabled':''}>◀</button>`;
+      for (let p = 1; p <= totalPages; p++) {
+        btns += `<button class="myq-page-btn ${p===myqCurrentPage?'active':''}" onclick="goMyQPage(${p})">${p}</button>`;
+      }
+      btns += `<button class="myq-page-btn" onclick="goMyQPage(${myqCurrentPage+1})" ${myqCurrentPage===totalPages?'disabled':''}>▶</button>`;
+      pageEl.innerHTML = btns;
+    }
   }
 
-  function toggleMyQMonth(header) {
+  function goMyQPage(page) {
+    myqCurrentPage = page;
+    _renderMyQPage();
+    document.getElementById('myqList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+    function toggleMyQMonth(header) {
     const body  = header.nextElementSibling;
     const arrow = header.querySelector('.myq-month-arrow');
     const isOpen = body.classList.toggle('open');
@@ -8721,6 +8831,7 @@ JSON 형식으로만 반환:
     const goal    = document.getElementById('logosGoal').value.trim();
 
     if (!grade || !subject) { alert('학년과 교과를 선택해주세요.'); return; }
+    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
 
     const selectedPhases = [...document.querySelectorAll('.logos-phase-btn.active')].map(b => b.dataset.phase);
@@ -8774,7 +8885,7 @@ ${phaseContent[p]}
       try {
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getApiHeaders(),
           body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
         });
         if (res.ok) {
@@ -9187,6 +9298,7 @@ ${phaseContent[p]}
     const keyword = document.getElementById('qbotKeyword').value.trim();
 
     if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
+    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
 
     qbotSavedQuestions = {};
@@ -9229,7 +9341,7 @@ ${phaseContent[p]}
     document.getElementById('qbotResult').classList.add('show');
     document.getElementById('qbotResult').scrollIntoView({ behavior:'smooth', block:'start' });
 
-    const ctx = grade + ' ' + subject + (unit ? ' ' + unit : '') + ' · ' + topic + (keyword ? ' (키워드: ' + keyword + ')' : '');
+    const ctx = grade + ' ' + subject + ' · ' + topic + (keyword ? ' (키워드: ' + keyword + ')' : '');
     const bgColors = ['#e0f2fe','#f0fdf4','#fdf4ff'];
     const fgColors = ['#0369a1','#166534','#6b21a8'];
     const bdColors = ['#7dd3fc','#86efac','#d8b4fe'];
@@ -9287,7 +9399,7 @@ ${phaseContent[p]}
       try {
         var res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getApiHeaders(),
           body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
         });
         if (res.ok) {
@@ -9581,6 +9693,7 @@ ${phaseContent[p]}
     var goal    = document.getElementById('dbotGoal').value.trim();
 
     if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
+    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
 
     dbotData = { grade: grade, subject: subject, unit: unit, topic: topic, goal: goal };
@@ -9612,7 +9725,7 @@ ${phaseContent[p]}
     try {
       var r1 = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600,
           messages: [{ role: 'user', content: '수업: ' + ctx + '\n\n이 주제의 본질적 쟁점에서 도출한 핵심질문 3가지.\n- 단순 정의(~은 무엇인가?) 금지\n- 관점 충돌·역설·실생활 연결 포함\n\nJSON 배열만: ["질문1","질문2","질문3"]' }]
         })
@@ -9691,7 +9804,7 @@ ${phaseContent[p]}
       try {
         var r2 = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getApiHeaders(),
           body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000,
             messages: [{ role: 'user', content: prompt }]
           })

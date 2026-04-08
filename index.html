@@ -3598,6 +3598,7 @@
         <div style="font-size:15px;font-weight:700;">조건에 맞는 내 질문이 없습니다</div>
       </div>
       <div id="myQGalleryBoard" class="qgal-list-full"></div>
+      <div id="myQGalPagination" style="display:none;justify-content:center;align-items:center;gap:6px;margin-top:20px;flex-wrap:wrap;"></div>
     </div>
   </div>
 </section>
@@ -7390,8 +7391,8 @@ JSON 형식으로만 반환:
     const clearBtn = document.getElementById('myqClearBtn');
     if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
 
-    // 최신순 정렬 후 페이지 슬라이스
-    const sorted = [...saved].sort((a, b) => b.id - a.id);
+    // 최신순 정렬 후 미션 항목 제외, 페이지 슬라이스
+    const sorted = [...saved].filter(e => !e.isMission).sort((a, b) => b.id - a.id);
     const total = sorted.length;
     const totalPages = Math.ceil(total / MYQ_PAGE_SIZE);
     if (myqCurrentPage > totalPages) myqCurrentPage = totalPages;
@@ -7475,16 +7476,19 @@ JSON 형식으로만 반환:
     renderMyQGallery();
   }
 
+  // ── 내 질문 모아보기 페이지 상태 ──
+  let myQGalPage = 1;
+  const MYGAL_PAGE_SIZE = 3;
+  let _myQGalAll = [];
+
   async function renderMyQGallery() {
     const loginEl  = document.getElementById('myQGalleryLogin');
     const filterEl = document.getElementById('myQGalleryFilters');
     const emptyEl  = document.getElementById('myQGalleryEmpty');
-    const board    = document.getElementById('myQGalleryBoard');
     const countEl  = document.getElementById('myQGalleryCount');
 
     const user = getCurrentUser();
 
-    // 비로그인: 안내 문구 표시
     if (!user) {
       loginEl.style.display  = 'block';
       filterEl.style.display = 'none';
@@ -7492,33 +7496,51 @@ JSON 형식으로만 반환:
       return;
     }
 
-    // 로그인: 필터 및 질문 표시
     loginEl.style.display  = 'none';
     filterEl.style.display = 'block';
 
     const myKey = user.key || user.email || user.name || '';
     const all   = await cloudGetMyQList();
 
-    let mine = all.filter(e => e.authorKey && e.authorKey === myKey);
+    let mine = all.filter(e => e.authorKey && e.authorKey === myKey && !e.isMission);
     if (myQGalFilter.grade   !== 'all') mine = mine.filter(e => e.grade   === myQGalFilter.grade);
     if (myQGalFilter.subject !== 'all') mine = mine.filter(e => e.subject === myQGalFilter.subject);
     mine.sort((a, b) => b.id - a.id);
+
+    _myQGalAll = mine;
+    myQGalPage = 1;
+    _renderMyQGalPage();
+  }
+
+  function _renderMyQGalPage() {
+    const emptyEl  = document.getElementById('myQGalleryEmpty');
+    const board    = document.getElementById('myQGalleryBoard');
+    const pageEl   = document.getElementById('myQGalPagination');
+    const countEl  = document.getElementById('myQGalleryCount');
+    const mine     = _myQGalAll;
 
     countEl.textContent = mine.length + '개';
 
     if (!mine.length) {
       emptyEl.style.display = 'block';
       board.innerHTML = '';
+      pageEl.style.display = 'none';
       return;
     }
     emptyEl.style.display = 'none';
 
+    const total      = mine.length;
+    const totalPages = Math.ceil(total / MYGAL_PAGE_SIZE);
+    if (myQGalPage > totalPages) myQGalPage = totalPages;
+    const start     = (myQGalPage - 1) * MYGAL_PAGE_SIZE;
+    const pageItems = mine.slice(start, start + MYGAL_PAGE_SIZE);
+
     const qColors = ['#0ea5e9','#8b5cf6','#10b981'];
-    board.innerHTML = mine.map(e => {
+    board.innerHTML = pageItems.map(e => {
       const qs    = [e.q1, e.q2, e.q3].filter(Boolean);
       const color = e.role === 'teacher' ? '#f59e0b' : '#0ea5e9';
       return `
-        <div class="qgal-item" style="--qgal-color:${color}">
+        <div class="qgal-item" style="--qgal-color:${color};margin-bottom:10px;">
           <div class="qgal-item-meta">
             <span class="qgal-item-tag">${e.role === 'teacher' ? '👩‍🏫 선생님' : '🎒 학생'}</span>
             <span class="qgal-item-tag">${e.grade}</span>
@@ -7536,6 +7558,25 @@ JSON 형식으로만 반환:
           <div class="qgal-item-date">${e.date}</div>
         </div>`;
     }).join('');
+
+    if (totalPages <= 1) {
+      pageEl.style.display = 'none';
+    } else {
+      pageEl.style.display = 'flex';
+      let btns = '';
+      btns += `<button class="myq-page-btn" onclick="goMyQGalPage(${myQGalPage-1})" ${myQGalPage===1?'disabled':''}>◀</button>`;
+      for (let p = 1; p <= totalPages; p++) {
+        btns += `<button class="myq-page-btn ${p===myQGalPage?'active':''}" onclick="goMyQGalPage(${p})">${p}</button>`;
+      }
+      btns += `<button class="myq-page-btn" onclick="goMyQGalPage(${myQGalPage+1})" ${myQGalPage===totalPages?'disabled':''}>▶</button>`;
+      pageEl.innerHTML = btns;
+    }
+  }
+
+  function goMyQGalPage(page) {
+    myQGalPage = page;
+    _renderMyQGalPage();
+    document.getElementById('myQGallerySection').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async function deleteMyQ(id) {

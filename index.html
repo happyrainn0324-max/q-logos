@@ -4944,20 +4944,11 @@
     }, 1200);
   }
   function getApiHeaders() {
-    return {
-      'Content-Type': 'application/json',
-      'x-api-key': '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',
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    };
+    return { 'Content-Type': 'application/json' };
   }
   // 페이지 로드 시 저장된 키 있으면 배너 숨김
   window.addEventListener('DOMContentLoaded', function() {
-    if (getApiKey()) {
-      document.getElementById('apiKeyBanner').style.display = 'none';
-    } else {
-      document.getElementById('apiKeyInput').focus();
-    }
+    document.getElementById('apiKeyBanner').style.display = 'none';
   });
 
   // ══════════════════════════════════════════
@@ -5951,7 +5942,7 @@ JSON 형식으로만 반환:
     };
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: getApiHeaders(),
         body: JSON.stringify({
@@ -9011,7 +9002,7 @@ ${phaseContent[p]}
 텍스트만 반환 (JSON 불필요). 내용을 충실하게 작성.`;
 
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('/.netlify/functions/claude', {
           method: 'POST',
           headers: getApiHeaders(),
           body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
@@ -9602,7 +9593,7 @@ ${phaseContent[p]}
     try {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 20000);
-      const extrasRes = await fetch('https://api.anthropic.com/v1/messages', {
+      const extrasRes = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: getApiHeaders(),
         signal: controller.signal,
@@ -10048,7 +10039,7 @@ ${phaseContent[p]}
     // STEP 1: 핵심질문
     var cqs = buildDbotCoreQuestions(subject, topic, grade);
     try {
-      var r1 = await fetch('https://api.anthropic.com/v1/messages', {
+      var r1 = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: getApiHeaders(),
         body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600,
@@ -10127,7 +10118,7 @@ ${phaseContent[p]}
 
       var acts = buildDbotActivities(phase.id, subject, topic, grade);
       try {
-        var r2 = await fetch('https://api.anthropic.com/v1/messages', {
+        var r2 = await fetch('/.netlify/functions/claude', {
           method: 'POST',
           headers: getApiHeaders(),
           body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000,

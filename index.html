@@ -5399,7 +5399,22 @@
 
   async function renderPortfolio() {
     const all = await collectAllPfEntries();
-    const filtered = pfSourceFilter === 'all' ? all : all.filter(e => e.source === pfSourceFilter);
+
+    // 오늘 날짜 문자열 (YYYY.MM.DD)
+    const now = new Date();
+    const todayStr = now.getFullYear() + '.' +
+      String(now.getMonth()+1).padStart(2,'0') + '.' +
+      String(now.getDate()).padStart(2,'0');
+
+    let filtered;
+    if (pfSourceFilter === 'all') {
+      filtered = all;
+    } else if (pfSourceFilter === 'myq') {
+      // 오늘의 질문 탭: source가 myq이고 오늘 날짜인 항목만
+      filtered = all.filter(e => e.source === 'myq' && e.date && e.date.startsWith(todayStr));
+    } else {
+      filtered = all.filter(e => e.source === pfSourceFilter);
+    }
 
     // 통계 업데이트
     const counts = { myq:0, kw:0, champ:0, dream:0, book:0 };
@@ -9275,50 +9290,99 @@ ${phaseContent[p]}
   ];
 
   // ── 키워드 생성 (주제 반영) ──
+  function buildQBotStarters(stepId, topic, subject) {
+    const t = topic || subject || '이 주제';
+    const map = {
+      launch: [
+        t + '을(를) 처음 들었을 때 어떤 느낌이 들었나요?',
+        t + '이(가) 우리 일상에서 어디에 나타날까요?',
+        t + '에 대해 가장 궁금한 것 한 가지를 말해보세요.',
+      ],
+      observe: [
+        t + '의 자료에서 가장 눈에 띄는 것은 무엇인가요?',
+        t + '에서 예상과 달라서 놀라운 부분은 어디인가요?',
+        t + '의 자료가 보여 주지 않는 것은 무엇일까요?',
+      ],
+      generate: [
+        '만약 ' + t + '이(가) 없다면 어떤 일이 벌어질까요?',
+        t + '과(와) 다른 사례를 비교하면 어떤 차이가 있나요?',
+        t + '을(를) 해결하거나 개선하는 가장 좋은 방법은 무엇일까요?',
+      ],
+      organize: [
+        t + '에 대한 질문들을 어떻게 분류할 수 있을까요?',
+        t + '을(를) 탐구하기 위해 어떤 순서로 조사해야 할까요?',
+        t + '에 대해 가장 먼저 알아야 할 것은 무엇인가요?',
+      ],
+      solve: [
+        t + ' 탐구에서 가장 중요한 발견은 무엇이었나요?',
+        t + '을(를) 배우고 나서 달라진 내 생각은 무엇인가요?',
+        t + '과(와) 관련해 다음에 더 탐구하고 싶은 것은 무엇인가요?',
+      ],
+    };
+    return map[stepId] || [t + '에 대해 가장 궁금한 것은?', t + '이(가) 왜 중요할까요?', t + '에 대해 더 알고 싶은 것은?'];
+  }
+
   function buildQBotKeywords(stepId, topic, subject, keyword) {
     const t = topic || subject || '이 주제';
     const kw = keyword ? keyword.split(/[,，、\s]+/).filter(Boolean) : [];
 
     const bank = {
       launch: [
-        // 느낌·감정 키워드 — 형용사로 통일, 자연스러운 구어체
-        ['궁금하다', '신기하다', '낯설다', '중요하다', '놀랍다', '어렵다', '익숙하다'],
-        // 궁금증 키워드 — 조사 오류 수정 (주제에 따라 '은/는' 결정되므로 고정 조사 제거)
-        [t + '이란?', t + '의 원인', t + '은(는) 왜?', t + '이(가) 우리에게 미치는 영향', '처음 알게 되었을 때', t + '의 역사'],
-        // 연결 키워드
-        ['우리 학교', '인천공항 주변', '일상생활', '나의 경험', '친구 관계', '우리 지역 사회', '사회 문제'],
+        // 느낌·감정 (주제 직접 포함)
+        [t + ' 처음 들었을 때', t + '이(가) 왜 놀라운가', t + '에 대한 첫 느낌',
+         t + '이(가) 낯선 이유', t + '에서 신기한 점', t + '을(를) 보고 드는 감정', t + '이 중요한 이유'],
+        // 일상·경험 연결 (주제 직접 포함)
+        [t + '을(를) 내 삶에서 찾으면?', '우리 학교에서 ' + t, '인천공항 주변과 ' + t,
+         t + '이(가) 일어나는 순간', '내가 겪은 ' + t + ' 상황', t + '과(와) 관련된 뉴스', t + '을(를) 왜 배울까?'],
+        // 호기심 자극 질문씨앗
+        [t + '의 가장 충격적인 사실은?', t + '을(를) 처음 만든 사람은?',
+         t + '이(가) 없었다면?', t + '에 대해 아무도 모르는 것은?',
+         t + '을(를) 가장 잘 아는 사람은?', t + '이(가) 바뀐다면?', t + '의 반대 개념은?'],
       ],
       observe: [
-        // 사실·데이터 키워드
-        [t + '의 수치', '통계 자료', '변화 추이', '비율', '규모', '현황', t + '의 실제 사례'],
-        // 의심·의문 키워드 — '이상한 점'보다 탐구적 표현으로
-        ['왜 이럴까?', '예상 밖의 결과', '모순점', '차이점', '빠진 정보', '다른 관점', '숨겨진 사실'],
-        // 원인·결과 키워드
-        ['원인', '결과', '영향', '상호 관계', '역사적 배경', '사회적 맥락', '연쇄 반응'],
+        // 데이터·수치 (주제 직접 포함)
+        [t + '의 실제 수치', t + '의 변화 추이', t + '의 통계',
+         t + '의 규모는 얼마나?', t + '의 현황 자료', t + '의 사례 분석', t + '과(와) 관련된 데이터'],
+        // 모순·의문 (주제 직접 포함)
+        [t + '에서 이상한 점', t + '이(가) 예상과 다른 이유', t + '의 숨겨진 사실',
+         t + '을(를) 둘러싼 오해', t + '에서 빠진 정보', t + '의 반전 사실', t + '의 다른 관점'],
+        // 원인·결과 (주제 직접 포함)
+        [t + '이(가) 생긴 원인', t + '이(가) 미치는 영향', t + '의 연쇄 반응',
+         t + '의 역사적 배경', t + '의 사회적 맥락', t + '이(가) 커진 이유', t + '의 결과는?'],
       ],
       generate: [
-        // 비교·분석 키워드
-        [t + '과(와) 다른 것의 차이', '공통점', '차이점', '장점과 단점', '두 가지 관점', '과거와 현재', '나라별 차이'],
-        // 평가·판단 키워드
-        ['가장 중요한 점', '최선의 방법', '문제점', '타당한가?', '누구에게 유리한가?', '공정한가?', '개선 방향'],
-        // 창의·상상 키워드
-        ['만약 ~라면?', '100년 후에는?', '반대로 한다면?', '새로운 방식', '다른 분야와 융합', t + '이(가) 없다면?', '내가 직접 설계한다면?'],
+        // 비교·분석 (주제 직접 포함)
+        [t + '과(와) 유사한 것의 차이', t + '의 장점과 단점', t + '의 찬성 vs 반대',
+         t + '의 과거와 현재', t + '의 나라별 차이', t + '을(를) 보는 두 가지 시각', t + '의 공통점과 차이점'],
+        // 평가·판단 (주제 직접 포함)
+        [t + '에서 가장 중요한 것', t + '의 문제점은?', t + '이(가) 공정한가?',
+         t + '의 최선의 해결책', t + '에서 누가 유리한가?', t + '을(를) 개선하려면?', t + '이(가) 타당한가?'],
+        // 창의·상상 (주제 직접 포함)
+        ['만약 ' + t + '이(가) 없다면?', '100년 후의 ' + t + '은?', t + '을(를) 반대로 하면?',
+         t + '을(를) 내가 직접 설계한다면?', t + '과(와) 다른 분야가 합쳐지면?',
+         '미래에 ' + t + '은(는) 어떻게 변할까?', t + '을(를) 완전히 새롭게 바꾼다면?'],
       ],
       organize: [
-        // 분류·구조 키워드
-        ['원인 범주', '현황 범주', '영향 범주', '해결책 범주', '우선순위', '핵심 질문', '세부 질문'],
-        // 계획·방법 키워드
-        ['조사 방법', '자료 출처', '인터뷰 대상', '탐구 설계', '발표 형식', '탐구 기간', '역할 분담'],
-        // 연결·흐름 키워드
-        ['질문 간 관계', '탐구 순서', '근거와 주장', '논증 구조', '마인드맵', 'KWL 차트', '개념도'],
+        // 분류·구조 (주제 직접 포함)
+        [t + '의 원인 분류', t + '의 현황 정리', t + '의 영향 범주',
+         t + '의 해결책 분류', t + '의 우선순위', t + '의 핵심 질문', t + '의 세부 질문'],
+        // 탐구 설계 (주제 직접 포함)
+        [t + ' 조사 방법', t + ' 자료 출처', t + ' 인터뷰 대상',
+         t + ' 탐구 설계', t + ' 발표 형식', t + ' 탐구 일정', t + ' 역할 분담'],
+        // 논증·흐름 (주제 직접 포함)
+        [t + '에 대한 나의 주장', t + '을(를) 뒷받침하는 근거', t + '의 반론과 재반론',
+         t + ' 개념도 그리기', t + ' KWL 차트', t + ' 마인드맵', t + ' 탐구 순서 정하기'],
       ],
       solve: [
-        // 표현·발표 키워드
-        ['구두 발표', '탐구 보고서', '인포그래픽', '영상 제작', '토론', '패들렛 공유', '전시 포스터'],
-        // 성찰·변화 키워드
-        ['탐구 전과 후의 변화', '달라진 생각', '어려웠던 점', '새롭게 배운 것', '내가 실천할 것', '가장 기억에 남는 것'],
-        // 미래·새 질문 키워드
-        ['다음 탐구 주제', '더 알고 싶은 것', '해결되지 않은 질문', '연결되는 새 문제', t + '의 미래'],
+        // 표현·발표 (주제 직접 포함)
+        [t + ' 탐구 보고서', t + ' 인포그래픽', t + ' 영상 제작',
+         t + ' 토론', t + ' 패들렛 공유', t + ' 전시 포스터', t + ' 발표 자료'],
+        // 성찰·변화 (주제 직접 포함)
+        [t + ' 탐구 전·후 변화', t + '을(를) 배우고 달라진 생각', t + ' 탐구에서 어려웠던 점',
+         t + '에서 새롭게 배운 것', t + '과(와) 관련해 내가 실천할 것', t + ' 탐구 중 가장 기억에 남는 것'],
+        // 미래·연결 (주제 직접 포함)
+        [t + '에 대한 다음 탐구 주제', t + '에서 더 알고 싶은 것', t + '의 해결되지 않은 질문',
+         t + '과(와) 연결되는 새 문제', t + '의 미래는?', t + '을(를) 더 깊이 이해하려면?'],
       ],
     };
 
@@ -9339,7 +9403,6 @@ ${phaseContent[p]}
     const keyword = document.getElementById('qbotKeyword').value.trim();
 
     if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
-    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
 
     qbotSavedQuestions = {};
@@ -9373,7 +9436,7 @@ ${phaseContent[p]}
       placeholderHtml += '<div style="flex:1"><div class="qbot-step-title">' + step.emoji + ' ' + step.num + ' · ' + step.name + ' — ' + step.sub + '</div></div>';
       placeholderHtml += '<div class="qbot-step-arrow" id="qbotArrow_' + step.id + '">▼</div></div>';
       placeholderHtml += '<div class="qbot-step-body' + (si===0 ? ' open' : '') + '" id="qbotBody_' + step.id + '">';
-      placeholderHtml += '<div class="qbot-step-desc" id="qbotDesc_' + step.id + '" style="color:#94a3b8;font-style:italic;">⏳ 생성 대기 중...</div>';
+      placeholderHtml += '<div class="qbot-step-desc" id="qbotDesc_' + step.id + '" style="color:#94a3b8;font-style:italic;">📚 ' + step.desc + '</div>';
       placeholderHtml += '<div id="qbotContent_' + step.id + '"></div>';
       placeholderHtml += '</div></div>';
     });
@@ -9399,7 +9462,7 @@ ${phaseContent[p]}
     function renderStep(step, si, aiStep) {
       var labels = stepRoles[step.id];
       var desc = (aiStep && aiStep.desc) ? aiStep.desc : step.desc;
-      var starters = (aiStep && Array.isArray(aiStep.starters)) ? aiStep.starters : step.qStarters.map(function(s){ return s.replace('○○', topic); });
+      var starters = (aiStep && Array.isArray(aiStep.starters)) ? aiStep.starters : buildQBotStarters(step.id, topic, subject);
       var kwGroups = (aiStep && Array.isArray(aiStep.keywords)) ? aiStep.keywords : buildQBotKeywords(step.id, topic, subject, keyword);
 
       var descEl = document.getElementById('qbotDesc_' + step.id);
@@ -9431,7 +9494,7 @@ ${phaseContent[p]}
       if (contentEl) contentEl.innerHTML = kwHtml + '<div style="margin-top:4px;">' + starterHtml + '</div>' + inputHtml;
     }
 
-    if (genBtn) genBtn.textContent = '⏳ 5단계 동시 생성 중...';
+    if (genBtn) genBtn.textContent = '✨ 질문 꾸러미 생성 중...';
 
     const callStep = async (step, si) => {
       var prompt = '수업: ' + ctx + '\n단계: ' + step.num + ' ' + step.name + '(' + step.sub + ')\n역할: ' + stepFocus[step.id] + '\n\n이 단계에 맞는 키워드 9개(3그룹×3개)와 질문 힌트 3개, 단계 설명 1-2문장을 생성.\n키워드: "' + topic + '"의 실제 개념·용어·수치·현상 (빈 연결어 금지)\n질문 힌트: 이 주제의 실제 내용이 담긴 구체적 탐구 질문 (단순 정의 금지)\n\nJSON만 반환:\n{"desc":"설명","keywords":[["kw1","kw2","kw3"],["kw4","kw5","kw6"],["kw7","kw8","kw9"]],"starters":["질문1?","질문2?","질문3?"]}';
@@ -9455,7 +9518,7 @@ ${phaseContent[p]}
 
     await Promise.all(qbotStepDefs.map(function(step, si) { return callStep(step, si); }));
 
-    if (genBtn) { genBtn.disabled = false; genBtn.textContent = '🤖 질문 꾸러미 다시 생성'; }
+    if (genBtn) { genBtn.disabled = false; genBtn.textContent = '🔄 질문 꾸러미 다시 생성'; }
   }
 
   function insertQBotStarter2(stepId, el) {

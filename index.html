@@ -2920,6 +2920,80 @@
   }
   .qbot-copy-all-btn:hover { background:#0284c7; }
   .qbot-divider { border:none; border-top:1px solid #e2e2ec; margin:18px 0; }
+  /* ── Q-BOT 심층 분석 추가 패널 ── */
+  .qbot-extra-section { margin-bottom: 22px; }
+  .qbot-extra-title {
+    font-size: 14px; font-weight: 900; color: #0a0a12;
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 2px solid #f1f5f9;
+    display: flex; align-items: center; gap: 6px;
+  }
+  /* 학습 자료 */
+  .qbot-resources-grid { display: flex; flex-direction: column; gap: 10px; }
+  .qbot-resource-card {
+    background: white; border-radius: 12px;
+    border-left: 4px solid var(--rc, #6366f1);
+    padding: 12px 14px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .qbot-resource-type {
+    font-size: 10px; font-weight: 800; color: var(--rc, #6366f1);
+    letter-spacing: .08em; margin-bottom: 4px;
+  }
+  .qbot-resource-title { font-size: 13px; font-weight: 800; color: #0a0a12; margin-bottom: 5px; }
+  .qbot-resource-summary { font-size: 12px; color: #475569; line-height: 1.65; }
+  /* 심화 질문 */
+  .qbot-dbot-card {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: linear-gradient(135deg,#f5f3ff,#ede9fe);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .qbot-dbot-num {
+    background: #8b5cf6; color: white; border-radius: 8px;
+    font-size: 10px; font-weight: 800; padding: 4px 8px; white-space: nowrap;
+  }
+  .qbot-dbot-q { font-size: 13px; font-weight: 700; color: #3b0764; margin-bottom: 5px; line-height: 1.55; }
+  .qbot-dbot-focus { font-size: 11px; color: #6b21a8; }
+  /* 프로젝트 */
+  .qbot-project-steps { display: flex; flex-direction: column; gap: 8px; }
+  .qbot-project-step {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 14px; background: white;
+    border-left: 4px solid var(--pc, #6366f1);
+    border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .qbot-project-num {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    background: var(--pc, #6366f1); color: white;
+    font-size: 12px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qbot-project-label { font-size: 12px; font-weight: 800; color: var(--pc, #6366f1); margin-bottom: 3px; }
+  .qbot-project-desc { font-size: 12px; color: #475569; line-height: 1.6; }
+  /* 수업 활동 */
+  .qbot-lesson-card {
+    border-radius: 14px; overflow: hidden;
+    border: 1.5px solid #e2e8f0; background: white;
+  }
+  .qbot-lesson-head {
+    background: var(--lc, #4f46e5); padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .qbot-lesson-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,.25); color: white;
+    font-size: 11px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .qbot-lesson-title { font-size: 13px; font-weight: 800; color: white; }
+  .qbot-lesson-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 7px; }
+  .qbot-lesson-row { font-size: 12px; color: #475569; display: flex; gap: 8px; align-items: flex-start; line-height: 1.6; }
+  .qbot-lesson-badge {
+    background: rgba(79,70,229,.1); color: #4338ca;
+    font-size: 10px; font-weight: 800; padding: 2px 7px;
+    border-radius: 6px; white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+  }
+
+
 
 
   /* ── D-BOT 수업 설계 모달 ── */
@@ -5576,7 +5650,6 @@
     const q3 = document.getElementById(prefix + '-q3').value.trim();
 
     if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
-    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!q1 && !q2 && !q3) { alert('질문을 최소 1개 이상 입력해주세요.'); return; }
 
     const now = new Date();
@@ -8887,7 +8960,6 @@ JSON 형식으로만 반환:
     const goal    = document.getElementById('logosGoal').value.trim();
 
     if (!grade || !subject) { alert('학년과 교과를 선택해주세요.'); return; }
-    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
 
     const selectedPhases = [...document.querySelectorAll('.logos-phase-btn.active')].map(b => b.dataset.phase);
@@ -9494,31 +9566,230 @@ ${phaseContent[p]}
       if (contentEl) contentEl.innerHTML = kwHtml + '<div style="margin-top:4px;">' + starterHtml + '</div>' + inputHtml;
     }
 
-    if (genBtn) genBtn.textContent = '✨ 질문 꾸러미 생성 중...';
+    if (genBtn) genBtn.textContent = '✨ 심층 탐구 질문 생성 중...';
 
+    // ── 심층 분석 마스터 프롬프트 (6단계 프레임워크) ──
+    const masterPrompt =
+`You are an advanced inquiry-based curriculum designer.
+Your task is NOT to generate simple questions by replacing keywords.
+Instead, you MUST deeply analyze the topic and reconstruct meaningful inquiry questions based on real-world knowledge, academic concepts, and interdisciplinary connections.
+
+수업 정보: ${ctx}
+
+[STEP 1: TOPIC ANALYSIS]
+- 핵심 개념 최소 3가지 추출
+- 교과 내·교과 간 연계 학문 개념 파악
+- 이 주제가 나타나는 실제 세계 맥락 파악
+- 학생들이 가질 수 있는 오개념 파악
+
+[STEP 2: RESOURCE RECONSTRUCTION]
+다음 3가지 유형의 학습 자료를 재구성 (링크 없이, 2~3문장 요약 + 주제 연결 설명):
+- Article: 실제 사례·이슈 기사
+- Media: 영상·뉴스·디지털 콘텐츠
+- Academic: 이론·개념·모델
+
+[STEP 3: Q-LOGOS QUESTION DESIGN]
+Q-LOGOS 5단계 탐구 질문 (각 단계 핵심 질문 1개, 복수 개념 연결, 인지 난이도 단계적 상승, 실제 맥락 기반):
+- Launch (질문 깨우기)
+- Observe (자료 관찰)
+- Generate (질문 생성)
+- Organize (사고 구조화)
+- Solve (답하고 나누기)
+
+[STEP 4: D-BOT EXTENSION]
+심화 질문 2개 (가정 도전·평가·윤리·사회적 관점 포함)
+
+[STEP 5: PROJECT DESIGN]
+6단계 탐구 프로젝트:
+1. 문제 정의 2. 질문 구성 3. 탐구 4. 분석 5. 해결책(근거 기반) 6. 성찰
+
+[STEP 6: LESSON IDEAS]
+실제 수업 활동 아이디어 3가지 (활동 설명·학생 과제·기대 사고 스킬·교육과정 역량 연계)
+
+[CRITICAL RULES]
+- NEVER generic or template-like questions
+- ALWAYS reconstruct meaning from topic
+- ALWAYS connect concepts across domains
+- ALWAYS reflect real-world application
+- 모든 출력은 한국어로
+
+다음 JSON 형식으로만 반환 (마크다운 없이):
+{
+  "analysis": {
+    "core_concepts": ["개념1","개념2","개념3"],
+    "misconceptions": ["오개념1","오개념2"]
+  },
+  "resources": [
+    {"type":"Article","title":"제목","summary":"2~3문장 요약 및 주제 연결"},
+    {"type":"Media","title":"제목","summary":"2~3문장 요약 및 주제 연결"},
+    {"type":"Academic","title":"제목","summary":"2~3문장 요약 및 주제 연결"}
+  ],
+  "qlogos": {
+    "launch":   {"question":"질문?","concept":"핵심개념","context":"실제맥락"},
+    "observe":  {"question":"질문?","concept":"핵심개념","context":"실제맥락"},
+    "generate": {"question":"질문?","concept":"핵심개념","context":"실제맥락"},
+    "organize": {"question":"질문?","concept":"핵심개념","context":"실제맥락"},
+    "solve":    {"question":"질문?","concept":"핵심개념","context":"실제맥락"}
+  },
+  "dbot": [
+    {"question":"심화질문1?","focus":"평가/윤리/사회 관점"},
+    {"question":"심화질문2?","focus":"평가/윤리/사회 관점"}
+  ],
+  "project": [
+    {"step":1,"label":"문제 정의","desc":"내용"},
+    {"step":2,"label":"질문 구성","desc":"내용"},
+    {"step":3,"label":"탐구","desc":"내용"},
+    {"step":4,"label":"분석","desc":"내용"},
+    {"step":5,"label":"해결책","desc":"내용"},
+    {"step":6,"label":"성찰","desc":"내용"}
+  ],
+  "lessons": [
+    {"title":"활동명","desc":"활동 설명","task":"학생 과제","skill":"기대 사고 스킬","competency":"역량 연계"},
+    {"title":"활동명","desc":"활동 설명","task":"학생 과제","skill":"기대 사고 스킬","competency":"역량 연계"},
+    {"title":"활동명","desc":"활동 설명","task":"학생 과제","skill":"기대 사고 스킬","competency":"역량 연계"}
+  ]
+}`;
+
+    // ── 마스터 API 호출 (단일 통합 요청) ──
+    let masterResult = null;
+    try {
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: getApiHeaders(),
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 4000,
+          messages: [{ role: 'user', content: masterPrompt }]
+        })
+      });
+      if (res.ok) {
+        var data = await res.json();
+        var raw = (data.content || []).map(function(c){ return c.text || ''; }).join('');
+        masterResult = tryParseStep(raw);
+      }
+    } catch(e) { console.error('[Q-BOT MASTER]', e); }
+
+    // ── 각 단계 렌더링 ──
     const callStep = async (step, si) => {
-      var prompt = '수업: ' + ctx + '\n단계: ' + step.num + ' ' + step.name + '(' + step.sub + ')\n역할: ' + stepFocus[step.id] + '\n\n이 단계에 맞는 키워드 9개(3그룹×3개)와 질문 힌트 3개, 단계 설명 1-2문장을 생성.\n키워드: "' + topic + '"의 실제 개념·용어·수치·현상 (빈 연결어 금지)\n질문 힌트: 이 주제의 실제 내용이 담긴 구체적 탐구 질문 (단순 정의 금지)\n\nJSON만 반환:\n{"desc":"설명","keywords":[["kw1","kw2","kw3"],["kw4","kw5","kw6"],["kw7","kw8","kw9"]],"starters":["질문1?","질문2?","질문3?"]}';
-
-      var aiStep = null;
-      try {
-        var res = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: getApiHeaders(),
-          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
-        });
-        if (res.ok) {
-          var data = await res.json();
-          var raw = (data.content || []).map(function(c){ return c.text || ''; }).join('');
-          aiStep = tryParseStep(raw);
-        }
-      } catch(e) { console.error('[Q-BOT]', step.id, e); }
-
+      let aiStep = null;
+      if (masterResult && masterResult.qlogos && masterResult.qlogos[step.id]) {
+        const ql = masterResult.qlogos[step.id];
+        // 핵심개념을 키워드칩으로 변환
+        const concepts = masterResult.analysis ? masterResult.analysis.core_concepts || [] : [];
+        const misconceptions = masterResult.analysis ? masterResult.analysis.misconceptions || [] : [];
+        const kwGroup1 = concepts.length ? concepts : buildQBotKeywords(step.id, topic, subject, keyword)[0];
+        const kwGroup2 = misconceptions.length ? misconceptions : buildQBotKeywords(step.id, topic, subject, keyword)[1];
+        const kwGroup3 = buildQBotKeywords(step.id, topic, subject, keyword)[2];
+        aiStep = {
+          desc: ql.context ? '[' + ql.concept + '] ' + ql.context : step.desc,
+          keywords: [kwGroup1.slice(0,6), kwGroup2.slice(0,6), kwGroup3.slice(0,6)],
+          starters: [ql.question],
+          _qlogos: ql,
+        };
+      }
       renderStep(step, si, aiStep);
     };
 
     await Promise.all(qbotStepDefs.map(function(step, si) { return callStep(step, si); }));
 
+    // ── 추가 패널 렌더링 (자료·심화질문·프로젝트·수업활동) ──
+    renderQBotExtras(masterResult, grade, subject, topic);
+
     if (genBtn) { genBtn.disabled = false; genBtn.textContent = '🔄 질문 꾸러미 다시 생성'; }
+  }
+
+
+  // ── Q-BOT 심층 분석 추가 패널 렌더링 ──
+  function renderQBotExtras(data, grade, subject, topic) {
+    const wrap = document.getElementById('qbotExtrasWrap');
+    if (!wrap) return;
+    if (!data) { wrap.innerHTML = ''; return; }
+
+    const resColors = { Article: '#0ea5e9', Media: '#8b5cf6', Academic: '#10b981' };
+    const resIcons  = { Article: '📰', Media: '🎬', Academic: '📚' };
+
+    // ── 학습 자료 ──
+    let resourcesHtml = '';
+    if (data.resources && data.resources.length) {
+      resourcesHtml = `
+        <div class="qbot-extra-section">
+          <div class="qbot-extra-title">📂 탐구 학습 자료</div>
+          <div class="qbot-resources-grid">
+            ${data.resources.map(r => `
+              <div class="qbot-resource-card" style="--rc:${resColors[r.type]||'#6366f1'}">
+                <div class="qbot-resource-type">${resIcons[r.type]||'📄'} ${r.type}</div>
+                <div class="qbot-resource-title">${r.title||''}</div>
+                <div class="qbot-resource-summary">${r.summary||''}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    // ── 심화 질문 ──
+    let dbotHtml = '';
+    if (data.dbot && data.dbot.length) {
+      dbotHtml = `
+        <div class="qbot-extra-section">
+          <div class="qbot-extra-title">🧠 심화 탐구 질문 (D-BOT)</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            ${data.dbot.map((d,i) => `
+              <div class="qbot-dbot-card">
+                <div class="qbot-dbot-num">심화 ${i+1}</div>
+                <div>
+                  <div class="qbot-dbot-q">${d.question||''}</div>
+                  <div class="qbot-dbot-focus">🔎 ${d.focus||''}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    // ── 탐구 프로젝트 ──
+    const projColors = ['#0ea5e9','#10b981','#8b5cf6','#f59e0b','#f43f5e','#06b6d4'];
+    let projectHtml = '';
+    if (data.project && data.project.length) {
+      projectHtml = `
+        <div class="qbot-extra-section">
+          <div class="qbot-extra-title">🗺️ 탐구 프로젝트 설계 (6단계)</div>
+          <div class="qbot-project-steps">
+            ${data.project.map((p,i) => `
+              <div class="qbot-project-step" style="--pc:${projColors[i]||'#6366f1'}">
+                <div class="qbot-project-num">${p.step||i+1}</div>
+                <div>
+                  <div class="qbot-project-label">${p.label||''}</div>
+                  <div class="qbot-project-desc">${p.desc||''}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    // ── 수업 활동 아이디어 ──
+    const lessonColors = ['#4f46e5','#0284c7','#0d9488'];
+    let lessonsHtml = '';
+    if (data.lessons && data.lessons.length) {
+      lessonsHtml = `
+        <div class="qbot-extra-section">
+          <div class="qbot-extra-title">💡 수업 활동 아이디어</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            ${data.lessons.map((l,i) => `
+              <div class="qbot-lesson-card" style="--lc:${lessonColors[i]||'#6366f1'}">
+                <div class="qbot-lesson-head">
+                  <span class="qbot-lesson-num">${i+1}</span>
+                  <span class="qbot-lesson-title">${l.title||''}</span>
+                </div>
+                <div class="qbot-lesson-body">
+                  <div class="qbot-lesson-row"><span class="qbot-lesson-badge">활동</span>${l.desc||''}</div>
+                  <div class="qbot-lesson-row"><span class="qbot-lesson-badge">과제</span>${l.task||''}</div>
+                  <div class="qbot-lesson-row"><span class="qbot-lesson-badge" style="background:rgba(16,185,129,.15);color:#065f46;">사고 스킬</span>${l.skill||''}</div>
+                  <div class="qbot-lesson-row"><span class="qbot-lesson-badge" style="background:rgba(245,158,11,.15);color:#92400e;">역량 연계</span>${l.competency||''}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    wrap.innerHTML = resourcesHtml + dbotHtml + projectHtml + lessonsHtml;
   }
 
   function insertQBotStarter2(stepId, el) {
@@ -9797,7 +10068,6 @@ ${phaseContent[p]}
     var goal    = document.getElementById('dbotGoal').value.trim();
 
     if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
-    if (!getApiKey()) { document.getElementById('apiKeyBanner').style.display='flex'; document.getElementById('apiKeyBanner').style.opacity='1'; document.getElementById('apiKeyInput').focus(); alert('먼저 우측 하단에서 Anthropic API 키를 입력해주세요.'); return; }
     if (!topic) { alert('수업 주제를 입력해주세요.'); return; }
 
     dbotData = { grade: grade, subject: subject, unit: unit, topic: topic, goal: goal };
@@ -10145,6 +10415,9 @@ ${phaseContent[p]}
 
         <!-- 단계별 아코디언 -->
         <div id="qbotSteps"></div>
+
+        <!-- 심층 분석 추가 패널 (자료·심화질문·프로젝트·수업활동) -->
+        <div id="qbotExtrasWrap" style="margin-top:20px;"></div>
 
         <hr class="qbot-divider"/>
         <div class="qbot-action-row">

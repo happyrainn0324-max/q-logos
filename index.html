@@ -5864,8 +5864,11 @@
         })
       });
 
-      if (!res.ok) throw new Error('API 응답 오류: ' + res.status);
       const data = await res.json();
+      if (!res.ok) {
+        const errDetail = data.error ? JSON.stringify(data.error) : JSON.stringify(data);
+        throw new Error('API ' + res.status + ' : ' + errDetail);
+      }
       const text = (data.content || []).map(c => c.text || '').join('');
 
       if (text) {
@@ -5876,7 +5879,7 @@
         throw new Error('응답 내용이 비어있습니다.');
       }
     } catch(e) {
-      errBox.textContent = '⚠️ 탐구 계획 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. (' + e.message + ')';
+      errBox.textContent = '오류: ' + e.message;
       errBox.style.display = 'block';
     } finally {
       btn.disabled = false;

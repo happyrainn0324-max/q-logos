@@ -6281,7 +6281,8 @@ JSON 형식으로만 반환:
       setTimeout(() => {
         const el = document.getElementById('qs-' + k);
         el.className = 'qsuggest-q-text filled';
-        el.textContent = generated[k] || '';
+        el.setAttribute('data-q', generated[k] || '');
+        el.innerHTML = '<span class="qs-q-inner">' + (generated[k] || '') + '</span>';
       }, 200 + i * 180);
     });
 
@@ -10515,7 +10516,7 @@ ${phaseContent[p]}
   function openInquiryModal(qid) {
     var el = document.getElementById(qid);
     var isFilled = el && el.classList.contains('filled');
-    var q = isFilled ? el.textContent.trim() : '';
+    var q = isFilled ? (el.getAttribute('data-q') || '').trim() : '';
     if (!isFilled || !q || el.classList.contains('loading')) {
       alert("먼저 '좋은 질문 생성하기' 버튼을 눌러 질문을 생성해주세요!"); return;
     }

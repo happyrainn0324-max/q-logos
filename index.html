@@ -10251,7 +10251,7 @@ ${phaseContent[p]}
       var r1 = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: getApiHeaders(),
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600,
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000,
           messages: [{ role: 'user', content: '수업: ' + ctx + '\n\n이 주제의 본질적 쟁점에서 도출한 핵심질문 3가지.\n- 단순 정의(~은 무엇인가?) 금지\n- 관점 충돌·역설·실생활 연결 포함\n\nJSON 배열만: ["질문1","질문2","질문3"]' }]
         })
       });
@@ -10330,7 +10330,7 @@ ${phaseContent[p]}
         var r2 = await fetch('/.netlify/functions/claude', {
           method: 'POST',
           headers: getApiHeaders(),
-          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000,
             messages: [{ role: 'user', content: prompt }]
           })
         });
@@ -10738,29 +10738,26 @@ async function generateIqbot() {
   var err      = document.getElementById('iqbotErr');
 
   btn.disabled = true;
-  btn.textContent = '⏳ AI가 탐구 계획을 설계하는 중...';
+  btn.textContent = '⏳ 설계 중...';
   result.classList.remove('show');
   err.style.display = 'none';
 
-  var prompt = '중학생이 아래 탐구 질문을 가지고 있습니다.\n\n'
-    + '탐구 질문: "' + q + '"\n'
-    + '탐구 방법: ' + typeText + '\n'
-    + '탐구 기간: ' + period + '\n\n'
-    + '이 학생을 위해 실현 가능한 탐구 계획을 아래 형식으로 설계해주세요. 중학생 수준에 맞게 쉽고 구체적으로 작성해주세요.\n\n'
-    + '[1] 탐구 주제 정리\n'
-    + '[2] 탐구 목표 (2~3가지)\n'
-    + '[3] 탐구 방법 (' + typeText + ') - 3~5단계\n'
-    + '[4] 탐구 일정 (' + period + ')\n'
-    + '[5] 필요한 재료 및 자료\n'
-    + '[6] 예상 결과 및 가설\n'
-    + '[7] 주의할 점\n'
-    + '[8] 결과 정리 방법';
+  var prompt = '중학생 탐구 계획을 간결하게 작성해주세요.\n'
+    + '탐구 질문: "' + q + '" / 방법: ' + typeText + ' / 기간: ' + period + '\n\n'
+    + '각 항목을 아래 형식으로 2~3줄씩 짧게 작성하세요.\n\n'
+    + '📌 탐구 주제\n'
+    + '🎯 탐구 목표\n'
+    + '🔬 탐구 방법 (3단계)\n'
+    + '📅 탐구 일정\n'
+    + '🧰 필요한 재료\n'
+    + '💡 예상 결과\n'
+    + '📝 결과 정리 방법';
 
   try {
     var res = await fetch('/.netlify/functions/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1200,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -10768,7 +10765,13 @@ async function generateIqbot() {
     if (!res.ok) throw new Error((data.error && data.error.message) || ('오류 ' + res.status));
     var text = (data.content || []).map(function(c){ return c.text || ''; }).join('');
     if (!text) throw new Error('응답이 비어있습니다.');
-    box.textContent = text;
+    box.innerHTML = text.split('\n').map(function(line) {
+      if (!line.trim()) return '';
+      if (/^[📌🎯🔬📅🧰💡📝⚠️]/.test(line.trim())) {
+        return '<div style="margin:16px 0 6px;font-size:14px;font-weight:900;color:#0c4a6e;border-bottom:1.5px solid #bae6fd;padding-bottom:4px;">' + line.trim() + '</div>';
+      }
+      return '<div style="font-size:14px;color:#334155;line-height:1.8;padding-left:4px;">' + line + '</div>';
+    }).join('');
     result.classList.add('show');
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch(e) {
@@ -10795,8 +10798,8 @@ function downloadIqbotPdf() {
   var q = document.getElementById('iqbotQuestion').value.trim();
   var c = document.getElementById('iqbotContent').textContent;
   var body = c.split('\n').map(function(line){
-    if (!line.trim()) return '<br>';
-    if (/^\[\d+\]/.test(line.trim())) return '<h3 style="margin:18px 0 5px;font-size:14px;color:#0c4a6e;border-bottom:1px solid #bae6fd;padding-bottom:3px;">' + line.trim() + '</h3>';
+    if (!line.trim()) return '';
+    if (/^[📌🎯🔬📅🧰💡📝⚠️]/.test(line.trim())) return '<h3 style="margin:18px 0 5px;font-size:14px;color:#0c4a6e;border-bottom:1px solid #bae6fd;padding-bottom:3px;">' + line.trim() + '</h3>';
     return '<p style="margin:3px 0;font-size:13px;color:#334155;line-height:1.8;">' + line + '</p>';
   }).join('');
   var win = window.open('', '_blank');

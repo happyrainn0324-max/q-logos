@@ -5867,7 +5867,7 @@
 💡 예상 결과 및 가설
 (어떤 결과가 나올지 예측)
 
-⚠️ 주의할 점
+【주의할 점】
 (탐구 시 조심해야 할 사항 2~3가지)
 
 📝 결과 정리 방법
@@ -5877,16 +5877,14 @@
       const res = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: getApiHeaders(),
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1200,
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000,
           messages: [{ role: 'user', content: prompt }]
         })
       });
 
       if (!res.ok) throw new Error('API 응답 오류: ' + res.status);
       const data = await res.json();
-      const text = data.content?.[0]?.text || '';
+      const text = (data.content || []).map(c => c.text || '').join('');
 
       if (text) {
         resultContent.textContent = text;

@@ -5973,70 +5973,6 @@
 <div class="body">${bodyHtml}</div>
 <script>window.onload = function(){ window.print(); }<\/script>
 
-<!-- ── 탐구 설계 모달 ── -->
-<div class="inquiry-overlay" id="inquiryOverlay" onclick="if(event.target===this)closeInquiryModal()">
-  <div class="inquiry-box">
-    <div class="inquiry-head">
-      <h2>🔭 AI 탐구 계획 설계하기</h2>
-      <p>선택한 질문을 바탕으로 AI가 탐구 계획을 설계해 드려요</p>
-      <button class="inquiry-close" onclick="closeInquiryModal()">✕</button>
-    </div>
-    <div class="inquiry-body">
-
-      <!-- 선택된 질문 미리보기 -->
-      <div class="inquiry-q-preview" id="inquiryQPreview">
-        <span class="q-icon">❓</span>
-        <span id="inquiryQText"></span>
-      </div>
-
-      <!-- 옵션 -->
-      <div class="inquiry-form-grid">
-        <div class="inquiry-field">
-          <label>탐구 유형</label>
-          <select id="inquiryTypeModal">
-            <option value="experiment">🧪 실험 탐구</option>
-            <option value="survey">📊 조사·문헌 탐구</option>
-            <option value="observation">👁️ 관찰 탐구</option>
-            <option value="comparison">⚖️ 비교 탐구</option>
-            <option value="creation">🛠️ 제작·창작 탐구</option>
-          </select>
-        </div>
-        <div class="inquiry-field">
-          <label>탐구 기간</label>
-          <select id="inquiryPeriodModal">
-            <option value="1주일">1주일</option>
-            <option value="2주일">2주일</option>
-            <option value="한 달">한 달</option>
-            <option value="한 학기">한 학기</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 생성 버튼 -->
-      <button class="inquiry-gen-btn" id="inquiryGenBtnModal" onclick="generateInquiryModal()">
-        <span id="inquiryGenIconModal">✨</span>
-        <span id="inquiryGenTxtModal">AI로 탐구 계획 설계하기</span>
-      </button>
-
-      <!-- 결과 -->
-      <div class="inquiry-result-box" id="inquiryResultModal">
-        <div class="inquiry-result-header">
-          <span>📋 AI 탐구 설계 결과</span>
-          <div class="inquiry-result-actions">
-            <button onclick="copyInquiryModal()" style="border:1.5px solid #e2e8f0;color:#64748b;background:white;">📋 복사</button>
-            <button onclick="downloadInquiryTxtModal()" style="border:1.5px solid #c4b5fd;color:#7c3aed;background:white;">📄 TXT</button>
-            <button onclick="downloadInquiryPdfModal()" style="border:none;color:white;background:linear-gradient(135deg,#7c3aed,#a855f7);">📑 PDF</button>
-          </div>
-        </div>
-        <div class="inquiry-result-content" id="inquiryResultContentModal"></div>
-      </div>
-
-      <!-- 에러 -->
-      <div class="inquiry-err" id="inquiryErrModal"></div>
-
-    </div>
-  </div>
-</div>
 
 </body></html>`);
     win.document.close();
@@ -10929,5 +10865,59 @@ ${phaseContent[p]}
   </div>
 </div>
 
+
+<!-- ── 탐구 설계 모달 ── -->
+<div class="inquiry-overlay" id="inquiryOverlay" onclick="if(event.target===this)closeInquiryModal()">
+  <div class="inquiry-box">
+    <div class="inquiry-head">
+      <h2>🔭 AI 탐구 계획 설계하기</h2>
+      <p>선택한 질문을 바탕으로 AI가 탐구 계획을 설계해 드려요</p>
+      <button class="inquiry-close" onclick="closeInquiryModal()">✕</button>
+    </div>
+    <div class="inquiry-body">
+      <div class="inquiry-q-preview" id="inquiryQPreview">
+        <span class="q-icon">❓</span>
+        <span id="inquiryQText"></span>
+      </div>
+      <div class="inquiry-form-grid">
+        <div class="inquiry-field">
+          <label>탐구 유형</label>
+          <select id="inquiryTypeModal">
+            <option value="experiment">🧪 실험 탐구</option>
+            <option value="survey">📊 조사·문헌 탐구</option>
+            <option value="observation">👁️ 관찰 탐구</option>
+            <option value="comparison">⚖️ 비교 탐구</option>
+            <option value="creation">🛠️ 제작·창작 탐구</option>
+          </select>
+        </div>
+        <div class="inquiry-field">
+          <label>탐구 기간</label>
+          <select id="inquiryPeriodModal">
+            <option value="1주일">1주일</option>
+            <option value="2주일">2주일</option>
+            <option value="한 달">한 달</option>
+            <option value="한 학기">한 학기</option>
+          </select>
+        </div>
+      </div>
+      <button class="inquiry-gen-btn" id="inquiryGenBtnModal" onclick="generateInquiryModal()">
+        <span id="inquiryGenIconModal">✨</span>
+        <span id="inquiryGenTxtModal">AI로 탐구 계획 설계하기</span>
+      </button>
+      <div class="inquiry-result-box" id="inquiryResultModal">
+        <div class="inquiry-result-header">
+          <span>📋 AI 탐구 설계 결과</span>
+          <div class="inquiry-result-actions">
+            <button onclick="copyInquiryModal()" style="border:1.5px solid #e2e8f0;color:#64748b;background:white;">📋 복사</button>
+            <button onclick="downloadInquiryTxtModal()" style="border:1.5px solid #c4b5fd;color:#7c3aed;background:white;">📄 TXT</button>
+            <button onclick="downloadInquiryPdfModal()" style="border:none;color:white;background:linear-gradient(135deg,#7c3aed,#a855f7);">📑 PDF</button>
+          </div>
+        </div>
+        <div class="inquiry-result-content" id="inquiryResultContentModal"></div>
+      </div>
+      <div class="inquiry-err" id="inquiryErrModal"></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

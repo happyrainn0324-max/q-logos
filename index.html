@@ -3230,7 +3230,121 @@
   .iqbot-result-actions button { padding:5px 13px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
   .iqbot-content { font-size:14px; color:#334155; line-height:1.9; white-space:pre-wrap; word-break:keep-all; }
   .iqbot-err { display:none; margin-top:14px; padding:12px 16px; background:#fef2f2; border:1.5px solid #fecaca; border-radius:12px; font-size:13px; font-weight:700; color:#dc2626; }
-</style>
+
+  /* ════════════════════════════════════
+     모바일 최적화 (@media max-width: 768px)
+     4개 섹션: 헤로, 오늘의 질문, 질문 배우기, OVERVIEW
+     ════════════════════════════════════ */
+  @media (max-width: 768px) {
+
+    /* ── NAV ── */
+    nav { padding: 0 16px; height: 56px; }
+    .nav-logo { font-size: 14px; }
+    .nav-logo-svg { width: 28px; height: 28px; }
+    .nav-links { display: none; }
+    .nav-cta, .custom-login-btn { padding: 8px 16px; font-size: 12px; }
+
+    /* ── HERO ── */
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 80px 20px 40px;
+      min-height: auto;
+      gap: 24px;
+    }
+    .hero-bots {
+      flex-direction: row;
+      position: static;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .bot-btn {
+      min-width: 100px;
+      min-height: 100px;
+      padding: 16px 10px;
+      border-radius: 16px;
+      flex-shrink: 0;
+    }
+    .bot-icon { font-size: 24px; }
+    .bot-title { font-size: 12px; }
+    .bot-sub { font-size: 10px; }
+    .hero h1 { font-size: 36px !important; line-height: 1.25; }
+    .hero-desc { font-size: 14px; }
+    .hero-highlights { gap: 8px; }
+    .hero-actions { gap: 8px; }
+    .hero-actions button, .hero-actions a { font-size: 13px; padding: 12px 18px; }
+    .hero-contest-grid { grid-template-columns: 1fr !important; gap: 12px; }
+    .hero-contest-box { padding: 20px !important; }
+
+    /* ── SECTION 공통 ── */
+    section { padding: 48px 20px !important; }
+    .section-title { font-size: 26px !important; }
+    .section-desc { font-size: 13px !important; }
+
+    /* ── 오늘의 나의 질문 ── */
+    #myquestion { padding: 40px 16px !important; }
+    .myq-tab-row { flex-direction: column; gap: 12px; }
+    .myq-tab-btn { width: 100%; justify-content: center; }
+    .myq-bot-row { flex-wrap: wrap; gap: 8px; }
+    .myq-bot-btn { flex: 1; min-width: 100px; font-size: 12px; padding: 10px 8px; }
+    .myq-form-grid { grid-template-columns: 1fr !important; }
+    .myq-q-grid { grid-template-columns: 1fr !important; }
+    .myq-submit-btn { font-size: 14px; padding: 14px; }
+
+    /* ── 질문 배우기 ── */
+    .qsuggest-header { text-align: center; }
+    .qgenerate-btn { width: 100%; font-size: 14px; }
+    .iqbot-open-btn { width: 100%; font-size: 14px; justify-content: center; }
+    .qsuggest-grid { grid-template-columns: 1fr !important; gap: 12px; }
+    .qsuggest-card { padding: 18px 16px; }
+
+    /* ── OVERVIEW ── */
+    #overview { padding: 48px 16px !important; }
+    .pillars-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+    .pillar-card { padding: 16px 14px !important; }
+    .pillar-card h3 { font-size: 15px !important; }
+    .overview-grid, .arc-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+    .overview-card { padding: 16px !important; }
+    .logos-framework { padding: 24px 16px !important; }
+    .dream-model-grid { grid-template-columns: 1fr 1fr !important; }
+    .logos-phase-cards { grid-template-columns: 1fr !important; }
+    .phase-card { padding: 16px !important; }
+
+    /* ── IQ-BOT 모달 ── */
+    .iqbot-box { border-radius: 20px; }
+    .iqbot-head { padding: 20px 20px 16px; border-radius: 20px 20px 0 0; }
+    .iqbot-body { padding: 20px; }
+    .iqbot-grid { grid-template-columns: 1fr; }
+
+    /* ── D-BOT / Q-BOT 모달 ── */
+    .dbot-box, .qbot-box { border-radius: 20px; max-height: 95vh; }
+    .dbot-head, .qbot-head { padding: 20px 20px 16px; }
+    .dbot-body, .qbot-body { padding: 20px; }
+    .dbot-form-grid { grid-template-columns: 1fr !important; }
+    .dbot-form-grid.two { grid-template-columns: 1fr !important; }
+
+    /* ── 질문 미션 놀이터 ── */
+    .qplay-tabs { grid-template-columns: 1fr 1fr !important; }
+
+    /* ── 포트폴리오 / 랭킹 ── */
+    .pf-dashboard { grid-template-columns: repeat(2,1fr) !important; }
+    .ranking-grade-grid { grid-template-columns: 1fr !important; }
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 28px !important; }
+    .hero-contest-btn-row { flex-direction: column; gap: 8px; }
+    .hero-contest-btn, .hero-contest-join { width: 100%; text-align: center; }
+    .pillars-grid { grid-template-columns: 1fr !important; }
+    .overview-grid, .arc-grid { grid-template-columns: 1fr !important; }
+    .dream-model-grid { grid-template-columns: 1fr !important; }
+    .qplay-tabs { grid-template-columns: 1fr !important; }
+    .myq-bot-btn .myq-bot-label { display: none; }
+    section { padding: 36px 16px !important; }
+    .section-title { font-size: 22px !important; }
+  }
+
+  </style>
 </head>
 <body>
 

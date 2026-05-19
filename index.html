@@ -10578,9 +10578,10 @@ ${phaseContent[p]}
   // ── 탐구 설계 모달 ──
   function openInquiryModal(qid) {
     var el = document.getElementById(qid);
-    var q = el ? el.textContent.trim() : '';
-    if (!q || el.classList.contains('loading')) {
-      alert('먼저 질문을 생성해주세요!'); return;
+    var isFilled = el && el.classList.contains('filled');
+    var q = isFilled ? el.textContent.trim() : '';
+    if (!isFilled || !q || el.classList.contains('loading')) {
+      alert("먼저 '좋은 질문 생성하기' 버튼을 눌러 질문을 생성해주세요!"); return;
     }
     document.getElementById('inquiryQText').textContent = q;
     document.getElementById('inquiryResultModal').classList.remove('show');

@@ -3366,15 +3366,34 @@
     }
     .qsuggest-grid { grid-template-columns: 1fr !important; gap: 10px; }
     .qsuggest-card {
-      padding: 16px 14px;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 8px;
+      padding: 18px 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      box-sizing: border-box;
     }
-    .qsuggest-type-badge { font-size: 11px; padding: 4px 10px; }
-    .qsuggest-type-desc { font-size: 11px; text-align: left; }
-    .qsuggest-q-text { font-size: 13px; min-height: 52px; }
-    .qs-inquiry-btn { font-size: 12px; padding: 8px 12px; }
+    .qsuggest-type-badge { font-size: 12px; padding: 5px 12px; }
+    .qsuggest-type-desc {
+      font-size: 12px;
+      text-align: left;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: -4px;
+    }
+    .qsuggest-q-text {
+      font-size: 14px;
+      min-height: 60px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: left;
+    }
+    .qs-inquiry-btn {
+      font-size: 13px;
+      padding: 10px 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
     /* ── OVERVIEW ── */
     #overview { padding: 44px 18px !important; }
@@ -3428,14 +3447,35 @@
     .dbot-form-grid.two { grid-template-columns: 1fr 1fr !important; }
 
     /* ── 모바일 숨김 섹션 ── */
-    #qgallery, #model, #qplayground, #portfolio, #roadmap { display: none !important; }
+    #qgallery, #model, #qplayground, #portfolio, #roadmap,
+    #myqList, #myQGallerySection,
+    #rankingSection, #qkingSection, #qclassSection { display: none !important; }
 
-    /* ── 공모전 카드 숨김 ── */
+    /* ── 공모전 카드 + 액션버튼 + 봇버튼 숨김 ── */
     .hero-contest-grid { display: none !important; }
+    .hero-actions { display: none !important; }
+    .hero-bots { display: none !important; }
+    .hero-highlights { display: none !important; }
 
     /* ── hero-desc 텍스트 전환 ── */
     .hero-desc-pc { display: none; }
     .hero-desc-mobile { display: inline; }
+
+    /* ── 헤로 가운데 정렬 ── */
+    .hero {
+      justify-items: center;
+      text-align: center;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+    .hero-badge { align-self: center; }
+    .hero h1 { text-align: center; }
+    .hero-desc { text-align: center; max-width: 100%; }
   }
 
   @media (max-width: 480px) {

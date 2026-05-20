@@ -1526,7 +1526,7 @@
     letter-spacing: -.01em; margin-top: 4px;
   }
   .qsuggest-grid {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; align-items: stretch;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; align-items: start;
   }
   @media (max-width:1200px) { .qsuggest-grid { grid-template-columns: repeat(3,1fr); } }
   @media (max-width:680px)  { .qsuggest-grid { grid-template-columns: 1fr; } }
@@ -1537,7 +1537,7 @@
     box-shadow: 0 2px 12px rgba(0,0,0,.05);
     transition: transform .2s, box-shadow .2s;
     position: relative; overflow: hidden;
-    text-align: center; height: 100%;
+    text-align: center; height: auto; min-height: 100%;
   }
   .qsuggest-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.1); }
   .qsuggest-card::before {
@@ -1560,11 +1560,12 @@
     font-size: 15.5px; color: #334155; line-height: 1.75;
     background: var(--bg); border-radius: 12px; padding: 13px 15px;
     border-left: 3px solid var(--qs-color, var(--indigo));
-    min-height: 100px; height: 100px; display: flex; align-items: center; justify-content: center;
+    min-height: 100px; height: auto; display: flex; align-items: center; justify-content: center;
     width: 100%; box-sizing: border-box;
     text-align: center;
     transition: all .4s ease;
     margin-top: auto;
+    word-break: keep-all; overflow-wrap: break-word;
   }
   .qs-placeholder {
     color: #c0c8d8; font-size: 14.5px; font-style: italic; line-height: 1.6;
@@ -1576,7 +1577,7 @@
     animation: shimmer 1.4s infinite;
     border-left-color: #c8c8e0;
     color: transparent;
-    min-height: 100px; height: 100px;
+    min-height: 100px; height: auto;
   }
   @keyframes shimmer {
     0%   { background-position: 200% 0; }

@@ -377,7 +377,7 @@
     justify-content: center; font-size: 22px; margin: 0 auto 20px;
   }
   .pillar-card h3 { font-size: 19px; font-weight: 700; margin-bottom: 10px; text-align: center; }
-  .pillar-card p { font-size: 15.5px; color: var(--muted); line-height: 1.75; text-align: left; }
+  .pillar-card p { font-size: 14px; color: var(--muted); line-height: 1.8; text-align: center; word-break: keep-all; overflow-wrap: break-word; }
 
   /* ── Q-LOGOS ── */
   .qlogos-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
@@ -1401,34 +1401,43 @@
 
   .myq-card {
     background: white; border: 1px solid var(--line); border-radius: 20px;
-    padding: 22px 26px; margin-bottom: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.04); position: relative;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;
+    padding: 14px 18px 14px 18px; margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.7fr); gap: 12px;
+    align-items: stretch; position: relative;
   }
-  .myq-card-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .myq-card-left {
+    display: flex; flex-direction: column; padding-bottom: 0;
+  }
+  .myq-card-right {
+    display: flex; flex-direction: column; padding-right: 52px;
+  }
+  .myq-card-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
   .myq-card-tag {
-    font-size: 15.5px; font-weight: 700; padding: 4px 12px;
+    font-size: 13px; font-weight: 700; padding: 2px 9px;
     border-radius: 100px; background: rgba(79,70,229,.08); color: var(--indigo);
   }
   .myq-card-tag.teacher { background: rgba(245,158,11,.1); color: #b45309; }
-  .myq-card-topic { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-  .myq-card-unit { font-size: 14px; color: var(--muted); }
-  .myq-card-qs { display: flex; flex-direction: column; gap: 8px; }
+  .myq-card-topic { font-size: 14.5px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .myq-card-unit { font-size: 12.5px; color: var(--muted); }
+  .myq-card-qs { display: flex; flex-direction: column; gap: 4px; }
   .myq-card-q {
-    display: flex; gap: 10px; align-items: flex-start;
-    font-size: 15.5px; color: #334155; line-height: 1.65;
+    display: flex; gap: 8px; align-items: flex-start;
+    font-size: 14px; color: #334155; line-height: 1.55;
   }
   .myq-card-qnum {
-    font-size: 15px; font-weight: 900; padding: 2px 8px; border-radius: 6px;
+    font-size: 12px; font-weight: 900; padding: 2px 6px; border-radius: 5px;
     color: white; flex-shrink: 0; margin-top: 2px;
   }
-  .myq-card-date { font-size: 15px; color: #94a3b8; position: absolute; top: 18px; right: 22px; }
+  .myq-card-date { font-size: 12px; color: #94a3b8; margin-top: 6px; }
   .myq-card-del {
-    position: absolute; bottom: 16px; right: 22px;
-    font-size: 15px; color: #cbd5e1; background: none; border: none;
-    cursor: pointer; font-family: inherit; transition: color .2s;
+    position: absolute; top: 12px; right: 14px;
+    font-size: 12px; font-weight: 700; color: #cbd5e1;
+    background: none; border: 1px solid #e2e8f0; border-radius: 6px;
+    padding: 2px 8px; cursor: pointer; font-family: inherit; transition: all .2s;
+    line-height: 1.4;
   }
-  .myq-card-del:hover { color: #f43f5e; }
+  .myq-card-del:hover { color: #f43f5e; border-color: #fca5a5; background: #fff1f2; }
 
   /* ── 월별 아코디언 ── */
   .myq-month-group { margin-bottom: 12px; border-radius: 20px; overflow: hidden; border: 1.5px solid var(--line); background: white; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
@@ -1450,8 +1459,8 @@
   .myq-month-body.open { display: block; }
   .myq-month-card {
     background: var(--bg); border: 1px solid var(--line); border-radius: 16px;
-    padding: 18px 20px; margin-top: 10px; position: relative;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start;
+    padding: 12px 16px; margin-top: 8px;
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.7fr); gap: 10px; align-items: start;
   }
   .myq-toggle-btn {
     display: inline-flex; align-items: center; gap: 6px;
@@ -1517,7 +1526,7 @@
     letter-spacing: -.01em; margin-top: 4px;
   }
   .qsuggest-grid {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; align-items: stretch;
   }
   @media (max-width:1200px) { .qsuggest-grid { grid-template-columns: repeat(3,1fr); } }
   @media (max-width:680px)  { .qsuggest-grid { grid-template-columns: 1fr; } }
@@ -1528,7 +1537,7 @@
     box-shadow: 0 2px 12px rgba(0,0,0,.05);
     transition: transform .2s, box-shadow .2s;
     position: relative; overflow: hidden;
-    text-align: center;
+    text-align: center; height: 100%;
   }
   .qsuggest-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.1); }
   .qsuggest-card::before {
@@ -1545,16 +1554,17 @@
   }
   .qsuggest-type-desc {
     font-size: 14px; color: var(--muted); line-height: 1.6;
-    text-align: center;
+    text-align: center; flex: 1;
   }
   .qsuggest-q-text {
     font-size: 15.5px; color: #334155; line-height: 1.75;
     background: var(--bg); border-radius: 12px; padding: 13px 15px;
     border-left: 3px solid var(--qs-color, var(--indigo));
-    min-height: 72px; display: flex; align-items: center; justify-content: center;
-    flex: 1; width: 100%;
+    min-height: 100px; height: 100px; display: flex; align-items: center; justify-content: center;
+    width: 100%; box-sizing: border-box;
     text-align: center;
     transition: all .4s ease;
+    margin-top: auto;
   }
   .qs-placeholder {
     color: #c0c8d8; font-size: 14.5px; font-style: italic; line-height: 1.6;
@@ -1566,7 +1576,7 @@
     animation: shimmer 1.4s infinite;
     border-left-color: #c8c8e0;
     color: transparent;
-    min-height: 72px;
+    min-height: 100px; height: 100px;
   }
   @keyframes shimmer {
     0%   { background-position: 200% 0; }
@@ -2311,29 +2321,32 @@
   }
   .qgal-list { padding: 12px; display: flex; flex-direction: column; gap: 10px; max-height: 600px; overflow-y: auto; }
   .qgal-item {
-    background: var(--bg); border-radius: 14px; padding: 14px 16px;
+    background: var(--bg); border-radius: 14px; padding: 12px 14px;
     border-left: 3px solid var(--qgal-color, var(--indigo));
     transition: background .15s;
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.7fr); gap: 10px; align-items: start;
   }
   .qgal-item:hover { background: #eef2ff; }
+  .qgal-item-left { min-width: 0; }
+  .qgal-item-right { min-width: 0; }
   .qgal-item-meta {
-    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
+    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;
   }
   .qgal-item-tag {
-    font-size: 15px; font-weight: 700; padding: 2px 9px; border-radius: 100px;
+    font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 100px;
     background: rgba(79,70,229,.08); color: var(--indigo);
   }
-  .qgal-item-topic { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
-  .qgal-item-qs { display: flex; flex-direction: column; gap: 5px; }
+  .qgal-item-topic { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .qgal-item-qs { display: flex; flex-direction: column; gap: 4px; }
   .qgal-item-q {
-    display: flex; gap: 8px; align-items: flex-start;
-    font-size: 15px; color: #334155; line-height: 1.6;
+    display: flex; gap: 7px; align-items: flex-start;
+    font-size: 13.5px; color: #334155; line-height: 1.55;
   }
   .qgal-item-qnum {
-    font-size: 14px; font-weight: 900; padding: 2px 6px; border-radius: 5px;
+    font-size: 12px; font-weight: 900; padding: 2px 6px; border-radius: 5px;
     color: white; flex-shrink: 0; margin-top: 2px;
   }
-  .qgal-item-date { font-size: 15px; color: #94a3b8; margin-top: 8px; text-align: right; }
+  .qgal-item-date { font-size: 12px; color: #94a3b8; margin-top: 6px; text-align: right; }
   .qgal-empty-col { text-align: center; padding: 32px 16px; color: #94a3b8; font-size: 15px; }
 
   /* ── INTEGRATED MODAL BUTTONS ── */
@@ -2406,12 +2419,12 @@
     background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.09);
     border-radius: 18px;
-    padding: 24px 16px;
+    padding: 22px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 8px;
+    gap: 5px;
   }
   .qlogos-frame-key {
     width: 52px; height: 52px; border-radius: 16px;
@@ -2426,11 +2439,14 @@
     font-size: 18px; font-weight: 800; color: white;
   }
   .qlogos-frame-sub {
-    font-size: 14px; color: #ffffff; line-height: 1.5; font-weight: 600;
+    font-size: 13px; color: #ffffff; line-height: 1.5; font-weight: 600;
+    word-break: keep-all; overflow-wrap: break-word;
   }
   .qlogos-frame-desc {
-    font-size: 15.5px; color: #cbd5e1; line-height: 1.6;
-    text-align: center; padding: 0 4px;
+    font-size: 12.5px; color: #cbd5e1; line-height: 1.65;
+    text-align: center; padding: 0 2px;
+    word-break: keep-all; overflow-wrap: break-word;
+    margin-bottom: 18px;
   }
 
   /* ── HERO CONTEST BOXES ── */
@@ -2527,7 +2543,7 @@
     transition: all .2s;
   }
   .qlogos-detail-btn {
-    margin-top: 10px;
+    margin-top: auto;
     background: transparent;
     border: 1.5px solid;
     border-radius: 100px;
@@ -3987,7 +4003,7 @@
       <!-- 사실적 질문 -->
       <div class="qsuggest-card" style="--qs-color:#0ea5e9">
         <div class="qsuggest-type-badge">🔍 사실적 질문</div>
-        <div class="qsuggest-type-desc">텍스트나 자료에서<br>확인 가능한 사실을 묻는 질문</div>
+        <div class="qsuggest-type-desc">텍스트나 자료에서<br>확인 가능한<br>사실을 묻는 질문</div>
         <div class="qsuggest-q-text" id="qs-factual">
           <span class="qs-placeholder">저장하면 예시 질문이<br>여기에 나타납니다</span>
         </div>
@@ -4027,7 +4043,7 @@
       <!-- 창의적 질문 -->
       <div class="qsuggest-card" style="--qs-color:#ec4899">
         <div class="qsuggest-type-badge">💡 창의적 질문</div>
-        <div class="qsuggest-type-desc">기존 틀을 벗어나 새로운<br>가능성을 상상하는 질문</div>
+        <div class="qsuggest-type-desc">기존의 틀을 벗어나<br>새로운 가능성을<br>상상하는 질문</div>
         <div class="qsuggest-q-text" id="qs-creative">
           <span class="qs-placeholder">저장하면 예시 질문이<br>여기에 나타납니다</span>
         </div>
@@ -4083,13 +4099,6 @@
   <!-- 필터 -->
   <div class="qgal-filters">
     <div class="qgal-filter-group">
-      <label class="qgal-filter-label">역할</label>
-      <div class="qgal-btn-row" id="qgalRoleBtns">
-        <button class="qgal-btn active" onclick="setQGalFilter('role','all',this)">전체</button>
-        <button class="qgal-btn" onclick="setQGalFilter('role','student',this)">🎒 학생</button>
-      </div>
-    </div>
-    <div class="qgal-filter-group">
       <label class="qgal-filter-label">학년</label>
       <div class="qgal-btn-row" id="qgalGradeBtns">
         <button class="qgal-btn active" onclick="setQGalFilter('grade','all',this)">전체</button>
@@ -4138,10 +4147,6 @@
       <div id="qgalStudentCount" style="font-size:15px;font-weight:800;color:#0ea5e9;margin-bottom:10px;margin-top:8px;"></div>
       <div id="qgalStudentList" class="qgal-list-full"></div>
     </div>
-    <div id="qgalTeacherSection" style="margin-top:28px;">
-      <div id="qgalTeacherCount" style="font-size:15px;font-weight:800;color:#f59e0b;margin-bottom:10px;"></div>
-      <div id="qgalTeacherList" class="qgal-list-full"></div>
-    </div>
   </div>
 </section>
 
@@ -4154,22 +4159,22 @@
     <div class="pillar-card">
       <div class="pillar-icon">💬</div>
       <h3>질문하는 학교문화 조성</h3>
-      <p>질문 게시판, 대화 규칙, 질문 친화적 교실 분위기, 온·오프라인 참여 공간을 구축합니다.</p>
+      <p>질문 게시판, 대화 규칙,<br>질문 친화적 교실 분위기,<br>온·오프라인 참여 공간을 구축합니다.</p>
     </div>
     <div class="pillar-card">
       <div class="pillar-icon">💡</div>
       <h3>좋은 질문 배우기</h3>
-      <p>질문 생성 방법, 디지털 질문 능력, 질문의 질을 높이는 전략을 학생이 직접 익힙니다.</p>
+      <p>질문 생성 방법, 디지털 질문 능력,<br>질문의 질을 높이는 전략을<br>학생이 직접 익힙니다.</p>
     </div>
     <div class="pillar-card">
       <div class="pillar-icon">📖</div>
       <h3>질문으로 배우기</h3>
-      <p>학생 질문 중심 교과 수업과 다양한 질문형 수업 모델로 배움의 깊이를 확장합니다.</p>
+      <p>학생 질문 중심 교과 수업과<br>다양한 질문형 수업 모델로<br>배움의 깊이를 확장합니다.</p>
     </div>
     <div class="pillar-card">
       <div class="pillar-icon">🌱</div>
       <h3>질문하며 살기</h3>
-      <p>프로젝트, 창체, 지역 연계 활동을 통해 질문을 삶의 실천과 공동체 문제 해결로 연결합니다.</p>
+      <p>프로젝트, 창체, 지역 연계 활동을 통해<br>질문을 삶의 실천과<br>공동체 문제 해결로 연결합니다.</p>
     </div>
   </div>
 </section>
@@ -4187,7 +4192,7 @@
         <div class="qlogos-frame-phase">PHASE 1</div>
         <div class="qlogos-frame-name">Launch</div>
         <div class="qlogos-frame-sub">질문을 깨우는 출발</div>
-        <div class="qlogos-frame-desc">삶과 연결된 장면·영상·기사로 학생 스스로 '왜?'라고 묻게 만드는 도입 단계</div>
+        <div class="qlogos-frame-desc">삶과 연결된 장면·영상·기사로<br>학생 스스로 '왜?'라고<br>묻게 만드는 도입 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(14,165,233,.5);color:#38bdf8">자세히 보기 →</button>
       </div>
       <div class="qlogos-frame-item" onclick="openModal('observe')">
@@ -4195,7 +4200,7 @@
         <div class="qlogos-frame-phase">PHASE 2</div>
         <div class="qlogos-frame-name">Observe</div>
         <div class="qlogos-frame-sub">자료를 보고 질문 찾기</div>
-        <div class="qlogos-frame-desc">텍스트·그래프·사진 등 다양한 자료를 꼼꼼히 살피며 핵심 쟁점을 발견하는 단계</div>
+        <div class="qlogos-frame-desc">텍스트·그래프·사진 등 다양한<br>자료를 꼼꼼히 살피며<br>핵심 쟁점을 발견하는 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(16,185,129,.5);color:#34d399">자세히 보기 →</button>
       </div>
       <div class="qlogos-frame-item" onclick="openModal('generate')">
@@ -4203,7 +4208,7 @@
         <div class="qlogos-frame-phase">PHASE 3</div>
         <div class="qlogos-frame-name">Generate</div>
         <div class="qlogos-frame-sub">질문 생성과 확장</div>
-        <div class="qlogos-frame-desc">개인·모둠 질문을 만들고 비교·보완하며 더 깊은 탐구 질문으로<br>발전시키는 단계</div>
+        <div class="qlogos-frame-desc">개인·모둠 질문을 만들고<br>비교·보완하며 더 깊은<br>탐구 질문으로 발전시키는 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(139,92,246,.5);color:#c4b5fd">자세히 보기 →</button>
       </div>
       <div class="qlogos-frame-item" onclick="openModal('organize')">
@@ -4211,7 +4216,7 @@
         <div class="qlogos-frame-phase">PHASE 4</div>
         <div class="qlogos-frame-name">Organize</div>
         <div class="qlogos-frame-sub">사고 정리와 구조화</div>
-        <div class="qlogos-frame-desc">질문을 분류하고 근거를 모아 탐구 계획·토론 구조를 체계적으로<br>정리하는 단계</div>
+        <div class="qlogos-frame-desc">질문을 분류하고 근거를 모아<br>탐구 계획·토론 구조를<br>체계적으로 정리하는 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(245,158,11,.5);color:#fbbf24">자세히 보기 →</button>
       </div>
       <div class="qlogos-frame-item" onclick="openModal('solve')">
@@ -4219,7 +4224,7 @@
         <div class="qlogos-frame-phase">PHASE 5</div>
         <div class="qlogos-frame-name">Solve</div>
         <div class="qlogos-frame-sub">답하기, 나누기, 성찰하기</div>
-        <div class="qlogos-frame-desc">탐구 결과를 발표·토론·글쓰기로 나누고 새로운 질문으로<br>다시 이어 가는 단계</div>
+        <div class="qlogos-frame-desc">탐구 결과를 발표·토론·글쓰기로<br>나누고 새로운 질문으로<br>다시 이어 가는 단계</div>
         <button class="qlogos-detail-btn" style="border-color:rgba(244,63,94,.5);color:#fb7185">자세히 보기 →</button>
       </div>
     </div>
@@ -5058,63 +5063,60 @@
 </section>
 
 <!-- 성과 나눔 -->
-<section id="roadmap" class="fade-in" style="padding-bottom:16px;">
+<section id="roadmap" class="fade-in" style="padding-bottom:80px;">
   <span class="section-eyebrow">ACHIEVEMENT SHARING</span>
   <h2 class="section-title">질문하는 학교 성과 나눔</h2>
   <p class="section-desc" style="margin-bottom:40px;">질문하는 학교의 주요 성과와 활동을 한눈에 확인하고 직접 참여해 보세요.</p>
 
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto;">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:820px;margin:0 auto;">
 
     <!-- 카드 1: 질문하는 수업 -->
     <a href="https://question-day-six.vercel.app/" target="_blank" rel="noopener" style="text-decoration:none;">
-      <div style="background:white;border-radius:24px;overflow:hidden;box-shadow:0 4px 20px rgba(79,70,229,.10);border:1.5px solid #e8e7ff;transition:transform .22s,box-shadow .22s;cursor:pointer;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(79,70,229,.18)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(79,70,229,.10)'">
-        <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:40px 32px 32px;text-align:center;">
-          <div style="font-size:48px;margin-bottom:14px;">📚</div>
-          <div style="font-size:11px;font-weight:800;letter-spacing:.18em;color:#c4b5fd;text-transform:uppercase;margin-bottom:8px;">Lesson</div>
-          <h3 style="font-size:22px;font-weight:900;color:white;line-height:1.3;word-break:keep-all;">질문하는 수업</h3>
+      <div style="background:#f8faf9;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid #e4ede9;transition:transform .22s,box-shadow .22s;cursor:pointer;position:relative;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,.11)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <div style="height:3px;background:linear-gradient(90deg,#34d399,#6ee7b7);"></div>
+        <div style="padding:28px 20px 10px;text-align:center;">
+          <div style="width:48px;height:48px;border-radius:14px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;">📚</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.2em;color:#6ee7b7;text-transform:uppercase;margin-bottom:6px;">Lesson</div>
+          <h3 style="font-size:16px;font-weight:800;color:#1a2e22;line-height:1.35;word-break:keep-all;margin-bottom:0;">질문하는 수업</h3>
         </div>
-        <div style="padding:24px 28px 28px;text-align:center;">
-          <p style="font-size:15px;color:#5a5a7a;line-height:1.75;word-break:keep-all;text-wrap:pretty;margin-bottom:20px;">질문 중심 수업 설계와 실제 수업 사례를 확인하고 참여할 수 있습니다.</p>
-          <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-            <span style="font-size:13px;font-weight:700;color:#4f46e5;">바로가기</span>
-            <span style="width:28px;height:28px;border-radius:50%;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:14px;color:#4f46e5;">→</span>
-          </div>
+        <div style="width:32px;height:1px;background:#d1fae5;margin:12px auto;"></div>
+        <div style="padding:0 20px 24px;text-align:center;">
+          <p style="font-size:13px;color:#64748b;line-height:1.75;word-break:keep-all;margin-bottom:16px;">질문 중심 수업 설계와 실제 수업 사례를 확인하고 참여할 수 있습니다.</p>
+          <div style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#059669;border:1px solid #a7f3d0;border-radius:100px;padding:5px 14px;background:#f0fdf4;">바로가기 →</div>
         </div>
       </div>
     </a>
 
     <!-- 카드 2: 질문기반 진로설계 공모전 -->
     <a href="https://career-github-io.vercel.app/" target="_blank" rel="noopener" style="text-decoration:none;">
-      <div style="background:white;border-radius:24px;overflow:hidden;box-shadow:0 4px 20px rgba(14,165,233,.10);border:1.5px solid #e0f2fe;transition:transform .22s,box-shadow .22s;cursor:pointer;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(14,165,233,.18)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(14,165,233,.10)'">
-        <div style="background:linear-gradient(135deg,#0ea5e9,#6366f1);padding:40px 32px 32px;text-align:center;">
-          <div style="font-size:48px;margin-bottom:14px;">🏆</div>
-          <div style="font-size:11px;font-weight:800;letter-spacing:.18em;color:#bae6fd;text-transform:uppercase;margin-bottom:8px;">Contest</div>
-          <h3 style="font-size:22px;font-weight:900;color:white;line-height:1.3;word-break:keep-all;">질문기반 진로설계 공모전</h3>
+      <div style="background:#f7fafd;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid #daeaf5;transition:transform .22s,box-shadow .22s;cursor:pointer;position:relative;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,.11)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <div style="height:3px;background:linear-gradient(90deg,#38bdf8,#7dd3fc);"></div>
+        <div style="padding:28px 20px 10px;text-align:center;">
+          <div style="width:48px;height:48px;border-radius:14px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;">🏆</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.2em;color:#7dd3fc;text-transform:uppercase;margin-bottom:6px;">Contest</div>
+          <h3 style="font-size:16px;font-weight:800;color:#0c2a3a;line-height:1.35;word-break:keep-all;margin-bottom:0;">질문기반 진로설계 공모전</h3>
         </div>
-        <div style="padding:24px 28px 28px;text-align:center;">
-          <p style="font-size:15px;color:#5a5a7a;line-height:1.75;word-break:keep-all;text-wrap:pretty;margin-bottom:20px;">질문을 통해 나만의 진로를 설계하는 공모전 우수작을 감상해보세요.</p>
-          <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-            <span style="font-size:13px;font-weight:700;color:#0ea5e9;">바로가기</span>
-            <span style="width:28px;height:28px;border-radius:50%;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:14px;color:#0ea5e9;">→</span>
-          </div>
+        <div style="width:32px;height:1px;background:#bae6fd;margin:12px auto;"></div>
+        <div style="padding:0 20px 24px;text-align:center;">
+          <p style="font-size:13px;color:#64748b;line-height:1.75;word-break:keep-all;margin-bottom:16px;">질문을 통해 나만의 진로를 설계하는 공모전 우수작을 감상해보세요.</p>
+          <div style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#0284c7;border:1px solid #7dd3fc;border-radius:100px;padding:5px 14px;background:#f0f9ff;">바로가기 →</div>
         </div>
       </div>
     </a>
 
-    <!-- 카드 3: 질문하는 학부모 아카데미 -->
+    <!-- 카드 3: 질문중심 학부모 진학아카데미 -->
     <a href="https://academy2026-rho.vercel.app/" target="_blank" rel="noopener" style="text-decoration:none;">
-      <div style="background:white;border-radius:24px;overflow:hidden;box-shadow:0 4px 20px rgba(16,185,129,.10);border:1.5px solid #d1fae5;transition:transform .22s,box-shadow .22s;cursor:pointer;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(16,185,129,.18)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(16,185,129,.10)'">
-        <div style="background:linear-gradient(135deg,#10b981,#0ea5e9);padding:40px 32px 32px;text-align:center;">
-          <div style="font-size:48px;margin-bottom:14px;">👨‍👩‍👧</div>
-          <div style="font-size:11px;font-weight:800;letter-spacing:.18em;color:#a7f3d0;text-transform:uppercase;margin-bottom:8px;">Academy</div>
-          <h3 style="font-size:22px;font-weight:900;color:white;line-height:1.3;word-break:keep-all;">질문하는 학부모 아카데미</h3>
+      <div style="background:#faf8fe;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid #e5dff5;transition:transform .22s,box-shadow .22s;cursor:pointer;position:relative;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,.11)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <div style="height:3px;background:linear-gradient(90deg,#a78bfa,#c4b5fd);"></div>
+        <div style="padding:28px 20px 10px;text-align:center;">
+          <div style="width:48px;height:48px;border-radius:14px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;">👨‍👩‍👧</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.2em;color:#c4b5fd;text-transform:uppercase;margin-bottom:6px;">Academy</div>
+          <h3 style="font-size:16px;font-weight:800;color:#1e1640;line-height:1.35;word-break:keep-all;margin-bottom:0;">질문중심 학부모 진학아카데미</h3>
         </div>
-        <div style="padding:24px 28px 28px;text-align:center;">
-          <p style="font-size:15px;color:#5a5a7a;line-height:1.75;word-break:keep-all;text-wrap:pretty;margin-bottom:20px;">학부모와 함께하는 질문 중심 교육 아카데미 프로그램을 만나보세요.</p>
-          <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-            <span style="font-size:13px;font-weight:700;color:#10b981;">바로가기</span>
-            <span style="width:28px;height:28px;border-radius:50%;background:#d1fae5;display:flex;align-items:center;justify-content:center;font-size:14px;color:#10b981;">→</span>
-          </div>
+        <div style="width:32px;height:1px;background:#ddd6fe;margin:12px auto;"></div>
+        <div style="padding:0 20px 24px;text-align:center;">
+          <p style="font-size:13px;color:#64748b;line-height:1.75;word-break:keep-all;margin-bottom:16px;">학부모와 함께하는 질문 중심 교육 아카데미 프로그램을 만나보세요.</p>
+          <div style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#7c3aed;border:1px solid #c4b5fd;border-radius:100px;padding:5px 14px;background:#faf5ff;">바로가기 →</div>
         </div>
       </div>
     </a>
@@ -5365,7 +5367,7 @@
 
 <footer>
   <p><strong>2026 질문하는 학교</strong> · 인천공항중학교</p>
-  <p style="margin-top:6px;font-size:14px;color:#ffffff;">AI · UX 플랫폼 디자이너 진로상담부 조유진 · 010-3106-9153</p>
+  <p style="margin-top:6px;font-size:14px;color:#ffffff;">AI · UX 플랫폼 디자이너 · <span style="color:#c4b5fd;">진로상담부 조유진</span> · 010-3106-9153</p>
 </footer>
 
 <script>
@@ -7951,20 +7953,24 @@ JSON 형식으로만 반환:
         const qs = [e.q1, e.q2, e.q3].filter(Boolean);
         return `
           <div class="qgal-item" style="--qgal-color:${color}">
-            <div class="qgal-item-meta">
-              <span class="qgal-item-tag">${e.grade}</span>
-              <span class="qgal-item-tag">${e.subject}</span>
-              ${e.unit ? `<span class="qgal-item-tag">${e.unit}</span>` : ''}
+            <div class="qgal-item-left">
+              <div class="qgal-item-meta">
+                <span class="qgal-item-tag">${e.grade}</span>
+                <span class="qgal-item-tag">${e.subject}</span>
+                ${e.unit ? `<span class="qgal-item-tag">${e.unit}</span>` : ''}
+              </div>
+              ${e.topic ? `<div class="qgal-item-topic">${e.topic}</div>` : ''}
             </div>
-            ${e.topic ? `<div class="qgal-item-topic">${e.topic}</div>` : ''}
-            <div class="qgal-item-qs" style="margin-top:8px;">
-              ${qs.map((q,i) => `
-                <div class="myq-card-q">
-                  <span class="myq-card-qnum" style="background:${qColors[i]||color}">Q${i+1}</span>
-                  <span>${q}</span>
-                </div>`).join('')}
+            <div class="qgal-item-right">
+              <div class="qgal-item-qs">
+                ${qs.map((q,i) => `
+                  <div class="myq-card-q">
+                    <span class="myq-card-qnum" style="background:${qColors[i]||color}">Q${i+1}</span>
+                    <span>${q}</span>
+                  </div>`).join('')}
+              </div>
+              <div class="qgal-item-date">${e.date}</div>
             </div>
-            <div class="qgal-item-date">${e.date}</div>
           </div>`;
       }).join('');
 
@@ -8001,7 +8007,7 @@ JSON 형식으로만 반환:
       let filtered = [...all];
       if (qgalFilter.grade   !== 'all') filtered = filtered.filter(e => e.grade   === qgalFilter.grade);
       if (qgalFilter.subject !== 'all') filtered = filtered.filter(e => e.subject === qgalFilter.subject);
-      if (qgalFilter.role    !== 'all') filtered = filtered.filter(e => e.role    === qgalFilter.role);
+      filtered = filtered.filter(e => e.role === 'student');
 
       filtered.sort((a, b) => b.id - a.id);
 
@@ -8020,16 +8026,6 @@ JSON 형식으로만 반환:
         stuSec.style.display = 'none';
       }
 
-      // 선생님 섹션
-      const teachers = filtered.filter(e => e.role === 'teacher');
-      const teaSec = document.getElementById('qgalTeacherSection');
-      if (teachers.length) {
-        teaSec.style.display = 'block';
-        document.getElementById('qgalTeacherCount').textContent = `👩‍🏫 선생님 질문 ${teachers.length}개`;
-        document.getElementById('qgalTeacherList').innerHTML = renderQGalMonthly(teachers, '#f59e0b');
-      } else {
-        teaSec.style.display = 'none';
-      }
 
     } catch(err) {
       loading.style.display = 'none';
@@ -8083,8 +8079,9 @@ JSON 형식으로만 반환:
       const c3 = isT ? colors.q3t : colors.q3s;
       const qs = [e.q1, e.q2, e.q3].filter(Boolean);
       return `
-        <div class="myq-card" style="margin-bottom:12px;">
-          <div>
+        <div class="myq-card" style="margin-bottom:8px;">
+          ${isMgr ? `<button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>` : ''}
+          <div class="myq-card-left">
             <div class="myq-card-meta">
               <span class="myq-card-tag ${isT ? 'teacher' : ''}">${isT ? '👩‍🏫 선생님' : '🎒 학생'}</span>
               <span class="myq-card-tag">${e.grade}</span>
@@ -8093,15 +8090,16 @@ JSON 형식으로만 반환:
             <div class="myq-card-topic">${e.topic || '(주제 미입력)'}</div>
             <div class="myq-card-unit">${e.unit || ''}</div>
           </div>
-          <div class="myq-card-qs">
-            ${qs.map((q, i) => `
-              <div class="myq-card-q">
-                <span class="myq-card-qnum" style="background:${[c1,c2,c3][i]}">Q${i+1}</span>
-                <span>${q}</span>
-              </div>`).join('')}
+          <div class="myq-card-right">
+            <div class="myq-card-qs">
+              ${qs.map((q, i) => `
+                <div class="myq-card-q">
+                  <span class="myq-card-qnum" style="background:${[c1,c2,c3][i]}">Q${i+1}</span>
+                  <span>${q}</span>
+                </div>`).join('')}
+            </div>
+            <div class="myq-card-date">${e.date}</div>
           </div>
-          <div class="myq-card-date">${e.date}</div>
-          ${isMgr ? `<button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>` : ''}
         </div>`;
     }).join('');
 
@@ -8208,22 +8206,26 @@ JSON 형식으로만 반환:
       const qs    = [e.q1, e.q2, e.q3].filter(Boolean);
       const color = e.role === 'teacher' ? '#f59e0b' : '#0ea5e9';
       return `
-        <div class="qgal-item" style="--qgal-color:${color};margin-bottom:10px;">
-          <div class="qgal-item-meta">
-            <span class="qgal-item-tag">${e.role === 'teacher' ? '👩‍🏫 선생님' : '🎒 학생'}</span>
-            <span class="qgal-item-tag">${e.grade}</span>
-            <span class="qgal-item-tag">${e.subject}</span>
-            ${e.unit ? `<span class="qgal-item-tag">${e.unit}</span>` : ''}
+        <div class="qgal-item" style="--qgal-color:${color};margin-bottom:8px;">
+          <div class="qgal-item-left">
+            <div class="qgal-item-meta">
+              <span class="qgal-item-tag">${e.role === 'teacher' ? '👩‍🏫 선생님' : '🎒 학생'}</span>
+              <span class="qgal-item-tag">${e.grade}</span>
+              <span class="qgal-item-tag">${e.subject}</span>
+              ${e.unit ? `<span class="qgal-item-tag">${e.unit}</span>` : ''}
+            </div>
+            ${e.topic ? `<div class="qgal-item-topic">${e.topic}</div>` : ''}
           </div>
-          ${e.topic ? `<div class="qgal-item-topic">${e.topic}</div>` : ''}
-          <div class="qgal-item-qs" style="margin-top:8px;">
-            ${qs.map((q,i) => `
-              <div class="myq-card-q">
-                <span class="myq-card-qnum" style="background:${qColors[i]||color}">Q${i+1}</span>
-                <span>${q}</span>
-              </div>`).join('')}
+          <div class="qgal-item-right">
+            <div class="qgal-item-qs">
+              ${qs.map((q,i) => `
+                <div class="myq-card-q">
+                  <span class="myq-card-qnum" style="background:${qColors[i]||color}">Q${i+1}</span>
+                  <span>${q}</span>
+                </div>`).join('')}
+            </div>
+            <div class="qgal-item-date">${e.date}</div>
           </div>
-          <div class="qgal-item-date">${e.date}</div>
         </div>`;
     }).join('');
 

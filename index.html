@@ -4117,7 +4117,6 @@
         <button id="myqSelectModeBtn" onclick="toggleMyQSelectMode()" style="display:none;font-size:14px;color:#4f46e5;background:none;border:1px solid #4f46e5;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">☑ 선택 삭제</button>
         <button id="myqDeleteSelectedBtn" onclick="deleteSelectedMyQ()" style="display:none;font-size:14px;color:white;background:#f43f5e;border:none;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">🗑 선택 삭제 (<span id="myqSelectedCount">0</span>)</button>
         <button id="myqSelectCancelBtn" onclick="cancelMyQSelectMode()" style="display:none;font-size:14px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">취소</button>
-        <button id="myqClearBtn" onclick="clearMyQ()" style="display:none;font-size:14px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">전체 삭제</button>
       </div>
     </div>
     <div id="myqCards"></div>
@@ -5760,9 +5759,7 @@
   // 매니저 버튼 일괄 업데이트
   function updateManagerButtons() {
     const isMgr = isManagerUser();
-    // 전체 삭제 버튼
-    const clearBtn = document.getElementById('myqClearBtn');
-    if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
+
     // CSV 내보내기 버튼
     const csvBtn = document.getElementById('myqCsvBtn');
     if (csvBtn) csvBtn.style.display = isMgr ? 'inline-block' : 'none';
@@ -8187,8 +8184,7 @@ JSON 형식으로만 반환:
     const colors = { q1s: '#0ea5e9', q2s: '#8b5cf6', q3s: '#10b981', q1t: '#f59e0b', q2t: '#f43f5e', q3t: '#8b5cf6' };
     const isMgr = isManagerUser();
     console.log('[매니저 확인]', isMgr, getCurrentUser()); // 디버그용
-    const clearBtn = document.getElementById('myqClearBtn');
-    if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
+
     const csvBtn = document.getElementById('myqCsvBtn');
     if (csvBtn) csvBtn.style.display = isMgr ? 'inline-block' : 'none';
     const selectModeBtn = document.getElementById('myqSelectModeBtn');

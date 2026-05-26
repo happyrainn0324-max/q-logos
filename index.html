@@ -4,8 +4,15 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>질문하는 학교 — 인천공항중학교</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+KR:wght@700;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+KR:wght@700;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+KR:wght@700;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+</noscript>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root {
@@ -4090,8 +4097,11 @@
         <div style="font-size:17px;font-weight:800;color:var(--ink);">📋 저장된 질문 기록</div>
         <span id="myqPageInfo" style="font-size:13px;font-weight:700;padding:3px 10px;border-radius:100px;background:rgba(79,70,229,.1);color:var(--indigo);"></span>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button id="myqCsvBtn" onclick="exportMyQCSV()" style="display:none;font-size:14px;color:#10b981;background:none;border:1px solid #10b981;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">📥 CSV 내보내기</button>
+        <button id="myqSelectModeBtn" onclick="toggleMyQSelectMode()" style="display:none;font-size:14px;color:#4f46e5;background:none;border:1px solid #4f46e5;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">☑ 선택 삭제</button>
+        <button id="myqDeleteSelectedBtn" onclick="deleteSelectedMyQ()" style="display:none;font-size:14px;color:white;background:#f43f5e;border:none;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">🗑 선택 삭제 (<span id="myqSelectedCount">0</span>)</button>
+        <button id="myqSelectCancelBtn" onclick="cancelMyQSelectMode()" style="display:none;font-size:14px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">취소</button>
         <button id="myqClearBtn" onclick="clearMyQ()" style="display:none;font-size:14px;color:#94a3b8;background:none;border:1px solid #e2e8f0;border-radius:100px;padding:5px 14px;cursor:pointer;font-family:inherit;">전체 삭제</button>
       </div>
     </div>
@@ -5502,6 +5512,11 @@
 
   // ══ 질문 목록 읽기/쓰기 ══
   // ── Supabase: 질문 목록 불러오기 (기존 JSONBin 데이터 + 신규 Supabase 데이터 합산) ──
+  // ── 캐시에서 빠르게 읽기 (Supabase 재호출 없이) ──
+  function getCachedMyQList() {
+    try { return JSON.parse(localStorage.getItem(LC_MYQ) || '[]'); } catch(e) { return []; }
+  }
+
   async function cloudGetMyQList() {
     let legacyList = [];
     let supabaseList = [];
@@ -5576,16 +5591,16 @@
 
   // ── Supabase: 질문 삭제 ──
   async function cloudDeleteMyQ(id) {
-    // Supabase에서 삭제 시도
+    // Supabase에서 삭제
     try {
       await fetch(`${SUPABASE_URL}/rest/v1/myq_list?id=eq.${id}`, {
         method: 'DELETE',
         headers: SUPABASE_HDR
       });
     } catch(e) { console.error('[cloudDeleteMyQ] Supabase 오류:', e); }
-    // 로컬 캐시에서도 제거 후 반환
-    const list = await cloudGetMyQList();
-    const updated = list.filter(e => e.id !== id);
+    // 로컬 캐시에서도 즉시 제거 (재호출 없이)
+    const cached = getCachedMyQList();
+    const updated = cached.filter(e => e.id !== id);
     localStorage.setItem(LC_MYQ, JSON.stringify(updated));
     return updated;
   }
@@ -5729,17 +5744,24 @@
       const session = localStorage.getItem('qschool_session');
       if (session) {
         const user = JSON.parse(session);
-        if (user.displayName && user.displayName.includes('조유진')) return true;
-        if (user.name && user.name.includes('조유진')) return true;
-        if (user.key && user.key.includes('조유진')) return true;
+        const name = (user.displayName || user.name || user.key || '');
+        const email = (user.email || '');
+        if (name.includes('조유진') || email.includes('happyrainn')) return true;
       }
       // 구글 로그인 세션 확인
       const google = localStorage.getItem('qschool_user');
       if (google) {
         const user = JSON.parse(google);
-        if (user.displayName && user.displayName.includes('조유진')) return true;
-        if (user.name && user.name.includes('조유진')) return true;
-        if (user.email && user.email.includes('happyrainn')) return true;
+        const name = (user.displayName || user.name || '');
+        const email = (user.email || '');
+        if (name.includes('조유진') || email.includes('happyrainn')) return true;
+      }
+      // 현재 로그인 유저 확인 (getCurrentUser 활용)
+      const cur = getCurrentUser();
+      if (cur) {
+        const name = (cur.displayName || cur.name || cur.key || '');
+        const email = (cur.email || '');
+        if (name.includes('조유진') || email.includes('happyrainn')) return true;
       }
     } catch(e) {}
     return false;
@@ -5910,8 +5932,8 @@
   async function collectAllPfEntries() {
     const entries = [];
 
-    // 1. 오늘의 나의 질문 (클라우드 공유 저장소) — 미션 항목 제외
-    const myqList = await cloudGetMyQList();
+    // 1. 오늘의 나의 질문 (캐시에서 즉시 읽기) — 미션 항목 제외
+    const myqList = getCachedMyQList();
     myqList.filter(e => !e.isMission).forEach(e => {
       const qs = [e.q1, e.q2, e.q3].filter(Boolean);
       entries.push({
@@ -8059,7 +8081,7 @@ JSON 형식으로만 반환:
     board.style.display   = 'none';
 
     try {
-      const all = await cloudGetMyQList();
+      const all = getCachedMyQList(); // 캐시에서 즉시 읽기
 
       // 미션 제외 + 필터 적용
       let filtered = [...all].filter(e => !e.isMission);
@@ -8106,7 +8128,7 @@ JSON 형식으로만 반환:
   let _myqAllSaved = [];
 
   async function renderMyQList() {
-    const saved = await cloudGetMyQList();
+    const saved = getCachedMyQList(); // 캐시에서 즉시 읽기
     _myqAllSaved = saved;
     myqCurrentPage = 1;
     _renderMyQPage();
@@ -8124,10 +8146,13 @@ JSON 형식으로만 반환:
 
     const colors = { q1s: '#0ea5e9', q2s: '#8b5cf6', q3s: '#10b981', q1t: '#f59e0b', q2t: '#f43f5e', q3t: '#8b5cf6' };
     const isMgr = isManagerUser();
+    console.log('[매니저 확인]', isMgr, getCurrentUser()); // 디버그용
     const clearBtn = document.getElementById('myqClearBtn');
     if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
     const csvBtn = document.getElementById('myqCsvBtn');
     if (csvBtn) csvBtn.style.display = isMgr ? 'inline-block' : 'none';
+    const selectModeBtn = document.getElementById('myqSelectModeBtn');
+    if (selectModeBtn) selectModeBtn.style.display = (isMgr && !_myqSelectMode) ? 'inline-block' : 'none';
 
     // 최신순 정렬 후 미션 항목 제외, 페이지 슬라이스
     const sorted = [...saved].filter(e => !e.isMission).sort((a, b) => b.id - a.id);
@@ -8146,8 +8171,9 @@ JSON 형식으로만 반환:
       const c3 = isT ? colors.q3t : colors.q3s;
       const qs = [e.q1, e.q2, e.q3].filter(Boolean);
       return `
-        <div class="myq-card" style="margin-bottom:8px;">
-          ${isMgr ? `<button class="myq-card-del" onclick="deleteMyQ(${e.id})">삭제 ✕</button>` : ''}
+        <div class="myq-card" id="myq-card-${e.id}" style="margin-bottom:8px;cursor:${isMgr && _myqSelectMode ? 'pointer' : 'default'};" onclick="${isMgr ? `toggleMyQSelect(${e.id}, this)` : ''}">
+          ${isMgr && _myqSelectMode ? `<input type="checkbox" id="myq-chk-${e.id}" class="myq-chk" style="width:18px;height:18px;accent-color:#4f46e5;cursor:pointer;flex-shrink:0;margin-right:4px;" onclick="event.stopPropagation();toggleMyQSelect(${e.id}, document.getElementById('myq-card-${e.id}'))" />` : ''}
+          ${isMgr && !_myqSelectMode ? `<button class="myq-card-del" onclick="event.stopPropagation();deleteMyQ(${e.id})">삭제 ✕</button>` : ''}
           <div class="myq-card-left">
             <div class="myq-card-meta">
               <span class="myq-card-tag ${isT ? 'teacher' : ''}">${isT ? '👩‍🏫 선생님' : '🎒 학생'}</span>
@@ -8235,7 +8261,7 @@ JSON 형식으로만 반환:
     filterEl.style.display = 'block';
 
     const myKey = user.key || user.email || user.name || '';
-    const all   = await cloudGetMyQList();
+    const all   = getCachedMyQList(); // 캐시에서 즉시 읽기
 
     let mine = all.filter(e => e.authorKey && e.authorKey === myKey && !e.isMission);
     mine.sort((a, b) => b.id - a.id);
@@ -8316,12 +8342,84 @@ JSON 형식으로만 반환:
     document.getElementById('myQGallerySection').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  // ── 선택 삭제 모드 ──
+  let _myqSelectMode = false;
+  let _myqSelectedIds = new Set();
+
+  function toggleMyQSelectMode() {
+    _myqSelectMode = true;
+    _myqSelectedIds.clear();
+    const selectModeBtn = document.getElementById('myqSelectModeBtn');
+    const deleteSelectedBtn = document.getElementById('myqDeleteSelectedBtn');
+    const cancelBtn = document.getElementById('myqSelectCancelBtn');
+    const clearBtn = document.getElementById('myqClearBtn');
+    if (selectModeBtn) selectModeBtn.style.display = 'none';
+    if (deleteSelectedBtn) deleteSelectedBtn.style.display = 'inline-block';
+    if (cancelBtn) cancelBtn.style.display = 'inline-block';
+    if (clearBtn) clearBtn.style.display = 'none';
+    _updateSelectedCount();
+    _renderMyQPage();
+  }
+
+  function cancelMyQSelectMode() {
+    _myqSelectMode = false;
+    _myqSelectedIds.clear();
+    const isMgr = isManagerUser();
+    const selectModeBtn = document.getElementById('myqSelectModeBtn');
+    const deleteSelectedBtn = document.getElementById('myqDeleteSelectedBtn');
+    const cancelBtn = document.getElementById('myqSelectCancelBtn');
+    const clearBtn = document.getElementById('myqClearBtn');
+    if (selectModeBtn) selectModeBtn.style.display = isMgr ? 'inline-block' : 'none';
+    if (deleteSelectedBtn) deleteSelectedBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.style.display = 'none';
+    if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
+    _renderMyQPage();
+  }
+
+  function toggleMyQSelect(id, cardEl) {
+    if (!_myqSelectMode) return;
+    if (_myqSelectedIds.has(id)) {
+      _myqSelectedIds.delete(id);
+      if (cardEl) { cardEl.style.background = ''; cardEl.style.outline = ''; }
+      const chk = document.getElementById('myq-chk-' + id);
+      if (chk) chk.checked = false;
+    } else {
+      _myqSelectedIds.add(id);
+      if (cardEl) { cardEl.style.background = 'rgba(79,70,229,.06)'; cardEl.style.outline = '2px solid #4f46e5'; cardEl.style.borderRadius = '16px'; }
+      const chk = document.getElementById('myq-chk-' + id);
+      if (chk) chk.checked = true;
+    }
+    _updateSelectedCount();
+  }
+
+  function _updateSelectedCount() {
+    const cnt = document.getElementById('myqSelectedCount');
+    if (cnt) cnt.textContent = _myqSelectedIds.size;
+    const deleteBtn = document.getElementById('myqDeleteSelectedBtn');
+    if (deleteBtn) deleteBtn.style.opacity = _myqSelectedIds.size > 0 ? '1' : '0.5';
+  }
+
+  async function deleteSelectedMyQ() {
+    if (_myqSelectedIds.size === 0) { alert('삭제할 질문을 선택해주세요.'); return; }
+    if (!confirm(`선택한 ${_myqSelectedIds.size}개의 질문을 삭제할까요?`)) return;
+    const ids = Array.from(_myqSelectedIds);
+    for (const id of ids) {
+      await cloudDeleteMyQ(id);
+    }
+    cancelMyQSelectMode();
+    await renderMyQList();
+    try { renderPortfolio(); } catch(e) {}
+    try { loadQGallery(); } catch(e) {}
+    try { renderMyQGallery(); } catch(e) {}
+  }
+
   async function deleteMyQ(id) {
-    await cloudDeleteMyQ(id);
-    renderMyQList();
-    renderPortfolio();
-    loadQGallery();
-    renderMyQGallery();
+    await cloudDeleteMyQ(id); // Supabase + 캐시에서 삭제
+    _myqAllSaved = getCachedMyQList(); // 캐시 갱신
+    _renderMyQPage(); // 즉시 화면 갱신
+    try { renderPortfolio(); } catch(e) {}
+    try { loadQGallery(); } catch(e) {}
+    try { renderMyQGallery(); } catch(e) {}
   }
 
   async function clearMyQ() {
@@ -8367,12 +8465,15 @@ JSON 형식으로만 반환:
 
   // 페이지 로드 시 질문 목록 + 포트폴리오 + 갤러리 순서대로 복원 (클라우드에서 한 번만 읽기)
   window.addEventListener('load', async () => {
-    // 클라우드에서 데이터 한 번만 읽어서 로컬 캐시에 저장 후 모두 렌더링
-    await cloudGetMyQList(); // 클라우드 → 로컬 캐시 동기화
-    await renderMyQList();
-    await renderPortfolio();
-    await loadQGallery();
-    await renderMyQGallery();
+    // 클라우드에서 데이터 딱 1번만 읽어서 캐시 저장 후 병렬 렌더링
+    await cloudGetMyQList(); // Supabase → localStorage 캐시 동기화 (1회)
+    // 렌더링 함수들은 캐시(localStorage)에서 읽으므로 병렬 실행 가능
+    await Promise.all([
+      renderMyQList(),
+      renderPortfolio(),
+      loadQGallery(),
+      renderMyQGallery(),
+    ]);
   });
 
   // ── 교과 수업 모달 ──
@@ -9381,8 +9482,8 @@ JSON 형식으로만 반환:
     if (dateEl) dateEl.textContent = '📅 ' + dateStr + ' 기준';
 
 
-    // 데이터 가져오기
-    const allEntries = await cloudGetMyQList();
+    // 데이터 가져오기 (캐시에서 즉시 읽기)
+    const allEntries = getCachedMyQList();
 
     // ── Q-Class 집계: 이달(YYYY.MM) + 학생 역할 항목만 ──
     const monthPrefix = getTodayPrefix(); // YYYY.MM

@@ -5511,58 +5511,31 @@
   }
 
   // ══ 질문 목록 읽기/쓰기 ══
-  // ── Supabase: 질문 목록 불러오기 (기존 JSONBin 데이터 + 신규 Supabase 데이터 합산) ──
-  // ── 캐시에서 빠르게 읽기 (Supabase 재호출 없이) ──
+  // ── 캐시에서 빠르게 읽기 ──
   function getCachedMyQList() {
     try { return JSON.parse(localStorage.getItem(LC_MYQ) || '[]'); } catch(e) { return []; }
   }
 
   async function cloudGetMyQList() {
-    let legacyList = [];
-    let supabaseList = [];
-
-    // 1) 기존 JSONBin 데이터 (읽기 전용 — 기존 243개 보존)
-    if (isCloudConfigured()) {
-      try {
-        const r = await fetch(`${JSONBIN_BASE}/${MYQ_BIN_ID}/latest`, { headers: JSONBIN_HDR });
-        if (r.ok) {
-          const d = await r.json();
-          const data = (d && d.record !== undefined) ? d.record : d;
-          if (Array.isArray(data)) legacyList = data;
-          else if (data && Array.isArray(data.list)) legacyList = data.list;
-        }
-      } catch(e) { console.warn('[cloudGetMyQList] JSONBin 읽기 실패 (무시):', e); }
-    }
-
-    // 2) 신규 Supabase 데이터 (1000건 limit 초과 대비 — 전체 페이지 순회)
+    // Supabase에서만 데이터 로드 (JSONBin 제거)
     try {
-      const PAGE = 1000;
-      let offset = 0;
-      let fetched = [];
-      while (true) {
-        const r = await fetch(
-          `${SUPABASE_URL}/rest/v1/myq_list?order=id.desc&limit=${PAGE}&offset=${offset}`,
-          { headers: { ...SUPABASE_HDR, 'Prefer': 'return=representation' } }
-        );
-        if (!r.ok) { console.error('[cloudGetMyQList] Supabase 읽기 실패:', r.status); break; }
-        const rows = await r.json();
-        if (!rows.length) break;
-        fetched = fetched.concat(rows.map(row => ({
-          id: row.id, role: row.role, grade: row.grade, subject: row.subject,
-          unit: row.unit, topic: row.topic, q1: row.q1, q2: row.q2, q3: row.q3,
-          date: row.date, authorKey: row.author_key
-        })));
-        if (rows.length < PAGE) break; // 마지막 페이지
-        offset += PAGE;
-      }
-      supabaseList = fetched;
-    } catch(e) { console.error('[cloudGetMyQList] Supabase 오류:', e); }
-
-    // 3) 합산 (Supabase 신규 + JSONBin 레거시, 중복 id 제거)
-    const legacyIds = new Set(supabaseList.map(e => e.id));
-    const merged = [...supabaseList, ...legacyList.filter(e => !legacyIds.has(e.id))];
-    localStorage.setItem(LC_MYQ, JSON.stringify(merged));
-    return merged;
+      const r = await fetch(
+        `${SUPABASE_URL}/rest/v1/myq_list?order=id.desc&limit=2000`,
+        { headers: { ...SUPABASE_HDR, 'Prefer': 'return=representation' } }
+      );
+      if (!r.ok) { console.error('[cloudGetMyQList] Supabase 읽기 실패:', r.status); return getCachedMyQList(); }
+      const rows = await r.json();
+      const list = rows.map(row => ({
+        id: row.id, role: row.role, grade: row.grade, subject: row.subject,
+        unit: row.unit, topic: row.topic, q1: row.q1, q2: row.q2, q3: row.q3,
+        date: row.date, authorKey: row.author_key
+      }));
+      localStorage.setItem(LC_MYQ, JSON.stringify(list));
+      return list;
+    } catch(e) {
+      console.error('[cloudGetMyQList] Supabase 오류:', e);
+      return getCachedMyQList(); // 오류 시 캐시 반환
+    }
   }
 
   // ── Supabase: 질문 저장 (신규는 Supabase에만 저장) ──
@@ -5731,6 +5704,8 @@
       const isManager = user.displayName && user.displayName.includes('조유진');
       managerBtn.style.display = isManager ? 'inline-flex' : 'none';
     }
+    // 로그인 후 매니저 버튼 즉시 업데이트
+    updateManagerButtons();
   }
 
   function openManagerPage() {
@@ -5765,6 +5740,25 @@
       }
     } catch(e) {}
     return false;
+  }
+
+  // 매니저 버튼 일괄 업데이트
+  function updateManagerButtons() {
+    const isMgr = isManagerUser();
+    // 전체 삭제 버튼
+    const clearBtn = document.getElementById('myqClearBtn');
+    if (clearBtn) clearBtn.style.display = isMgr ? 'inline-block' : 'none';
+    // CSV 내보내기 버튼
+    const csvBtn = document.getElementById('myqCsvBtn');
+    if (csvBtn) csvBtn.style.display = isMgr ? 'inline-block' : 'none';
+    // 선택 삭제 버튼
+    const selectModeBtn = document.getElementById('myqSelectModeBtn');
+    if (selectModeBtn) selectModeBtn.style.display = (isMgr && !_myqSelectMode) ? 'inline-block' : 'none';
+    // myqList 영역 표시 (데이터 있을 때)
+    if (isMgr && _myqAllSaved && _myqAllSaved.length) {
+      const listEl = document.getElementById('myqList');
+      if (listEl) listEl.style.display = 'block';
+    }
   }
 
   // 페이지 로드 시 세션 자동 복원 (localStorage 세션 → 클라우드 유저 재확인)
@@ -5826,6 +5820,8 @@
     navUser.style.display = 'flex';
     document.getElementById('navAvatar').src = user.picture || '';
     document.getElementById('navUserName').textContent = user.name;
+    // 로그인 후 매니저 버튼 즉시 업데이트
+    updateManagerButtons();
   }
 
   function handleLogout() {
@@ -6186,7 +6182,7 @@
       authorKey,
       isMission: true,
     };
-    const saved = await cloudGetMyQList();
+    const saved = getCachedMyQList();
     saved.unshift(entry);
     await cloudSetMyQList(saved);
   }
@@ -6223,7 +6219,7 @@
     [prefix+'-unit', prefix+'-topic', prefix+'-q1', prefix+'-q2', prefix+'-q3'].forEach(id => document.getElementById(id).value = '');
 
     // Supabase 저장 및 렌더링 (백그라운드)
-    const saved = await cloudGetMyQList();
+    const saved = getCachedMyQList();
     saved.unshift(entry);
     await cloudSetMyQList(saved);
 
@@ -6495,7 +6491,7 @@
   }
 
   async function onClickGenerateBtn() {
-    const saved = await cloudGetMyQList();
+    const saved = getCachedMyQList();
     if (!saved.length) {
       alert('먼저 위에서 오늘의 질문을 저장해 주세요!');
       document.getElementById('myquestion').scrollIntoView({ behavior: 'smooth' });
@@ -8434,7 +8430,7 @@ JSON 형식으로만 반환:
 
   // ── CSV 내보내기 ──
   async function exportMyQCSV() {
-    const list = await cloudGetMyQList();
+    const list = getCachedMyQList();
     if (!list || list.length === 0) { alert('내보낼 데이터가 없습니다.'); return; }
     const headers = ['날짜', '역할', '학년', '과목', '단원', '주제', '질문1', '질문2', '질문3', '작성자키'];
     const rows = list

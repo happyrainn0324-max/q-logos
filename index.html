@@ -1563,7 +1563,7 @@
     letter-spacing: -.01em; margin-top: 4px;
   }
   .qsuggest-grid {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; align-items: start;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 28px; align-items: start;
   }
   @media (max-width:1200px) { .qsuggest-grid { grid-template-columns: repeat(3,1fr); } }
   @media (max-width:680px)  { .qsuggest-grid { grid-template-columns: 1fr; } }
@@ -1577,6 +1577,10 @@
     text-align: center; height: auto; min-height: 100%;
   }
   .qsuggest-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.1); }
+  .qsuggest-card.selected { outline: 3px solid var(--qs-color); background: rgba(255,255,255,.98); box-shadow: 0 0 0 6px color-mix(in srgb, var(--qs-color) 15%, transparent); }
+  .qsuggest-q-text.filled { cursor: pointer; }
+  .qsuggest-q-text.filled:hover { opacity: .85; }
+
   .qsuggest-card::before {
     content:''; position:absolute; top:0; left:0; right:0; height:4px;
     background: var(--qs-color, var(--indigo));
@@ -3429,7 +3433,7 @@
       justify-content: center;
       box-sizing: border-box;
     }
-    .qsuggest-grid { grid-template-columns: 1fr !important; gap: 10px; }
+    .qsuggest-grid { grid-template-columns: 1fr !important; gap: 28px; }
     .qsuggest-card {
       padding: 18px 16px;
       flex-direction: column;
@@ -4032,10 +4036,18 @@
       <h2 class="section-title" style="margin-top:8px;">질문 배우기</h2>
       <p class="section-desc" id="qsuggestDesc" style="margin-bottom:16px;">질문을 저장하거나 아래 버튼을 눌러 6가지 유형의 질문 예시를 확인해 보세요.</p>
       <div id="qsuggestTopicBadge" class="qsuggest-topic-badge" style="display:none;margin-bottom:16px;"></div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-        <button id="qGenerateBtn" class="qgenerate-btn" onclick="onClickGenerateBtn()" style="min-width:220px;justify-content:center;">✦ 좋은 질문 생성하기</button>
-        <button onclick="openIqbotModal()" style="min-width:220px;justify-content:center;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:white;border:none;border-radius:100px;padding:14px 28px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 6px 20px rgba(14,165,233,.35);">🔭 탐구 설계하기</button>
-        <a href="https://padlet.com/happyrainn/padlet-13r33ohiwbqqok5f" target="_blank" rel="noopener" style="min-width:220px;justify-content:center;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#10b981,#0ea5e9);color:white;border:none;border-radius:100px;padding:14px 28px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 6px 20px rgba(16,185,129,.35);text-decoration:none;">📋 탐구 계획서 작성하기</a>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;">
+        <div style="display:flex;gap:10px;align-items:center;width:100%;max-width:800px;">
+          <input id="qSuggestTopicInput" type="text" placeholder="탐구 주제를 입력하세요 (예: 광합성, 독립운동, 기후변화...)"
+            style="flex:1;padding:13px 18px;border:2px solid var(--line);border-radius:100px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s;color:var(--ink);background:white;"
+            onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='var(--line)'"
+            onkeydown="if(event.key==='Enter')onClickGenerateBtn()" />
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;width:100%;max-width:800px;flex-wrap:wrap;">
+          <button id="qGenerateBtn" class="qgenerate-btn" onclick="onClickGenerateBtn()" style="flex:1;min-width:160px;justify-content:center;white-space:nowrap;">✦ 좋은 질문 생성하기</button>
+          <button onclick="openIqbotModal()" style="flex:1;min-width:160px;justify-content:center;display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:white;border:none;border-radius:100px;padding:14px 20px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 6px 20px rgba(14,165,233,.35);white-space:nowrap;">🔭 탐구 설계하기</button>
+          <a href="https://padlet.com/happyrainn/padlet-13r33ohiwbqqok5f" target="_blank" rel="noopener" style="flex:1;min-width:160px;justify-content:center;display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#10b981,#0ea5e9);color:white;border:none;border-radius:100px;padding:14px 20px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 6px 20px rgba(16,185,129,.35);text-decoration:none;white-space:nowrap;">📋 탐구 계획서 작성하기</a>
+        </div>
       </div>
     </div>
     <div class="qsuggest-grid">
@@ -4043,7 +4055,7 @@
       <div class="qsuggest-card" style="--qs-color:#0ea5e9">
         <div class="qsuggest-type-badge">🔍 사실적 질문</div>
         <div class="qsuggest-type-desc">텍스트나 자료에서<br>확인 가능한<br>사실을 묻는 질문</div>
-        <div class="qsuggest-q-text" id="qs-factual">
+        <div class="qsuggest-q-text" id="qs-factual" onclick="selectQSuggestCard(this, 'qs-factual', '🔍 사실적 질문')" title="클릭하면 탐구 설계하기에 자동 입력됩니다">
           <span class="qs-placeholder">저장하면<br>예시 질문이<br>여기에 나타납니다</span>
         </div>
       </div>
@@ -4051,7 +4063,7 @@
       <div class="qsuggest-card" style="--qs-color:#8b5cf6">
         <div class="qsuggest-type-badge">🧩 추론적 질문</div>
         <div class="qsuggest-type-desc">자료를 바탕으로 숨겨진 의미나<br>원인을 추론하는 질문</div>
-        <div class="qsuggest-q-text" id="qs-inferential">
+        <div class="qsuggest-q-text" id="qs-inferential" onclick="selectQSuggestCard(this, 'qs-inferential', '🧩 추론적 질문')" title="클릭하면 탐구 설계하기에 자동 입력됩니다">
           <span class="qs-placeholder">저장하면<br>예시 질문이<br>여기에 나타납니다</span>
         </div>
       </div>
@@ -4059,7 +4071,7 @@
       <div class="qsuggest-card" style="--qs-color:#f43f5e">
         <div class="qsuggest-type-badge">⚖️ 비판적 질문</div>
         <div class="qsuggest-type-desc">주장·근거·관점의 타당성을<br>평가하는 질문</div>
-        <div class="qsuggest-q-text" id="qs-critical">
+        <div class="qsuggest-q-text" id="qs-critical" onclick="selectQSuggestCard(this, 'qs-critical', '⚖️ 비판적 질문')" title="클릭하면 탐구 설계하기에 자동 입력됩니다">
           <span class="qs-placeholder">저장하면<br>예시 질문이<br>여기에 나타납니다</span>
         </div>
       </div>
@@ -4067,7 +4079,7 @@
       <div class="qsuggest-card" style="--qs-color:#10b981">
         <div class="qsuggest-type-badge">🚀 적용적 질문</div>
         <div class="qsuggest-type-desc">배운 내용을 실생활이나 새로운<br>상황에 적용하는 질문</div>
-        <div class="qsuggest-q-text" id="qs-applied">
+        <div class="qsuggest-q-text" id="qs-applied" onclick="selectQSuggestCard(this, 'qs-applied', '🚀 적용적 질문')" title="클릭하면 탐구 설계하기에 자동 입력됩니다">
           <span class="qs-placeholder">저장하면<br>예시 질문이<br>여기에 나타납니다</span>
         </div>
       </div>
@@ -4075,7 +4087,7 @@
       <div class="qsuggest-card" style="--qs-color:#f59e0b">
         <div class="qsuggest-type-badge">🪞 성찰적 질문</div>
         <div class="qsuggest-type-desc">자신의 생각·경험·가치관을<br>돌아보게 하는 질문</div>
-        <div class="qsuggest-q-text" id="qs-reflective">
+        <div class="qsuggest-q-text" id="qs-reflective" onclick="selectQSuggestCard(this, 'qs-reflective', '🪞 성찰적 질문')" title="클릭하면 탐구 설계하기에 자동 입력됩니다">
           <span class="qs-placeholder">저장하면<br>예시 질문이<br>여기에 나타납니다</span>
         </div>
       </div>
@@ -4083,10 +4095,13 @@
       <div class="qsuggest-card" style="--qs-color:#ec4899">
         <div class="qsuggest-type-badge">💡 창의적 질문</div>
         <div class="qsuggest-type-desc">기존의 틀을 벗어나<br>새로운 가능성을<br>상상하는 질문</div>
-        <div class="qsuggest-q-text" id="qs-creative">
+        <div class="qsuggest-q-text" id="qs-creative" onclick="selectQSuggestCard(this, 'qs-creative', '💡 창의적 질문')" title="클릭하면 탐구 설계하기에 자동 입력됩니다">
           <span class="qs-placeholder">저장하면<br>예시 질문이<br>여기에 나타납니다</span>
         </div>
       </div>
+    </div>
+    <div style="text-align:center;margin-top:20px;font-size:15px;font-weight:600;color:var(--muted);padding:12px 20px;background:rgba(79,70,229,.06);border-radius:12px;border:1.5px dashed rgba(79,70,229,.2);">
+      💡 탐구하고 싶은 질문을 선택해보세요. 선택된 질문은 심화 탐구 설계하기로 연계됩니다.
     </div>
   </div>
 
@@ -6233,6 +6248,9 @@
     setTimeout(() => {
       const sec = document.getElementById('qSuggestSection');
       if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // 입력칸에 저장된 주제 자동 채우기
+      const topicInputEl = document.getElementById('qSuggestTopicInput');
+      if (topicInputEl && !topicInputEl.value.trim()) topicInputEl.value = topic || subject || '';
       setTimeout(async () => {
         await generateQSuggestions({ subject, topic, unit, q1, q2, q3 });
       }, 600);
@@ -6491,13 +6509,34 @@
   }
 
   async function onClickGenerateBtn() {
+    // 탐구 주제 입력칸 값 우선 사용
+    const inputEl = document.getElementById('qSuggestTopicInput');
+    const inputTopic = inputEl ? inputEl.value.trim() : '';
+
+    if (inputTopic) {
+      // 입력칸에 주제가 있으면 그걸로 바로 생성
+      await generateQSuggestions({
+        subject: '', topic: inputTopic, unit: '', q1: '', q2: '', q3: '',
+      });
+      return;
+    }
+
+    // 입력칸이 비어있으면 저장된 질문에서 가져옴
     const saved = getCachedMyQList();
     if (!saved.length) {
-      alert('먼저 위에서 오늘의 질문을 저장해 주세요!');
-      document.getElementById('myquestion').scrollIntoView({ behavior: 'smooth' });
+      if (inputEl) {
+        inputEl.focus();
+        inputEl.style.borderColor = '#f43f5e';
+        inputEl.placeholder = '탐구 주제를 입력해주세요!';
+        setTimeout(() => {
+          inputEl.style.borderColor = 'var(--line)';
+          inputEl.placeholder = '탐구 주제를 입력하세요 (예: 광합성, 독립운동, 기후변화...)';
+        }, 2000);
+      }
       return;
     }
     const last = saved[0];
+    if (inputEl) inputEl.value = last.topic || last.subject || '';
     await generateQSuggestions({
       subject: last.subject, topic: last.topic,
       unit: last.unit, q1: last.q1, q2: last.q2, q3: last.q3,
@@ -6510,7 +6549,9 @@
     btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> AI가 질문을 생성 중...</span>';
 
     const badge = document.getElementById('qsuggestTopicBadge');
-    badge.textContent = `📚 ${subject}${unit ? ' · ' + unit : ''}${topic ? ' · ' + topic : ''}`;
+    const _inputEl = document.getElementById('qSuggestTopicInput');
+    const _inputTopic = _inputEl ? _inputEl.value.trim() : '';
+    badge.textContent = `📚 ${_inputTopic || topic || subject}${!_inputTopic && unit ? ' · ' + unit : ''}`;
     badge.style.display = 'inline-block';
     document.getElementById('qsuggestDesc').textContent = 'AI가 주제를 깊이 분석해 6가지 서로 다른 사고 방식의 질문을 만들고 있어요...';
 
@@ -6520,7 +6561,10 @@
       el.innerHTML = '';
     });
 
-    const mainTopic = topic || unit || subject;
+    // 탐구 주제 입력칸 값도 반영
+    const inputEl = document.getElementById('qSuggestTopicInput');
+    const inputTopic = inputEl ? inputEl.value.trim() : '';
+    const mainTopic = inputTopic || topic || unit || subject;
     const studentQs = [q1, q2, q3].filter(Boolean);
     const contextParts = [
       '과목: ' + subject,
@@ -11291,6 +11335,34 @@ ${phaseContent[p]}
 </div>
 
 <script>
+// 질문 카드 선택 → 탐구 설계하기 모달에 자동 입력
+function selectQSuggestCard(el, cardId, label) {
+  // filled 상태가 아니면 무시
+  if (!el.classList.contains('filled')) return;
+
+  // 질문 텍스트 추출
+  const qText = el.textContent.trim();
+  if (!qText) return;
+
+  // 선택 표시 - 모든 카드 선택 해제 후 현재 카드 선택
+  document.querySelectorAll('.qsuggest-card').forEach(c => c.classList.remove('selected'));
+  const card = el.closest('.qsuggest-card');
+  if (card) card.classList.add('selected');
+
+  // 탐구 설계하기 모달 열고 질문 자동 입력
+  openIqbotModal();
+  setTimeout(function() {
+    var iqInput = document.getElementById('iqbotQuestion');
+    if (iqInput) {
+      iqInput.value = qText;
+      iqInput.focus();
+      // 글자 수 카운터 업데이트
+      var cnt = document.getElementById('iqbotQCount');
+      if (cnt) cnt.textContent = qText.length + ' / 120';
+    }
+  }, 200);
+}
+
 function openIqbotModal() {
   document.getElementById('iqbotResult').classList.remove('show');
   document.getElementById('iqbotErr').style.display = 'none';

@@ -30,21 +30,51 @@
   /* ── 브라우저 정규화: 어떤 브라우저에서도 동일한 기준 ── */
   html {
     scroll-behavior: smooth;
-    font-size: 16px;          /* 1rem = 16px 기준 고정 */
-    -webkit-text-size-adjust: 100%; /* iOS Safari 자동 확대 방지 */
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
     text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
   body {
-    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', sans-serif;
     background: var(--bg);
     color: var(--ink);
     line-height: 1.6;
     overflow-x: hidden;
     min-width: 320px;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
+
+  /* ── 폼 요소 브라우저 기본값 완전 통일 ── */
+  button, input, select, textarea, optgroup {
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-size: 100%;
+    line-height: 1.6;
+    margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  button { cursor: pointer; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235a5a7a' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px !important;
+  }
+  textarea { resize: vertical; }
+  input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; }
+
+  /* ── 브라우저별 기본 여백/테두리 제거 ── */
+  h1, h2, h3, h4, h5, h6 { font-weight: inherit; font-size: inherit; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  table { border-collapse: collapse; border-spacing: 0; }
+  ol, ul { list-style: none; }
 
   /* ── NAV ── */
   nav {
@@ -2458,16 +2488,16 @@
     margin-top: 20px;
   }
   .hero-contest-box {
-    border-radius: 20px;
-    padding: 40px 32px;
+    border-radius: 16px;
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 16px;
+    gap: 10px;
     border: 1.5px solid transparent;
     transition: transform .2s, box-shadow .2s;
-    min-height: 280px;
+    min-height: 200px;
   }
   .hero-contest-box:hover {
     transform: translateY(-3px);
@@ -2482,34 +2512,34 @@
     border-color: rgba(139,92,246,.25);
   }
   .hero-contest-label {
-    font-size: 28px; font-weight: 900; color: white; letter-spacing: -0.01em;
+    font-size: 20px; font-weight: 900; color: white; letter-spacing: -0.01em;
     text-align: center;
   }
   .hero-contest-agora .hero-contest-label { color: #38bdf8; }
   .hero-contest-logos .hero-contest-label { color: #c4b5fd; }
   .hero-contest-period {
-    font-size: 15px; font-weight: 600; color: #94a3b8;
+    font-size: 12px; font-weight: 600; color: #94a3b8;
     text-transform: uppercase; letter-spacing: .08em;
   }
   .hero-contest-desc {
-    font-size: 16px; color: #cbd5e1; line-height: 2; flex: 1;
+    font-size: 13px; color: #cbd5e1; line-height: 1.8; flex: 1;
   }
   .hero-contest-tags {
-    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+    display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
   }
   .hero-contest-tag {
-    font-size: 15px; font-weight: 600;
+    font-size: 12px; font-weight: 600;
     background: rgba(255,255,255,.08);
     color: #94a3b8;
     border-radius: 100px;
-    padding: 3px 10px;
+    padding: 2px 8px;
   }
   .hero-contest-btn-row {
-    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; justify-content: center;
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; justify-content: center;
   }
   .hero-contest-join {
-    padding: 12px 24px; border-radius: 100px;
-    font-size: 17px; font-weight: 800;
+    padding: 8px 16px; border-radius: 100px;
+    font-size: 13px; font-weight: 800;
     cursor: pointer; transition: all .2s;
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     border: none;
@@ -2523,8 +2553,8 @@
   }
   .logos-join:hover { background: #ddd6fe; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(196,181,253,.35); }
   .hero-contest-btn {
-    padding: 12px 24px; border-radius: 100px;
-    font-size: 17px; font-weight: 800;
+    padding: 8px 16px; border-radius: 100px;
+    font-size: 13px; font-weight: 800;
     cursor: pointer; transition: all .2s;
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     background: rgba(255,255,255,.1);
@@ -4134,7 +4164,7 @@
   </div>
 
   <!-- 결과 영역 -->
-  <div id="qgalLoading" style="display:none;text-align:center;padding:40px 0;">
+  <div id="qgalLoading" style="display:block;text-align:center;padding:40px 0;">
     <div class="qsuggest-dots" style="justify-content:center;"><span></span><span></span><span></span></div>
     <div style="font-size:16px;color:var(--muted);margin-top:12px;">질문을 불러오는 중...</div>
   </div>
@@ -5695,10 +5725,21 @@
   // 매니저 여부 확인 헬퍼
   function isManagerUser() {
     try {
+      // 커스텀 로그인 세션 확인
       const session = localStorage.getItem('qschool_session');
       if (session) {
         const user = JSON.parse(session);
-        return user.displayName && user.displayName.includes('조유진');
+        if (user.displayName && user.displayName.includes('조유진')) return true;
+        if (user.name && user.name.includes('조유진')) return true;
+        if (user.key && user.key.includes('조유진')) return true;
+      }
+      // 구글 로그인 세션 확인
+      const google = localStorage.getItem('qschool_user');
+      if (google) {
+        const user = JSON.parse(google);
+        if (user.displayName && user.displayName.includes('조유진')) return true;
+        if (user.name && user.name.includes('조유진')) return true;
+        if (user.email && user.email.includes('happyrainn')) return true;
       }
     } catch(e) {}
     return false;
@@ -5869,9 +5910,9 @@
   async function collectAllPfEntries() {
     const entries = [];
 
-    // 1. 오늘의 나의 질문 (클라우드 공유 저장소)
+    // 1. 오늘의 나의 질문 (클라우드 공유 저장소) — 미션 항목 제외
     const myqList = await cloudGetMyQList();
-    myqList.forEach(e => {
+    myqList.filter(e => !e.isMission).forEach(e => {
       const qs = [e.q1, e.q2, e.q3].filter(Boolean);
       entries.push({
         source: 'myq', id: 'myq_' + e.id,
@@ -6141,32 +6182,34 @@
     if (!grade || !subject) { alert('학년과 과목을 선택해주세요.'); return; }
     if (!q1 && !q2 && !q3) { alert('질문을 최소 1개 이상 입력해주세요.'); return; }
 
+    // ✅ 저장 버튼 누르자마자 즉시 메시지 표시
+    const msgEl = document.getElementById('myqSaveMsgStudent');
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      setTimeout(() => { msgEl.style.display = 'none'; }, 2500);
+    }
+
     const now = new Date();
     const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
     const currentUser = getCurrentUser();
     const authorKey = currentUser ? (currentUser.key || currentUser.email || currentUser.name || '') : '';
     const entry = { role, grade, subject, unit, topic, q1, q2, q3, date: dateStr, id: Date.now(), authorKey };
-    const saved = await cloudGetMyQList();
-    saved.unshift(entry);
-    await cloudSetMyQList(saved);
 
     // 폼 초기화
     [prefix+'-grade', prefix+'-subject'].forEach(id => document.getElementById(id).value = '');
     [prefix+'-unit', prefix+'-topic', prefix+'-q1', prefix+'-q2', prefix+'-q3'].forEach(id => document.getElementById(id).value = '');
+
+    // Supabase 저장 및 렌더링 (백그라운드)
+    const saved = await cloudGetMyQList();
+    saved.unshift(entry);
+    await cloudSetMyQList(saved);
 
     renderMyQList();
     try { renderPortfolio(); } catch(e) {}
     try { loadQGallery(); } catch(e) {}
     try { renderMyQGallery(); } catch(e) {}
     try { loadRankings(); } catch(e) {}
-
-    // 저장 성공 피드백 — 버튼 아래 메시지 표시
-    const msgEl = document.getElementById('myqSaveMsgStudent');
-    if (msgEl) {
-      msgEl.style.display = 'block';
-      setTimeout(() => { msgEl.style.display = 'none'; }, 2500);
-    }
 
     // AI 질문 생성 섹션으로 스크롤 후 생성 시작
     setTimeout(() => {
@@ -8008,38 +8051,48 @@ JSON 형식으로만 반환:
     const stats   = document.getElementById('qgalStats');
     const board   = document.getElementById('qgalBoard');
     if (!loading) return;
+
+    // 초기 상태 설정
     loading.style.display = 'block';
     empty.style.display   = 'none';
-    stats.style.display   = 'none';
+    if (stats) stats.style.display = 'none';
     board.style.display   = 'none';
 
     try {
       const all = await cloudGetMyQList();
 
-      let filtered = [...all];
+      // 미션 제외 + 필터 적용
+      let filtered = [...all].filter(e => !e.isMission);
       if (qgalFilter.grade   !== 'all') filtered = filtered.filter(e => e.grade   === qgalFilter.grade);
       if (qgalFilter.subject !== 'all') filtered = filtered.filter(e => e.subject === qgalFilter.subject);
       filtered = filtered.filter(e => e.role === 'student');
-
       filtered.sort((a, b) => b.id - a.id);
 
       loading.style.display = 'none';
-      if (!filtered.length) { empty.style.display = 'block'; return; }
-      board.style.display = 'block';
 
-      // 학생 섹션
-      const students = filtered.filter(e => e.role === 'student');
-      const stuSec = document.getElementById('qgalStudentSection');
-      if (students.length) {
-        stuSec.style.display = 'block';
-        document.getElementById('qgalStudentCount').textContent = `🎒 학생 질문 ${students.length}개`;
-        document.getElementById('qgalStudentList').innerHTML = renderQGalMonthly(students, '#0ea5e9');
-      } else {
-        stuSec.style.display = 'none';
+      if (!filtered.length) {
+        empty.style.display = 'block';
+        return;
       }
 
+      board.style.display = 'block';
+
+      // 학생 섹션 렌더링
+      const stuSec   = document.getElementById('qgalStudentSection');
+      const stuCount = document.getElementById('qgalStudentCount');
+      const stuList  = document.getElementById('qgalStudentList');
+      if (stuSec && stuCount && stuList) {
+        if (filtered.length) {
+          stuSec.style.display = 'block';
+          stuCount.textContent = `🎒 학생 질문 ${filtered.length}개`;
+          stuList.innerHTML    = renderQGalMonthly(filtered, '#0ea5e9');
+        } else {
+          stuSec.style.display = 'none';
+        }
+      }
 
     } catch(err) {
+      console.error('[loadQGallery] 오류:', err);
       loading.style.display = 'none';
       empty.style.display   = 'block';
     }

@@ -6327,7 +6327,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-6',
           max_tokens: 1200,
           messages: [{ role: 'user', content: prompt }]
         })
@@ -6658,7 +6658,7 @@ JSON 형식으로만 반환:
         method: 'POST',
         headers: getApiHeaders(),
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-6',
           max_tokens: 1500,
           system: systemPrompt,
           messages: [{ role: 'user', content: userPrompt }]
@@ -9832,7 +9832,7 @@ ${phaseContent[p]}
         const res = await fetch('/.netlify/functions/claude', {
           method: 'POST',
           headers: getApiHeaders(),
-          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
+          body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
         });
         if (res.ok) {
           const data = await res.json();
@@ -10425,7 +10425,7 @@ ${phaseContent[p]}
         headers: getApiHeaders(),
         signal: controller.signal,
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-6',
           max_tokens: 2000,
           messages: [{ role: 'user', content: extrasPrompt }]
         })
@@ -10869,7 +10869,7 @@ ${phaseContent[p]}
       var r1 = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: getApiHeaders(),
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000,
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 2000,
           messages: [{ role: 'user', content: '수업: ' + ctx + '\n\n이 주제의 본질적 쟁점에서 도출한 핵심질문 3가지.\n- 단순 정의(~은 무엇인가?) 금지\n- 관점 충돌·역설·실생활 연결 포함\n\nJSON 배열만: ["질문1","질문2","질문3"]' }]
         })
       });
@@ -10948,7 +10948,7 @@ ${phaseContent[p]}
         var r2 = await fetch('/.netlify/functions/claude', {
           method: 'POST',
           headers: getApiHeaders(),
-          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000,
+          body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4000,
             messages: [{ role: 'user', content: prompt }]
           })
         });
@@ -11403,7 +11403,7 @@ async function generateIqbot() {
     var res = await fetch('/.netlify/functions/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1200,
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1200,
         messages: [{ role: 'user', content: prompt }]
       })
     });

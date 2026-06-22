@@ -260,6 +260,58 @@
   .bot-sky { background: linear-gradient(160deg,#0ea5e9,#06b6d4); }
   .bot-violet { background: linear-gradient(160deg,#8b5cf6,#ec4899); }
   .bot-teal { background: linear-gradient(160deg,#14b8a6,#10b981); }
+  .bot-edutalk {
+    background: linear-gradient(145deg,#1e3a8a,#4f46e5);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,.18);
+    box-shadow: 0 8px 32px rgba(30,58,138,.35);
+  }
+  .bot-edutalk::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .bot-edutalk:hover {
+    box-shadow: 0 14px 40px rgba(30,58,138,.55);
+  }
+  .bot-edutalk-logo {
+    font-size: 22px;
+    font-weight: 900;
+    color: white;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #fff 0%, #e9d5ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bot-edutalk-logo::after {
+    content: '💗';
+    font-size: 18px;
+    -webkit-text-fill-color: initial;
+    background: none;
+  }
+  .bot-edutalk-sparkle {
+    position: absolute;
+    font-size: 13px;
+    color: rgba(255,255,255,.6);
+    pointer-events: none;
+    animation: sparkle-pulse 2.4s ease-in-out infinite;
+  }
+  .bot-edutalk-tl { top: 10px; left: 12px; animation-delay: 0s; }
+  .bot-edutalk-tr { top: 10px; right: 12px; animation-delay: .8s; }
+  .bot-edutalk-bl { bottom: 10px; left: 12px; animation-delay: 1.6s; }
+  @keyframes sparkle-pulse {
+    0%, 100% { opacity: .4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+  }
   .hero-bg {
     position: fixed; inset: 0; z-index: -1;
     background:
@@ -3927,6 +3979,14 @@
 
   <!-- Right: Tall bot buttons -->
   <div class="hero-bots">
+    <a class="bot-btn bot-edutalk" href="https://www.aiedutalk.co.kr" target="_blank" rel="noopener" onclick="window.open('https://www.aiedutalk.co.kr','_blank');return false;">
+      <span class="bot-edutalk-sparkle bot-edutalk-tl">✦</span>
+      <span class="bot-edutalk-sparkle bot-edutalk-tr">✦</span>
+      <span class="bot-edutalk-sparkle bot-edutalk-bl">✦</span>
+      <span class="bot-icon" style="font-size:38px;line-height:1;">🤖</span>
+      <span class="bot-edutalk-logo">AI 에듀톡</span>
+      <span class="bot-sub" style="font-size:13px;">AI 학습 상담 플랫폼 바로가기</span>
+    </a>
     <button class="bot-btn bot-sky" onclick="openQBotModal()">
       <span class="bot-icon">🤖</span>
       <span class="bot-title">학생 질문 설계<br/>Q-BOT</span>
